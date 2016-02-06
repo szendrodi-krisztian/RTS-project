@@ -8,7 +8,6 @@ package mygame;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.texture.Texture2D;
-import static jdk.nashorn.internal.objects.NativeArray.map;
 
 /**
  *
