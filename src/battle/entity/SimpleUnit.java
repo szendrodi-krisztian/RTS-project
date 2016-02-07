@@ -9,8 +9,8 @@ public class SimpleUnit extends Unit {
 
     public SimpleUnit(int x, int y) {
         super(new Foot(), new SimpleWeapon());
-        posX = x;
-        posY = y;
+        pos.x = x;
+        pos.y = y;
     }
 
     @Override

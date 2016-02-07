@@ -80,19 +80,29 @@ public class Main extends SimpleApplication {
                         Ray ray = new Ray(cur3d, dir);
                         rootNode.collideWith(ray, results);
                         CollisionResult coll = results.getClosestCollision();
-                        if (coll == null && select == null) {
+                        if (coll == null) {
                             return;
                         }
-
                         Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
                         Unit unit = map.units[map.n * (int) hit_geom.x + (int) hit_geom.z];
-                        if (unit == null) {
-                            if (select == null) {
+                        if (unit != null) {
+                            select = unit;
+                        }
+                        break;
+                    case "right click":
+                        if (select != null) {
+                            CollisionResults results2 = new CollisionResults();
+                            Vector2f cur2 = inputManager.getCursorPosition();
+                            Vector3f cur3d2 = cam.getWorldCoordinates(cur2.clone(), 0f).clone();
+                            Vector3f dir2 = cam.getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
+                            Ray ray2 = new Ray(cur3d2, dir2);
+                            rootNode.collideWith(ray2, results2);
+                            CollisionResult coll2 = results2.getClosestCollision();
+                            if (coll2 == null) {
                                 return;
                             }
-                            select.moveTo((int)coll.getContactPoint().x, (int)coll.getContactPoint().z+1);
-                        }else{
-                            select = unit;
+
+                            select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z + 1);
                         }
                         break;
                 }

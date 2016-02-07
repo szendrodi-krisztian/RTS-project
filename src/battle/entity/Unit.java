@@ -42,11 +42,11 @@ public abstract class Unit {
     public static final float N_STEP = 5;
 
     // The position on the grid
-    protected int posX, posY;
+    protected Vector2f pos = new Vector2f();
     // positional value [0-1[
-    private float fractalX, fractalY;
-    private float destX, destY;
-    private float nextX, nextY;
+    private final Vector2f fractal = new Vector2f();
+    private final Vector2f dest = new Vector2f();
+    private Vector2f next = new Vector2f();
     // Health points
     private int health;
     // Angle in rads
@@ -93,33 +93,34 @@ public abstract class Unit {
      */
     public final int move(float tpf) {
         int ret = 0;
-        fractalX += (tpf * nextX * vehicle.getMovementSpeed()) / N_STEP;
-        fractalY += (tpf * nextY * vehicle.getMovementSpeed()) / N_STEP;
-        if (FastMath.abs(fractalX) >= 1) {
-            System.out.print("move from (" + posX + ", " + posY+")");
-            posX += FastMath.sign(fractalX);
-            ret = (int) FastMath.sign(fractalX)*map.n;
-            fractalX = 0;
-            Vector2f d = map.dijkstra(posX, posY, destX, destY); // map.disjk : gives next position on the path
-            nextX = d.x;
-            nextY = d.y;
-            System.out.println(" to (" + posX + ", " + posY + ") ret: " + ret);
-            geometry.setLocalTranslation(posX + fractalX, 0.0001f, posY + fractalY);
+        fractal.addLocal(next.mult(tpf * vehicle.getMovementSpeed() / N_STEP));
+        if (next.x == 0 && FastMath.abs(fractal.x) > 0.011f) {
+            fractal.x += -(tpf * vehicle.getMovementSpeed() / N_STEP) * FastMath.sign(fractal.x);
+            geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
             return ret;
         }
-        if (FastMath.abs(fractalY) >= 1) {
-            System.out.print("move from (" + posX + ", " + posY+")");
-            ret = (int) (FastMath.sign(fractalY) );
-            posY += FastMath.sign(fractalY);
-            fractalY = 0;
-            Vector2f d = map.dijkstra(posX, posY, destX, destY);
-            nextX = d.x;
-            nextY = d.y;
-            System.out.println(" to (" + posX + ", " + posY + ") ret: " + ret);
-            geometry.setLocalTranslation(posX + fractalX, 0.0001f, posY + fractalY);
+        if (next.y == 0 && FastMath.abs(fractal.y) > 0.011f) {
+            fractal.y += -(tpf * vehicle.getMovementSpeed() / N_STEP) * FastMath.sign(fractal.y);
+            geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
             return ret;
         }
-        geometry.setLocalTranslation(posX + fractalX, 0.0001f, posY + fractalY);
+        if (FastMath.abs(fractal.x) >= 1) {
+            pos.x += FastMath.sign(fractal.x);
+            ret = (int) FastMath.sign(fractal.x) * map.n;
+            fractal.x = 0;
+            next = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y); // map.disjk : gives next position on the path
+            geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
+            return ret;
+        }
+        if (FastMath.abs(fractal.y) >= 1) {
+            ret = (int) (FastMath.sign(fractal.y));
+            pos.y += FastMath.sign(fractal.y);
+            fractal.y = 0;
+            next = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y);
+            geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
+            return ret;
+        }
+        geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
         return ret;
     }
 
@@ -130,15 +131,15 @@ public abstract class Unit {
      * @param y
      */
     public void moveTo(int x, int y) {
-        destX = x;
-        destY = y;
-        Vector2f d = map.dijkstra(posX, posY, destX, destY);
-        nextX = d.x;
-        nextY = d.y;
+        dest.x = x;
+        dest.y = y;
+        Vector2f d = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y);
+        next.x = d.x;
+        next.y = d.y;
     }
 
     public final void attack(int x, int y) {
-        weapon.attack(pose, accuracy, dmg_mult, posX, posY, x, y);
+        weapon.attack(pose, accuracy, dmg_mult, (int) pos.x, (int) pos.y, x, y);
     }
 
     public void setPose(Pose p) {
@@ -153,7 +154,7 @@ public abstract class Unit {
 
     @Override
     public final String toString() {
-        return "Unit{" + "vehicle=" + vehicle + ", weapon=" + weapon + ", posX=" + posX + ", posY=" + posY + ", fractalX=" + fractalX + ", fractalY=" + fractalY + ", destX=" + destX + ", destY=" + destY + ", nextX=" + nextX + ", nextY=" + nextY + ", health=" + health + ", accuracy=" + accuracy + ", stamina=" + stamina + ", discipline=" + discipline + ", morale=" + morale + ", dmg_mult=" + dmg_mult + '}';
+        return "Unit{" + "vehicle=" + vehicle + ", weapon=" + weapon + ", pos.x=" + pos.x + ", pos.y=" + pos.y + ", fractal.x=" + fractal.x + ", fractal.y=" + fractal.y + ", dest.x=" + dest.x + ", dest.y=" + dest.y + ", next.x=" + next.x + ", next.y=" + next.y + ", health=" + health + ", accuracy=" + accuracy + ", stamina=" + stamina + ", discipline=" + discipline + ", morale=" + morale + ", dmg_mult=" + dmg_mult + '}';
     }
 
 }

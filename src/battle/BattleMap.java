@@ -33,13 +33,13 @@ public class BattleMap {
         this.m = m;
         Unit.init(this, assets, rootNode);
         units = new Unit[n * m];
-      //  SimpleUnit u = new SimpleUnit(1, 1);
+        SimpleUnit u = new SimpleUnit(1, 2);
 
-      //  u.moveTo(9, 5);
+        u.moveTo(9, 5);
         SimpleUnit u2 = new SimpleUnit(5, 0);
         u2.moveTo(3, 1);
         units[n * 5 + 0] = u2;
-      //  units[n * 1 + 1] = u;
+        units[n * 1 + 2] = u;
 
         grid = new TerrainElement[n * m];
         Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();
@@ -78,7 +78,7 @@ public class BattleMap {
         }
         return new Vector2f(x, y);
     }
-    
+
     List<Integer> from = new ArrayList<>();
     List<Integer> to = new ArrayList<>();
 
@@ -90,11 +90,16 @@ public class BattleMap {
                 int r = units[i].move(tpf);
                 if (r != 0) {
                     from.add(i);
-                    to.add(i+r);
+                    to.add(i + r);
                 }
             }
         }
-        for(int i = 0;i<from.size();i++){
+        for (int i = 0; i < from.size(); i++) {
+            /*
+            * BE CAREFUL DRAGONS AHEAD!
+            * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
+            * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
+            */
             units[to.get(i)] = units[from.get(i)];
             units[from.get(i)] = null;
         }
