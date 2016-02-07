@@ -9,6 +9,8 @@ import battle.terrain.TerrainElementManager;
 import battle.terrain.render.TerrainGridMesh;
 import com.jme3.math.FastMath;
 import com.jme3.scene.Mesh;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  *
@@ -20,14 +22,14 @@ public class BattleMap {
 
     public BattleMap(int n, int m, Node rootNode, AssetManager assets) {
         grid = new TerrainElement[n * m];
-        TerrainElement e = TerrainElementManager.getInstance(assets).getElementByName("stone");
-        TerrainElement e2 = TerrainElementManager.getInstance(assets).getElementByName("grass");
+        Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();
         for (int i = 0; i < grid.length; i++) {
-            if (FastMath.nextRandomInt(0, 10) < 5) {
-                grid[i] = e;
-            } else {
-                grid[i] = e2;
+            int random = FastMath.nextRandomInt(0, all.size());
+            Iterator<TerrainElement> iter = all.values().iterator();
+            while (--random > 0) {
+                iter.next();
             }
+            grid[i] = iter.next();
         }
         buildGridMesh(n, m, rootNode);
     }

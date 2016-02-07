@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -27,7 +28,7 @@ public class TerrainElementManager {
     //
     private static TerrainElementManager instance;
     //
-    private final Map<String, TerrainElement> terrains = new HashMap<>();
+    private final Map<String, TerrainElement> terrains = new LinkedHashMap<>();
     //
     private final Material terrainMaterial;
 
@@ -59,7 +60,7 @@ public class TerrainElementManager {
     private TerrainElementManager(AssetManager assets) {
         atlas = new CustomTextureAtlas();
         List<TerrainElement> elements = new ArrayList<>(10);
-        
+        // Add any special elements also to this list
         try {
             BufferedReader r = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("terrain.txt"), "UTF-8"));
             String line = r.readLine();
@@ -86,6 +87,10 @@ public class TerrainElementManager {
         atlas.create();
         terrainMaterial = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
         terrainMaterial.setTexture("ColorMap", atlas.getTexture());
+    }
+    
+    public final Map<String, TerrainElement> getAllTerrains(){
+        return Collections.unmodifiableMap(terrains);
     }
 
     public final TerrainElement getElementByName(String name) {

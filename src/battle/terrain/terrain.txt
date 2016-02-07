@@ -1,3 +1,4 @@
 NAME    ACCESIBLE   MOVEMENT_SPEED  PROJECTILE_RESISTANCE
 grass true 1.0 0.0
 stone true 1.0 0.0
+water false 0.0 0.0
