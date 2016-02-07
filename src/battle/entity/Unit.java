@@ -42,7 +42,7 @@ public abstract class Unit {
     public static final float N_STEP = 5;
 
     // The position on the grid
-    private int posX, posY;
+    protected int posX, posY;
     // positional value [0-1[
     private float fractalX, fractalY;
     private float destX, destY;
@@ -91,18 +91,21 @@ public abstract class Unit {
      *
      * @param tpf Time per frame.
      */
-    public void move(float tpf) {
-
+    public final int move(float tpf) {
+        int ret = 0;
         fractalX += (tpf * nextX * vehicle.getMovementSpeed()) / N_STEP;
         fractalY += (tpf * nextY * vehicle.getMovementSpeed()) / N_STEP;
         if (FastMath.abs(fractalX) >= 1) {
             posX += FastMath.sign(fractalX);
+            ret = (int) FastMath.sign(fractalX);
             fractalX = 0;
             Vector2f d = map.dijkstra(posX, posY, destX, destY); // map.disjk : gives next position on the path
             nextX = d.x;
             nextY = d.y;
+            return ret;
         }
         if (FastMath.abs(fractalY) >= 1) {
+            ret = (int) FastMath.sign(fractalX)*map.n;
             posY += FastMath.sign(fractalY);
             fractalY = 0;
             Vector2f d = map.dijkstra(posX, posY, destX, destY);
@@ -110,6 +113,7 @@ public abstract class Unit {
             nextY = d.y;
         }
         geometry.setLocalTranslation(posX+fractalX, 0.0001f, posY+fractalY);
+        return ret;
     }
 
     /**

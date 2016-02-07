@@ -24,16 +24,22 @@ public class BattleMap {
 
     public TerrainElement grid[];
 
-    public List<Unit> units = new ArrayList<>();
+    public Unit units[];
+
+    public int n, m;
 
     public BattleMap(int n, int m, Node rootNode, AssetManager assets) {
+        this.n = n;
+        this.m = m;
         Unit.init(this, assets, rootNode);
-        SimpleUnit u = new SimpleUnit();
+        units = new Unit[n * m];
+        SimpleUnit u = new SimpleUnit(1, 1);
+
         u.moveTo(10, 5);
-        SimpleUnit u2 = new SimpleUnit();
+        SimpleUnit u2 = new SimpleUnit(5, 0);
         u2.moveTo(12, 3);
-        units.add(u);
-        units.add(u2);
+        units[n * 5 + 0] = u2;
+        units[n * 1 + 1] = u;
 
         grid = new TerrainElement[n * m];
         Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();
@@ -72,10 +78,25 @@ public class BattleMap {
         }
         return new Vector2f(x, y);
     }
+    
+    List<Integer> from = new ArrayList<>();
+    List<Integer> to = new ArrayList<>();
 
     public void tick(float tpf) {
-        for (Unit u : units) {
-            u.move(tpf);
+        from.clear();
+        to.clear();
+        for (int i = 0; i < units.length; i++) {
+            if (units[i] != null) {
+                int r = units[i].move(tpf);
+                if (r != 0) {
+                    from.add(i);
+                    to.add(i+r);
+                }
+            }
+        }
+        for(int i = 0;i<from.size();i++){
+            units[to.get(i)] = units[from.get(i)];
+            units[from.get(i)] = null;
         }
     }
 
