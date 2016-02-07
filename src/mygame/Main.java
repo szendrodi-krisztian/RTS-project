@@ -1,5 +1,6 @@
 package mygame;
 
+import battle.BattleMap;
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -13,6 +14,8 @@ import com.jme3.scene.shape.Box;
  * @author normenhansen
  */
 public class Main extends SimpleApplication {
+    
+    BattleMap map;
 
     public static void main(String[] args) {
         Main app = new Main();
@@ -21,23 +24,20 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        Box b = new Box(1, 1, 1);
-        Geometry geom = new Geometry("Box", b);
-
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        geom.setMaterial(mat);
-
-        rootNode.attachChild(geom);
+        map = new BattleMap(150, 200, rootNode, assetManager);
+        cam.setLocation(new Vector3f(20, 10, 10));
+        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+        flyCam.setMoveSpeed(50);
+        
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        //TODO: add update code
+        
     }
 
     @Override
     public void simpleRender(RenderManager rm) {
-        //TODO: add render code
+        
     }
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mygame;
+package battle.entity;
 
 import com.jme3.texture.Texture2D;
 
@@ -11,14 +11,16 @@ import com.jme3.texture.Texture2D;
  *
  * @author Krisz
  */
-public abstract class TerrainElement {
+public interface IVehicle {
+
+    public int getMovementSpeed();
+
+    public void setMovementSpeed(int newSpeed);
+
+    public Texture2D getTexture();
     
-    public abstract Texture2D getTexture();
+    public void setTexture(Texture2D tex);
     
-    public abstract boolean isAccesible();
     
-    public abstract float getMovementModifier();
-    
-    public abstract float getProjectileResistance();
-    
+
 }

@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mygame;
+package battle.entity;
 
+import battle.BattleMap;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.texture.Texture2D;
-import static jdk.nashorn.internal.objects.NativeArray.map;
 
 /**
  *
