@@ -24,6 +24,7 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+
         map = new BattleMap(150, 200, rootNode, assetManager);
         cam.setLocation(new Vector3f(20, 10, 10));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
