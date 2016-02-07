@@ -33,13 +33,13 @@ public class BattleMap {
         this.m = m;
         Unit.init(this, assets, rootNode);
         units = new Unit[n * m];
-        SimpleUnit u = new SimpleUnit(1, 1);
+      //  SimpleUnit u = new SimpleUnit(1, 1);
 
-        u.moveTo(10, 5);
+      //  u.moveTo(9, 5);
         SimpleUnit u2 = new SimpleUnit(5, 0);
-        u2.moveTo(12, 3);
+        u2.moveTo(3, 1);
         units[n * 5 + 0] = u2;
-        units[n * 1 + 1] = u;
+      //  units[n * 1 + 1] = u;
 
         grid = new TerrainElement[n * m];
         Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();

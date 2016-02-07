@@ -75,13 +75,12 @@ public abstract class Unit {
         this.weapon = weapon;
         Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
         Texture t = assets.loadTexture(new TextureKey("Textures/units/unit.png", false));
-        
-        
+
         m.setTexture("ColorMap", t);
         Quad q = new Quad(1, 1);
-        
+
         geometry = new Geometry("unit", q);
-        geometry.rotate(new Quaternion(new float[]{-FastMath.HALF_PI,0,0}));
+        geometry.rotate(new Quaternion(new float[]{-FastMath.HALF_PI, 0, 0}));
         geometry.setMaterial(m);
         node.attachChild(geometry);
     }
@@ -90,29 +89,37 @@ public abstract class Unit {
      * Moves this unit for animation.
      *
      * @param tpf Time per frame.
+     * @return
      */
     public final int move(float tpf) {
         int ret = 0;
         fractalX += (tpf * nextX * vehicle.getMovementSpeed()) / N_STEP;
         fractalY += (tpf * nextY * vehicle.getMovementSpeed()) / N_STEP;
         if (FastMath.abs(fractalX) >= 1) {
+            System.out.print("move from (" + posX + ", " + posY+")");
             posX += FastMath.sign(fractalX);
-            ret = (int) FastMath.sign(fractalX);
+            ret = (int) FastMath.sign(fractalX)* map.n;
             fractalX = 0;
             Vector2f d = map.dijkstra(posX, posY, destX, destY); // map.disjk : gives next position on the path
             nextX = d.x;
             nextY = d.y;
+            System.out.println(" to (" + posX + ", " + posY + ") ret: " + ret);
+            geometry.setLocalTranslation(posX + fractalX, 0.0001f, posY + fractalY);
             return ret;
         }
         if (FastMath.abs(fractalY) >= 1) {
-            ret = (int) FastMath.sign(fractalX)*map.n;
+            System.out.print("move from (" + posX + ", " + posY+")");
+            ret = (int) (FastMath.sign(fractalY) );
             posY += FastMath.sign(fractalY);
             fractalY = 0;
             Vector2f d = map.dijkstra(posX, posY, destX, destY);
             nextX = d.x;
             nextY = d.y;
+            System.out.println(" to (" + posX + ", " + posY + ") ret: " + ret);
+            geometry.setLocalTranslation(posX + fractalX, 0.0001f, posY + fractalY);
+            return ret;
         }
-        geometry.setLocalTranslation(posX+fractalX, 0.0001f, posY+fractalY);
+        geometry.setLocalTranslation(posX + fractalX, 0.0001f, posY + fractalY);
         return ret;
     }
 
