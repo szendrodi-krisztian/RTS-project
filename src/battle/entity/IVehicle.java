@@ -1,11 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battle.entity;
-
-import com.jme3.texture.Texture2D;
 
 /**
  *
@@ -13,13 +6,13 @@ import com.jme3.texture.Texture2D;
  */
 public interface IVehicle {
 
-    public int getMovementSpeed();
+    public float getMovementSpeed();
 
     public void setMovementSpeed(int newSpeed);
 
-    public Texture2D getTexture();
+    public String getTexture();
     
-    public void setTexture(Texture2D tex);
+    public void setTexture(String tex);
     
     
 

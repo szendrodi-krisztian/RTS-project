@@ -1,5 +1,7 @@
 package battle;
 
+import battle.entity.SimpleUnit;
+import battle.entity.Unit;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
@@ -9,7 +11,9 @@ import battle.terrain.TerrainElementManager;
 import battle.terrain.render.TerrainGridMesh;
 import com.jme3.math.FastMath;
 import com.jme3.scene.Mesh;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,7 +24,17 @@ public class BattleMap {
 
     public TerrainElement grid[];
 
+    public List<Unit> units = new ArrayList<>();
+
     public BattleMap(int n, int m, Node rootNode, AssetManager assets) {
+        Unit.init(this, assets, rootNode);
+        SimpleUnit u = new SimpleUnit();
+        u.moveTo(10, 5);
+        SimpleUnit u2 = new SimpleUnit();
+        u2.moveTo(12, 3);
+        units.add(u);
+        units.add(u2);
+
         grid = new TerrainElement[n * m];
         Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();
         for (int i = 0; i < grid.length; i++) {
@@ -32,6 +46,7 @@ public class BattleMap {
             grid[i] = iter.next();
         }
         buildGridMesh(n, m, rootNode);
+
     }
 
     private void buildGridMesh(int n, int m, Node rootNode) {
@@ -42,7 +57,26 @@ public class BattleMap {
     }
 
     public Vector2f dijkstra(int posX, int posY, float destX, float destY) {
-        return new Vector2f(1, 1);
+        int x = 0, y = 0;
+        if (destX > posX) {
+            x = 1;
+        }
+        if (destX < posX) {
+            x = -1;
+        }
+        if (destY > posY) {
+            y = 1;
+        }
+        if (destY < posY) {
+            y = -1;
+        }
+        return new Vector2f(x, y);
+    }
+
+    public void tick(float tpf) {
+        for (Unit u : units) {
+            u.move(tpf);
+        }
     }
 
 }

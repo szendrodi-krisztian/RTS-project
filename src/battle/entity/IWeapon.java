@@ -5,7 +5,6 @@
  */
 package battle.entity;
 
-import com.jme3.texture.Texture2D;
 import battle.entity.Unit.Pose;
 
 /**
@@ -14,9 +13,9 @@ import battle.entity.Unit.Pose;
  */
 public interface IWeapon {
 
-    public Texture2D getTexture();
+    public String getTexture();
 
-    public void setTexture(Texture2D tex);
+    public void setTexture(String tex);
 
     public int getMinDamage();
 

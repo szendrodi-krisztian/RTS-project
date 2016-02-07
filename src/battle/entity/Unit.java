@@ -1,14 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battle.entity;
 
 import battle.BattleMap;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.TextureKey;
+import com.jme3.material.Material;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
-import com.jme3.texture.Texture2D;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+import com.jme3.scene.shape.Quad;
+import com.jme3.texture.Texture;
 
 /**
  *
@@ -25,17 +27,19 @@ public abstract class Unit {
 
         NORTH, SOUTH, EAST, WEST
     }
-    
+
+    private Geometry geometry;
+
     private static BattleMap map;
 
-    private IVehicle vehicle;
-    private IWeapon weapon;
+    private final IVehicle vehicle;
+    private final IWeapon weapon;
 
     private Pose pose;
 
     private Rotation rotation;
 
-    public static final float N_STEP = 30;
+    public static final float N_STEP = 5;
 
     // The position on the grid
     private int posX, posY;
@@ -55,14 +59,31 @@ public abstract class Unit {
     private float morale;
     //
     private float dmg_mult;
-    
-    public static void init(BattleMap map){
+    //
+    private static AssetManager assets;
+    //
+    private static Node node;
+
+    public static void init(BattleMap map, AssetManager assets, Node root) {
+        Unit.node = root;
+        Unit.assets = assets;
         Unit.map = map;
     }
 
     public Unit(IVehicle vehicle, IWeapon weapon) {
         this.vehicle = vehicle;
         this.weapon = weapon;
+        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture t = assets.loadTexture(new TextureKey("Textures/units/unit.png", false));
+        
+        
+        m.setTexture("ColorMap", t);
+        Quad q = new Quad(1, 1);
+        
+        geometry = new Geometry("unit", q);
+        geometry.rotate(new Quaternion(new float[]{-FastMath.HALF_PI,0,0}));
+        geometry.setMaterial(m);
+        node.attachChild(geometry);
     }
 
     /**
@@ -82,13 +103,13 @@ public abstract class Unit {
             nextY = d.y;
         }
         if (FastMath.abs(fractalY) >= 1) {
-            posX += FastMath.sign(fractalY);
+            posY += FastMath.sign(fractalY);
             fractalY = 0;
             Vector2f d = map.dijkstra(posX, posY, destX, destY);
             nextX = d.x;
             nextY = d.y;
         }
-
+        geometry.setLocalTranslation(posX+fractalX, 0.0001f, posY+fractalY);
     }
 
     /**
@@ -116,8 +137,8 @@ public abstract class Unit {
     public Pose getPose() {
         return pose;
     }
-    
-    public abstract Texture2D getTexture();
+
+    public abstract String getTexture();
 
     @Override
     public final String toString() {
