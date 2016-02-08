@@ -4,6 +4,7 @@ import battle.BattleMap;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -73,10 +74,10 @@ public abstract class Unit {
     public Unit(IVehicle vehicle, IWeapon weapon) {
         this.vehicle = vehicle;
         this.weapon = weapon;
-        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        Material m = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
         Texture t = assets.loadTexture(new TextureKey("Textures/units/unit.png", false));
 
-        m.setTexture("ColorMap", t);
+        m.setTexture("DiffuseMap", t);
         Quad q = new Quad(1, 1);
 
         geometry = new Geometry("unit", q);
@@ -96,12 +97,12 @@ public abstract class Unit {
         fractal.addLocal(next.mult(tpf * vehicle.getMovementSpeed() / N_STEP));
         if (next.x == 0 && FastMath.abs(fractal.x) > 0.011f) {
             fractal.x += -(tpf * vehicle.getMovementSpeed() / N_STEP) * FastMath.sign(fractal.x);
-            geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
+            geometry.setLocalTranslation(pos.x + fractal.x, 0.0002f, pos.y + fractal.y);
             return ret;
         }
         if (next.y == 0 && FastMath.abs(fractal.y) > 0.011f) {
             fractal.y += -(tpf * vehicle.getMovementSpeed() / N_STEP) * FastMath.sign(fractal.y);
-            geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
+            geometry.setLocalTranslation(pos.x + fractal.x, 0.0002f, pos.y + fractal.y);
             return ret;
         }
         if (FastMath.abs(fractal.x) >= 1) {
@@ -109,7 +110,7 @@ public abstract class Unit {
             ret = (int) FastMath.sign(fractal.x) * map.n;
             fractal.x = 0;
             next = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y); // map.disjk : gives next position on the path
-            geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
+            geometry.setLocalTranslation(pos.x + fractal.x, 0.0002f, pos.y + fractal.y);
             return ret;
         }
         if (FastMath.abs(fractal.y) >= 1) {
@@ -117,10 +118,10 @@ public abstract class Unit {
             pos.y += FastMath.sign(fractal.y);
             fractal.y = 0;
             next = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y);
-            geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
+            geometry.setLocalTranslation(pos.x + fractal.x, 0.0002f, pos.y + fractal.y);
             return ret;
         }
-        geometry.setLocalTranslation(pos.x + fractal.x, 0.0001f, pos.y + fractal.y);
+        geometry.setLocalTranslation(pos.x + fractal.x, 0.0002f, pos.y + fractal.y);
         return ret;
     }
 

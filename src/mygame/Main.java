@@ -11,10 +11,13 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.light.AmbientLight;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Spatial;
 
 /**
  * test
@@ -38,6 +41,13 @@ public class Main extends SimpleApplication {
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         flyCam.setMoveSpeed(50);
         flyCam.setEnabled(false);
+        
+        AmbientLight light = new AmbientLight();
+        light.setColor(ColorRGBA.White);
+        rootNode.addLight(light);
+        // TODO: UGLY HACK!!! 
+        // I dont know why but when no units on screen the transparent bucket gets culled.
+        rootNode.setCullHint(Spatial.CullHint.Never);
 
         AnalogListener al = new AnalogListener() {
 

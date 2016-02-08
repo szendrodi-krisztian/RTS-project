@@ -54,8 +54,8 @@ public final class CustomTextureAtlas {
 
     /**
      * Builds the unified texture. Once built dont add any more textures to this
-     * atlas.
-     * The build is simple: we take all the textures, and copy the image data into a grid on the big texture.
+     * atlas. The build is simple: we take all the textures, and copy the image
+     * data into a grid on the big texture.
      */
     public final void create() {
         if (created) {
@@ -63,7 +63,12 @@ public final class CustomTextureAtlas {
         }
         byte b[] = new byte[ATLAS_SIZE * ATLAS_SIZE * 4];
         byte ba[] = new byte[ATLAS_SIZE * ATLAS_SIZE * 4];
-        Image.Format f = nameTex.get("grass").getImage().getFormat();
+        Image.Format f;
+        if (nameTex.get("grass") != null) {
+            f = nameTex.get("grass").getImage().getFormat();
+        } else {
+            f = nameTex.get("tree").getImage().getFormat();
+        }
         Image img = new Image(f, ATLAS_SIZE, ATLAS_SIZE, BufferUtils.createByteBuffer(b));
         Image imgAlpha = new Image(f, ATLAS_SIZE, ATLAS_SIZE, BufferUtils.createByteBuffer(ba));
         ImageRaster mainRaster = ImageRaster.create(img);

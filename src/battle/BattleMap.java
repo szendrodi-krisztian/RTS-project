@@ -8,9 +8,12 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
+import battle.terrain.render.TerrainDecorationMesh;
 import battle.terrain.render.TerrainGridMesh;
 import com.jme3.math.FastMath;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -60,6 +63,12 @@ public class BattleMap {
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
         rootNode.attachChild(geom);
+        
+        Mesh me = new TerrainDecorationMesh(n, m, grid);
+        Geometry g = new Geometry("BattleDecor", me);
+        g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
+        g.setQueueBucket(RenderQueue.Bucket.Transparent);
+        rootNode.attachChild(g);
     }
 
     public Vector2f dijkstra(int posX, int posY, float destX, float destY) {

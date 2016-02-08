@@ -3,7 +3,9 @@ package battle.terrain;
 import battle.terrain.render.CustomTextureAtlas;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.Vector2f;
+import com.jme3.texture.Texture;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,15 +24,18 @@ import java.util.logging.Logger;
  */
 public class TerrainElementManager {
 
-    // Texture atlas for all textures.
-
+    // Texture atlas for 1*1 textures.
     private final CustomTextureAtlas atlas;
+    // Texture atlas for 1*2 textures.
+    private final CustomTextureAtlas bigAtlas;
     //
     private static TerrainElementManager instance;
     //
     private final Map<String, TerrainElement> terrains = new LinkedHashMap<>();
     //
     private final Material terrainMaterial;
+    //
+    private final Material decorMaterial;
 
     /**
      * Get the singleton.
@@ -53,12 +58,24 @@ public class TerrainElementManager {
         return terrainMaterial;
     }
 
+    public final Material getDecorMaterial() {
+        return decorMaterial;
+    }
+
     public final Vector2f getTextureOffset(String name) {
-        return atlas.getOffset(name);
+        TerrainElement e = getElementByName(name);
+        if (e.getTexture_heigth() == 128) {
+            return atlas.getOffset(name);
+        }
+        if (e.getTexture_heigth() == 256) {
+            return bigAtlas.getOffset(name);
+        }
+        return null;
     }
 
     private TerrainElementManager(AssetManager assets) {
         atlas = new CustomTextureAtlas();
+        bigAtlas = new CustomTextureAtlas();
         List<TerrainElement> elements = new ArrayList<>(10);
         // Add any special elements also to this list
         try {
@@ -72,6 +89,9 @@ public class TerrainElementManager {
                 e.accessible = Boolean.parseBoolean(arg[1]);
                 e.movement = Float.parseFloat(arg[2]);
                 e.proj_resis = Float.parseFloat(arg[3]);
+                e.texture_width = Integer.parseInt(arg[4]);
+                e.texture_heigth = Integer.parseInt(arg[5]);
+                e.has_alpha = Boolean.parseBoolean(arg[6]);
                 elements.add(e);
             }
         } catch (UnsupportedEncodingException ex) {
@@ -82,14 +102,36 @@ public class TerrainElementManager {
 
         for (TerrainElement e : elements) {
             terrains.put(e.getName(), e);
-            atlas.addTexture(assets.loadTexture("Textures/terrain/" + e.getName() + ".png"), e.getName(), false);
+            Texture t = assets.loadTexture("Textures/terrain/" + e.getName() + ".png");
+            Texture am = null;
+            if (e.has_alpha) {
+                am = assets.loadTexture("Textures/terrain/" + e.getName() + "alpha.png");
+            }
+            if (e.getTexture_heigth() == 128) {
+                atlas.addTexture(t, e.getName(), false);
+                if (e.has_alpha) {
+                    atlas.addTexture(am, e.getName(), true);
+                }
+            }
+            if (e.getTexture_heigth() == 256) {
+                bigAtlas.addTexture(t, e.getName(), false);
+                if (e.has_alpha) {
+                    bigAtlas.addTexture(am, e.getName(), true);
+                }
+            }
         }
         atlas.create();
-        terrainMaterial = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
-        terrainMaterial.setTexture("ColorMap", atlas.getTexture());
+        bigAtlas.create();
+        terrainMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
+        terrainMaterial.setTexture("DiffuseMap", atlas.getTexture());
+        decorMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
+        decorMaterial.setTexture("DiffuseMap", bigAtlas.getTexture());
+        decorMaterial.setTexture("AlphaMap", bigAtlas.getAlphaTexture());
+        decorMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        decorMaterial.getAdditionalRenderState().setAlphaTest(true);
     }
-    
-    public final Map<String, TerrainElement> getAllTerrains(){
+
+    public final Map<String, TerrainElement> getAllTerrains() {
         return Collections.unmodifiableMap(terrains);
     }
 

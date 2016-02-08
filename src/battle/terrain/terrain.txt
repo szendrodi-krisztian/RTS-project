@@ -1,4 +1,5 @@
-NAME    ACCESIBLE   MOVEMENT_SPEED  PROJECTILE_RESISTANCE
-grass true 1.0 0.0
-stone true 1.0 0.0
-water false 0.0 0.0
+NAME    ACCESIBLE   MOVEMENT_SPEED  PROJECTILE_RESISTANCE   TEXTURE_WIDTH   TEXTURE_HEIGTH HAS_ALPHA
+grass true 1.0 0.0 128 128 false
+stone true 1.0 0.0 128 128 false
+water false 0.0 0.0 128 128 false
+tree false 0.0 1.0 128 256 true
