@@ -35,7 +35,7 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
 
-        map = new BattleMap(20, 10, rootNode, assetManager);
+        map = new BattleMap(100, 100, rootNode, assetManager);
         cam.setLocation(new Vector3f(0, 50, 0));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         flyCam.setMoveSpeed(50);
