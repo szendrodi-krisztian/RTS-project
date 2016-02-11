@@ -109,7 +109,7 @@ public abstract class Unit {
             pos.x += FastMath.sign(fractal.x);
             ret = (int) FastMath.sign(fractal.x) * map.n;
             fractal.x = 0;
-            next = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y); // map.disjk : gives next position on the path
+            next = map.dijkstra((int) pos.x, (int) pos.y,(int) dest.x,(int) dest.y); // map.disjk : gives next position on the path
             geometry.setLocalTranslation(pos.x + fractal.x, 0.0002f, pos.y + fractal.y);
             return ret;
         }
@@ -117,7 +117,7 @@ public abstract class Unit {
             ret = (int) (FastMath.sign(fractal.y));
             pos.y += FastMath.sign(fractal.y);
             fractal.y = 0;
-            next = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y);
+            next = map.dijkstra((int) pos.x, (int) pos.y,(int) dest.x,(int) dest.y);
             geometry.setLocalTranslation(pos.x + fractal.x, 0.0002f, pos.y + fractal.y);
             return ret;
         }
@@ -134,7 +134,7 @@ public abstract class Unit {
     public void moveTo(int x, int y) {
         dest.x = x;
         dest.y = y;
-        Vector2f d = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y);
+        Vector2f d = map.dijkstra((int) pos.x, (int) pos.y,(int) dest.x,(int) dest.y);
         next.x = d.x;
         next.y = d.y;
     }
