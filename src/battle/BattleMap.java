@@ -54,7 +54,7 @@ public class BattleMap {
         pathDistanceGrid = new int[n*m];
         subsequentGrids = new LinkedList<>();
 
-        u.moveTo(10, 10);
+        
 
 
         units[n*2+2] = u;
@@ -110,12 +110,12 @@ public class BattleMap {
                 neighbourX=(int)(i/3)-1;
                 neighbourY=(int)(i%3)-1;
                 if((currentGrid.x+neighbourX)+1>n || (currentGrid.x+neighbourY)+1>m || 
-                (currentGrid.x+neighbourX)<1 || (currentGrid.y+neighbourY)<1)
+                (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
                 {
                     continue;
                 }
                 System.out.println(((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY));
-                if(/*grid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)].isAccesible() &&*/
+                if(grid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)].isAccesible() &&
                 pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y])
                 {
                     pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)]=pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y]+1;
