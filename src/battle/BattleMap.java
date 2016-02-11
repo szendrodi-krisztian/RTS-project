@@ -68,38 +68,16 @@ public class BattleMap {
     private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
         Mesh mesh = new TerrainGridMesh(n, m, grid);
         
-        BoundingBox b1 = new BoundingBox(new Vector3f(1,-20,1), 1, 1, 1);
-        mesh.setBound(b1);
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
         geom.move(0, 0, 0);
-        geom.setCullHint(Spatial.CullHint.Never);
         rootNode.attachChild(geom);
 
         Mesh me = new TerrainDecorationMesh(n, m, grid);
-        
-        BoundingBox b2 = new BoundingBox(new Vector3f(2,-10,2), 1, 1, 1);
-        me.setBound(b2);
         Geometry g = new Geometry("BattleDecor", me);
-        g.setCullHint(Spatial.CullHint.Never);
         g.move(0, 0.1f, 0);
         g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
         rootNode.attachChild(g);
-        rootNode.setCullHint(Spatial.CullHint.Never);
-        
-
-        Geometry wb1 = WireBox.makeGeometry((BoundingBox) geom.getMesh().getBound());
-        Material m1 = new Material(as, "Common/MatDefs/Misc/Unshaded.j3md");
-        m1.setColor("Color", ColorRGBA.BlackNoAlpha);
-        wb1.setMaterial(m1);
-        rootNode.attachChild(wb1);
-
-        Geometry wb2 = WireBox.makeGeometry((BoundingBox) g.getMesh().getBound());
-        Material m2 = new Material(as, "Common/MatDefs/Misc/Unshaded.j3md");
-        m2.setColor("Color", ColorRGBA.BlackNoAlpha);
-        wb2.setMaterial(m2);
-        rootNode.attachChild(wb2);
-
     }
 
     public Vector2f dijkstra(int posX, int posY, float destX, float destY) {

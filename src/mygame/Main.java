@@ -44,7 +44,7 @@ public class Main extends SimpleApplication {
         AmbientLight light = new AmbientLight();
         light.setColor(ColorRGBA.White);
         rootNode.addLight(light);
-        
+
         AnalogListener al = new AnalogListener() {
 
             final int mult = 10;
@@ -63,6 +63,12 @@ public class Main extends SimpleApplication {
                         break;
                     case "down":
                         cam.setLocation(cam.getLocation().subtract(Vector3f.UNIT_Z.mult(value * mult)));
+                        break;
+                    case "zoom in":
+                        cam.setLocation(cam.getLocation().subtract(Vector3f.UNIT_Y.mult(value * mult)));
+                        break;
+                    case "zoom out":
+                        cam.setLocation(cam.getLocation().add(Vector3f.UNIT_Y.mult(value * mult)));
                         break;
                 }
             }
@@ -91,7 +97,7 @@ public class Main extends SimpleApplication {
                         }
                         Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
                         Unit unit = map.units[map.n * (int) hit_geom.z + (int) hit_geom.x];
-                        //System.out.println(unit);
+                        System.out.println(unit);
                         //System.out.println((int) hit_geom.x + "  " + (int) hit_geom.z);
                         if (unit != null) {
                             select = unit;
@@ -117,12 +123,14 @@ public class Main extends SimpleApplication {
             }
         };
 
-        inputManager.addListener(al, new String[]{"left", "right", "up", "down"});
+        inputManager.addListener(al, new String[]{"left", "right", "up", "down", "zoom in", "zoom out"});
         inputManager.addListener(actl, new String[]{"left click", "right click"});
         inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
         inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
         inputManager.addMapping("up", new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping("down", new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addMapping("zoom in", new KeyTrigger(KeyInput.KEY_Q));
+        inputManager.addMapping("zoom out", new KeyTrigger(KeyInput.KEY_E));
         inputManager.addMapping("left click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("right click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
     }
@@ -134,6 +142,6 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleRender(RenderManager rm) {
-        
+
     }
 }

@@ -6,6 +6,7 @@ import com.jme3.asset.TextureKey;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -14,7 +15,9 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.debug.WireBox;
 import com.jme3.texture.Texture;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -36,7 +39,7 @@ public abstract class Unit {
         NORTH, SOUTH, EAST, WEST
     }
 
-    private Geometry geometry;
+    private final Geometry geometry;
 
     private static BattleMap map;
 
@@ -85,37 +88,44 @@ public abstract class Unit {
         Texture t = assets.loadTexture(new TextureKey("Textures/units/unit.png", false));
 
         m.setTexture("DiffuseMap", t);
-        //Quad q = new Quad(1, 1);
         Mesh mesh = new Mesh();
-        FloatBuffer vb = BufferUtils.createFloatBuffer(4*3);
-        vb.put(0).put(0).put(0);
-        vb.put(0).put(0).put(-1);
-        vb.put(-1).put(0).put(-1);
-        vb.put(-1).put(0).put(0);
+        FloatBuffer vb = BufferUtils.createFloatBuffer(4 * 3);
+        FloatBuffer tc = BufferUtils.createFloatBuffer(4 * 2);
+        FloatBuffer nb = BufferUtils.createFloatBuffer(4 * 3);
         IntBuffer ib = BufferUtils.createIntBuffer(6);
+        vb.put(0).put(0).put(0);
+        vb.put(0).put(0).put(1);
+        vb.put(1).put(0).put(1);
+        vb.put(1).put(0).put(0);
         ib.put(0).put(2).put(3);
         ib.put(0).put(1).put(2);
-        FloatBuffer tc = BufferUtils.createFloatBuffer(4*2);
-        tc.put(1).put(0);
-        tc.put(1).put(1);
         tc.put(0).put(1);
         tc.put(0).put(0);
+        tc.put(1).put(0);
+        tc.put(1).put(1);
+        nb.put(0).put(1).put(0);
+        nb.put(0).put(1).put(0);
+        nb.put(0).put(1).put(0);
+        nb.put(0).put(1).put(0);
         vb.rewind();
         ib.rewind();
         tc.rewind();
-        
+        nb.rewind();
+
         mesh.setBuffer(VertexBuffer.Type.Position, 3, vb);
         mesh.setBuffer(VertexBuffer.Type.Index, 3, ib);
         mesh.setBuffer(VertexBuffer.Type.TexCoord, 2, tc);
+        mesh.setBuffer(VertexBuffer.Type.Normal, 3, nb);
+
         mesh.updateBound();
 
         geometry = new Geometry("unit", mesh);
-        
         geometry.setMaterial(m);
-       // node.attachChild(geometry);
+        node.attachChild(geometry);
+
     }
 
-    private static final float Y_LEVEL = 2f;
+    private static final float Y_LEVEL = 0.02f;
 
     /**
      * Moves this unit for animation.
@@ -139,7 +149,7 @@ public abstract class Unit {
         if (FastMath.abs(fractal.x) >= 1) {
             System.out.print("move from " + pos + " to ");
             pos.x += FastMath.sign(fractal.x);
-            ret = (int) FastMath.sign(fractal.x) ;
+            ret = (int) FastMath.sign(fractal.x);
             System.out.println(pos + "ret: " + ret);
             fractal.x = 0;
             next = map.dijkstra((int) pos.x, (int) pos.y, dest.x, dest.y); // map.disjk : gives next position on the path
@@ -148,7 +158,7 @@ public abstract class Unit {
         }
         if (FastMath.abs(fractal.y) >= 1) {
             System.out.print("move from " + pos + " to ");
-            ret = (int) (FastMath.sign(fractal.y)* map.n);
+            ret = (int) (FastMath.sign(fractal.y) * map.n);
             pos.y += FastMath.sign(fractal.y);
             System.out.println(pos + " ret: " + ret);
             fractal.y = 0;

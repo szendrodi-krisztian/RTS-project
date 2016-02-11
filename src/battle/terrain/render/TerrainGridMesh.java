@@ -20,6 +20,7 @@ public class TerrainGridMesh extends Mesh {
     public TerrainGridMesh(int n, int m, TerrainElement grid[]) {
         super();
         FloatBuffer vertexbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
+        FloatBuffer normalbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
         FloatBuffer texCoords = BufferUtils.createFloatBuffer(n * m * 4 * 2);
         IntBuffer indecies = BufferUtils.createIntBuffer(n * m * 6);
 
@@ -31,6 +32,11 @@ public class TerrainGridMesh extends Mesh {
                 vertexbuffer.put(i + 1).put(0).put(j);
                 vertexbuffer.put(i + 1).put(0).put(j + 1);
                 vertexbuffer.put(i).put(0).put(j + 1);
+                
+                normalbuffer.put(0).put(1).put(0);
+                normalbuffer.put(0).put(1).put(0);
+                normalbuffer.put(0).put(1).put(0);
+                normalbuffer.put(0).put(1).put(0);
 
                 indecies.put(index + 1).put(index).put(index + 2);
                 indecies.put(index + 2).put(index).put(index + 3);
@@ -53,9 +59,10 @@ public class TerrainGridMesh extends Mesh {
         }
 
         setBuffer(VertexBuffer.Type.Position, 3, vertexbuffer);
+        setBuffer(VertexBuffer.Type.Normal, 3, normalbuffer);
         setBuffer(VertexBuffer.Type.Index, 3, indecies);
         setBuffer(VertexBuffer.Type.TexCoord, 2, texCoords);
-
+        updateBound();
     }
 
 }
