@@ -2,6 +2,7 @@ package battle;
 
 import battle.entity.SimpleUnit;
 import battle.entity.Unit;
+import battle.terrain.SimplexNoise;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
@@ -10,23 +11,12 @@ import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
 import battle.terrain.render.TerrainDecorationMesh;
 import battle.terrain.render.TerrainGridMesh;
-import com.jme3.bounding.BoundingBox;
-import com.jme3.bounding.BoundingVolume;
-import com.jme3.material.Material;
-import com.jme3.material.MaterialDef;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.debug.WireBox;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -64,14 +54,26 @@ public class BattleMap {
         units[mapWidth*2+2] = u;
 
         grid = new TerrainElement[mapWidth * mapHeight];
-        Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();
-        for (int i = 0; i < grid.length; i++) {
-            int random = FastMath.nextRandomInt(0, all.size());
-            Iterator<TerrainElement> iter = all.values().iterator();
-            while (--random > 0) {
-                iter.next();
+        SimplexNoise noise = new SimplexNoise(128, 0.3f, FastMath.nextRandomInt());
+        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, FastMath.nextRandomInt());
+
+        for (int i = 0; i < mapWidth; i++) {
+            for (int j = 0; j < mapHeight; j++) {
+                float n = noise.getNoise(3 * i, 3 * j);
+                if (n < -0.12) {
+                    grid[mapWidth * i + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
+                    continue;
+                }
+                if (n < 0.015f) {
+                    grid[mapWidth * i + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
+                    continue;
+                }
+                if (treenoise.getNoise(20*i, 20*j) > 7f) {
+                    grid[mapWidth * i + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
+                } else {
+                    grid[mapWidth * i + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
+                }
             }
-            grid[i] = iter.next();
         }
         buildGridMesh(mapWidth, mapHeight, rootNode, assets);
 
