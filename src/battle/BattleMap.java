@@ -104,7 +104,6 @@ public class BattleMap {
                 return new Vector2f(0,0);
             else
                 currentGrid=subsequentGrids.remove();
-            System.out.println("destdist: "+pathDistanceGrid[(int)destX*m+(int)destY]);
             for(int i=0; i<9; i++)
             {
                 if(i==4)
@@ -116,7 +115,6 @@ public class BattleMap {
                 {
                     continue;
                 }
-                System.out.println(((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY));
                 if(grid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)].isAccesible() &&
                 pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y])
                 {
@@ -125,10 +123,7 @@ public class BattleMap {
                     //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
                 }
             }
-            System.out.println("size: "+subsequentGrids.size());
         }
-        System.out.println("posdist: "+pathDistanceGrid[(int)posX*m+(int)posY]);
-        System.out.println("destdist: "+pathDistanceGrid[(int)destX*m+(int)destY]);
         currentGrid.x=destX;
         currentGrid.y=destY;
         for(int i=pathDistanceGrid[(int)destX*m+(int)destY]; i>1; i--)
@@ -152,7 +147,6 @@ public class BattleMap {
         }
         x=(int)currentGrid.x-posX;
         y=(int)currentGrid.y-posY;
-        System.out.println(x+","+y);
         return new Vector2f(x,y);
     }
 
