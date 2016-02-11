@@ -28,7 +28,7 @@ public class TerrainDecorationMesh extends Mesh {
         int index = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                if (grid[i * n + j].getTexture_heigth() == 256) {
+                if (grid[j * n + i].getTexture_heigth() == 256) {
 
                     vertexbuffer.put(i).put(0).put(j);
                     vertexbuffer.put(i + 1).put(0).put(j);
@@ -44,7 +44,7 @@ public class TerrainDecorationMesh extends Mesh {
                     indecies.put(index + 2).put(index).put(index + 3);
                     index += 4;
 
-                    Vector2f base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * n + j].getName());
+                    Vector2f base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[j * n + i].getName());
                     float bleed = 0.01f;
                     texCoords.put((base_tex.x + 1 * 128) / 2048f - bleed).put((base_tex.y + 0 * 256) / 2048f + bleed);
                     texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 0 * 256) / 2048f + bleed);

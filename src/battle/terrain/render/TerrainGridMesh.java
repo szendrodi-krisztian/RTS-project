@@ -43,8 +43,8 @@ public class TerrainGridMesh extends Mesh {
                 index += 4;
 
                 Vector2f base_tex;
-                if (grid[i * n + j].getTexture_heigth() == 128) {
-                    base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * n + j].getName());
+                if (grid[j * n + i].getTexture_heigth() == 128) {
+                    base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[j * n + i].getName());
                 } else {
                     // TODO: specify whats underneath tree's and such.
                     base_tex = TerrainElementManager.getInstance(null).getTextureOffset("grass");

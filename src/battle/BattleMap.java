@@ -61,17 +61,17 @@ public class BattleMap {
             for (int j = 0; j < mapHeight; j++) {
                 float n = noise.getNoise(3 * i, 3 * j);
                 if (n < -0.12) {
-                    grid[mapHeight * i + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
+                    grid[mapWidth * j + i] = TerrainElementManager.getInstance(assets).getElementByName("water");
                     continue;
                 }
                 if (n < 0.015f) {
-                    grid[mapHeight * i + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
+                    grid[mapWidth * j + i] = TerrainElementManager.getInstance(assets).getElementByName("stone");
                     continue;
                 }
-                if (treenoise.getNoise(20*i, 20*j) > 7f) {
-                    grid[mapHeight * i + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
+                if (treenoise.getNoise(20 * i, 20 * j) > 7f) {
+                    grid[mapWidth * j + i] = TerrainElementManager.getInstance(assets).getElementByName("tree");
                 } else {
-                    grid[mapHeight * i + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
+                    grid[mapWidth * j + i] = TerrainElementManager.getInstance(assets).getElementByName("grass");
                 }
             }
         }

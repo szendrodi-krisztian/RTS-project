@@ -35,7 +35,7 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
 
-        map = new BattleMap(100, 100, rootNode, assetManager);
+        map = new BattleMap(20, 10, rootNode, assetManager);
         cam.setLocation(new Vector3f(0, 50, 0));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         flyCam.setMoveSpeed(50);
@@ -96,7 +96,7 @@ public class Main extends SimpleApplication {
                             return;
                         }
                         Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
-                        Unit unit = map.units[map.mapWidth * (int) hit_geom.z + (int) hit_geom.x];
+                        Unit unit = map.units[map.mapHeight * (int) hit_geom.z + (int) hit_geom.x];
                         System.out.println(unit);
                         //System.out.println((int) hit_geom.x + "  " + (int) hit_geom.z);
                         if (unit != null) {
