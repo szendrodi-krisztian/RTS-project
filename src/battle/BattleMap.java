@@ -51,7 +51,7 @@ public class BattleMap {
         
 
 
-        units[mapWidth*2+2] = u;
+        units[mapHeight*2+2] = u;
 
         grid = new TerrainElement[mapWidth * mapHeight];
         SimplexNoise noise = new SimplexNoise(128, 0.3f, FastMath.nextRandomInt());
@@ -61,17 +61,17 @@ public class BattleMap {
             for (int j = 0; j < mapHeight; j++) {
                 float n = noise.getNoise(3 * i, 3 * j);
                 if (n < -0.12) {
-                    grid[mapWidth * i + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
+                    grid[mapHeight * i + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
                     continue;
                 }
                 if (n < 0.015f) {
-                    grid[mapWidth * i + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
+                    grid[mapHeight * i + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
                     continue;
                 }
                 if (treenoise.getNoise(20*i, 20*j) > 7f) {
-                    grid[mapWidth * i + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
+                    grid[mapHeight * i + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
                 } else {
-                    grid[mapWidth * i + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
+                    grid[mapHeight * i + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
                 }
             }
         }
