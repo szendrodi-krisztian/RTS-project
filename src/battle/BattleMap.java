@@ -97,6 +97,8 @@ public class BattleMap {
     public Vector2f dijkstra(int posX, int posY, int destX, int destY) {
         if(!grid[destX*mapHeight+destY].isAccesible())
             return new Vector2f(0,0);
+        if(posX==destX && posY==destY)
+            return new Vector2f(0,0);
         subsequentGrids.clear();        
         int x,y;
         int neighbourX, neighbourY;
