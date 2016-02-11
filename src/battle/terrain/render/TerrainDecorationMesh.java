@@ -2,6 +2,8 @@ package battle.terrain.render;
 
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
+import com.jme3.bounding.BoundingBox;
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
@@ -27,10 +29,10 @@ public class TerrainDecorationMesh extends Mesh {
             for (int j = 0; j < m; j++) {
                 if (grid[i * n + j].getTexture_heigth() == 256) {
                     
-                    vertexbuffer.put(i).put(0.02f).put(j);
-                    vertexbuffer.put(i + 1).put(0.02f).put(j);
-                    vertexbuffer.put(i + 1).put(0.02f).put(j + 2);
-                    vertexbuffer.put(i).put(0.02f).put(j + 2);
+                    vertexbuffer.put(i).put(0).put(j);
+                    vertexbuffer.put(i + 1).put(0).put(j);
+                    vertexbuffer.put(i + 1).put(0).put(j + 2);
+                    vertexbuffer.put(i).put(0).put(j + 2);
 
 
                     indecies.put(index + 1).put(index).put(index + 2);
@@ -50,7 +52,6 @@ public class TerrainDecorationMesh extends Mesh {
         setBuffer(VertexBuffer.Type.Position, 3, vertexbuffer);
         setBuffer(VertexBuffer.Type.Index, 3, indecies);
         setBuffer(VertexBuffer.Type.TexCoord, 2, texCoords);
-        updateCounts();
         updateBound();
 
     }

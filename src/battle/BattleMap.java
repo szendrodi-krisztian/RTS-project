@@ -10,7 +10,10 @@ import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
 import battle.terrain.render.TerrainDecorationMesh;
 import battle.terrain.render.TerrainGridMesh;
+import com.jme3.bounding.BoundingBox;
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
@@ -36,13 +39,13 @@ public class BattleMap {
         this.m = m;
         Unit.init(this, assets, rootNode);
         units = new Unit[n * m];
-        SimpleUnit u = new SimpleUnit(1, 2);
+       // SimpleUnit u = new SimpleUnit(1, 2);
 
-        u.moveTo(9, 5);
-        SimpleUnit u2 = new SimpleUnit(5, 0);
-        u2.moveTo(3, 1);
-        units[n * 5 + 0] = u2;
-        units[n * 1 + 2] = u;
+        // u.moveTo(0, 0);
+        SimpleUnit u2 = new SimpleUnit(3, 0);
+        u2.moveTo(10, 10);
+        units[(n - 1) * 0 + 3] = u2;
+        //units[n * 1 + 2] = u;
 
         grid = new TerrainElement[n * m];
         Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();
@@ -62,12 +65,14 @@ public class BattleMap {
         Mesh mesh = new TerrainGridMesh(n, m, grid);
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
+        geom.move(20, 20, 0);
         rootNode.attachChild(geom);
-        
+
         Mesh me = new TerrainDecorationMesh(n, m, grid);
         Geometry g = new Geometry("BattleDecor", me);
+        g.move(0, 10, 0);
         g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
-        g.setQueueBucket(RenderQueue.Bucket.Transparent);
+       
         rootNode.attachChild(g);
     }
 
@@ -105,10 +110,11 @@ public class BattleMap {
         }
         for (int i = 0; i < from.size(); i++) {
             /*
-            * BE CAREFUL DRAGONS AHEAD!
-            * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
-            * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
-            */
+             * BE CAREFUL DRAGONS AHEAD!
+             * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
+             * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
+             */
+            System.out.println("___move " + from.get(i) + " to " + to.get(i));
             units[to.get(i)] = units[from.get(i)];
             units[from.get(i)] = null;
         }

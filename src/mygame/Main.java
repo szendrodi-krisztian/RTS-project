@@ -17,13 +17,11 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.Spatial;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.TransparentComparator;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.shape.Quad;
 
-/**
- * test
- *
- * @author normenhansen
- */
 public class Main extends SimpleApplication {
 
     BattleMap map;
@@ -36,19 +34,18 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
 
-        map = new BattleMap(10, 20, rootNode, assetManager);
-        cam.setLocation(new Vector3f(0, 10, 0));
+        map = new BattleMap(40, 40, rootNode, assetManager);
+        cam.setLocation(new Vector3f(0, 50, 0));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         flyCam.setMoveSpeed(50);
         flyCam.setEnabled(false);
         
+        
+
         AmbientLight light = new AmbientLight();
         light.setColor(ColorRGBA.White);
         rootNode.addLight(light);
-        // TODO: UGLY HACK!!! 
-        // I dont know why but when no units on screen the transparent bucket gets culled.
-        rootNode.setCullHint(Spatial.CullHint.Never);
-
+        
         AnalogListener al = new AnalogListener() {
 
             final int mult = 10;
@@ -94,7 +91,9 @@ public class Main extends SimpleApplication {
                             return;
                         }
                         Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
-                        Unit unit = map.units[map.n * (int) hit_geom.x + (int) hit_geom.z];
+                        Unit unit = map.units[map.n * (int) hit_geom.z + (int) hit_geom.x];
+                        //System.out.println(unit);
+                        //System.out.println((int) hit_geom.x + "  " + (int) hit_geom.z);
                         if (unit != null) {
                             select = unit;
                         }
@@ -112,7 +111,7 @@ public class Main extends SimpleApplication {
                                 return;
                             }
 
-                            select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z + 1);
+                            select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z);
                         }
                         break;
                 }
@@ -136,6 +135,6 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleRender(RenderManager rm) {
-
+        
     }
 }

@@ -2,6 +2,7 @@ package battle.terrain.render;
 
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
@@ -19,7 +20,7 @@ public class TerrainGridMesh extends Mesh {
     public TerrainGridMesh(int n, int m, TerrainElement grid[]) {
         super();
         FloatBuffer vertexbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
-        FloatBuffer texCoords = BufferUtils.createFloatBuffer(n * m * 4 * 3);
+        FloatBuffer texCoords = BufferUtils.createFloatBuffer(n * m * 4 * 2);
         IntBuffer indecies = BufferUtils.createIntBuffer(n * m * 6);
 
         int index = 0;
@@ -38,7 +39,8 @@ public class TerrainGridMesh extends Mesh {
                 Vector2f base_tex;
                 if (grid[i * n + j].getTexture_heigth() == 128) {
                     base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * n + j].getName());
-                }else{
+                } else {
+                    // TODO: specify whats underneath tree's and such.
                     base_tex = TerrainElementManager.getInstance(null).getTextureOffset("grass");
                 }
                 float bleed = 0.01f;
@@ -53,7 +55,6 @@ public class TerrainGridMesh extends Mesh {
         setBuffer(VertexBuffer.Type.Position, 3, vertexbuffer);
         setBuffer(VertexBuffer.Type.Index, 3, indecies);
         setBuffer(VertexBuffer.Type.TexCoord, 2, texCoords);
-        updateCounts();
         updateBound();
 
     }
