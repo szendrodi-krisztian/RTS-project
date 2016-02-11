@@ -22,7 +22,9 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.WireBox;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,19 +39,25 @@ public class BattleMap {
     public Unit units[];
 
     public int n, m;
-
+    
+    public int pathDistanceGrid[];
+    public LinkedList<Vector2f> subsequentGrids;
+    public List<Vector2f> changedArrayElements;
+            
     public BattleMap(int n, int m, Node rootNode, AssetManager assets) {
         this.n = n;
         this.m = m;
         Unit.init(this, assets, rootNode);
         units = new Unit[n * m];
-       // SimpleUnit u = new SimpleUnit(1, 2);
+        SimpleUnit u = new SimpleUnit(2, 2);
+        
+        pathDistanceGrid = new int[n*m];
+        subsequentGrids = new LinkedList<>();
 
-        // u.moveTo(0, 0);
-        SimpleUnit u2 = new SimpleUnit(3, 0);
-        u2.moveTo(10, 10);
-        units[(n - 1) * 0 + 3] = u2;
-        //units[n * 1 + 2] = u;
+        u.moveTo(10, 10);
+
+
+        units[n*2+2] = u;
 
         grid = new TerrainElement[n * m];
         Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();
@@ -80,21 +88,69 @@ public class BattleMap {
         rootNode.attachChild(g);
     }
 
-    public Vector2f dijkstra(int posX, int posY, float destX, float destY) {
-        int x = 0, y = 0;
-        if (destX > posX) {
-            x = 1;
+    public Vector2f dijkstra(int posX, int posY, int destX, int destY) {       
+        subsequentGrids.clear();        
+        int x,y;
+        int neighbourX, neighbourY;
+        Vector2f currentGrid = new Vector2f(posX,posY);
+        Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
+        subsequentGrids.addLast(new Vector2f(posX,posY));
+        pathDistanceGrid[posX*m+posY]=0; 
+        while(pathDistanceGrid[destX*m+destY]==Integer.MAX_VALUE)
+        {
+            if(subsequentGrids.isEmpty())
+                return new Vector2f(0,0);
+            else
+                currentGrid=subsequentGrids.remove();
+            System.out.println("destdist: "+pathDistanceGrid[(int)destX*m+(int)destY]);
+            for(int i=0; i<9; i++)
+            {
+                if(i==4)
+                    continue;
+                neighbourX=(int)(i/3)-1;
+                neighbourY=(int)(i%3)-1;
+                if((currentGrid.x+neighbourX)+1>n || (currentGrid.x+neighbourY)+1>m || 
+                (currentGrid.x+neighbourX)<1 || (currentGrid.y+neighbourY)<1)
+                {
+                    continue;
+                }
+                System.out.println(((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY));
+                if(/*grid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)].isAccesible() &&*/
+                pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y])
+                {
+                    pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)]=pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y]+1;
+                    subsequentGrids.addLast(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
+                    //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
+                }
+            }
+            System.out.println("size: "+subsequentGrids.size());
         }
-        if (destX < posX) {
-            x = -1;
+        System.out.println("posdist: "+pathDistanceGrid[(int)posX*m+(int)posY]);
+        System.out.println("destdist: "+pathDistanceGrid[(int)destX*m+(int)destY]);
+        currentGrid.x=destX;
+        currentGrid.y=destY;
+        for(int i=pathDistanceGrid[(int)destX*m+(int)destY]; i>1; i--)
+        {
+            for(int j=0; j<9; j++)
+            {
+                neighbourX=(int)(j/3)-1;
+                neighbourY=(int)(j%3)-1;
+                if(((int)currentGrid.x+neighbourX)>n-1 || ((int)currentGrid.y+neighbourY)>m-1)
+                {
+                    continue;
+                }
+                if(pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)] == pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y]-1)
+                {
+                    currentGrid.x+=neighbourX;
+                    currentGrid.y+=neighbourY;
+                    break;
+                }
+            }
         }
-        if (destY > posY) {
-            y = 1;
-        }
-        if (destY < posY) {
-            y = -1;
-        }
-        return new Vector2f(x, y);
+        x=(int)currentGrid.x-posX;
+        y=(int)currentGrid.y-posY;
+        System.out.println(x+","+y);
+        return new Vector2f(x,y);
     }
 
     List<Integer> from = new ArrayList<>();
