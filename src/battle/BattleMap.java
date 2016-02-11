@@ -88,7 +88,9 @@ public class BattleMap {
         rootNode.attachChild(g);
     }
 
-    public Vector2f dijkstra(int posX, int posY, int destX, int destY) {       
+    public Vector2f dijkstra(int posX, int posY, int destX, int destY) {
+        if(!grid[destX*m+destY].isAccesible())
+            return new Vector2f(0,0);
         subsequentGrids.clear();        
         int x,y;
         int neighbourX, neighbourY;
@@ -135,7 +137,8 @@ public class BattleMap {
             {
                 neighbourX=(int)(j/3)-1;
                 neighbourY=(int)(j%3)-1;
-                if(((int)currentGrid.x+neighbourX)>n-1 || ((int)currentGrid.y+neighbourY)>m-1)
+                if((currentGrid.x+neighbourX)+1>n || (currentGrid.x+neighbourY)+1>m || 
+                (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
                 {
                     continue;
                 }
