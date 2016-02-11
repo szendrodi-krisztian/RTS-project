@@ -94,13 +94,12 @@ public class BattleMap {
         rootNode.attachChild(g);
     }
 
-    public Vector2f dijkstra(int posX, int posY, int destX, int destY) {
+    public Vector2f pathFinder(int posX, int posY, int destX, int destY) {
         if(!grid[destX*mapHeight+destY].isAccesible())
             return new Vector2f(0,0);
         if(posX==destX && posY==destY)
             return new Vector2f(0,0);
-        subsequentGrids.clear();        
-        int x,y;
+        subsequentGrids.clear();
         int neighbourX, neighbourY;
         Vector2f currentGrid = new Vector2f(posX,posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
@@ -153,9 +152,7 @@ public class BattleMap {
                 }
             }
         }
-        x=(int)currentGrid.x-posX;
-        y=(int)currentGrid.y-posY;
-        return new Vector2f(x,y);
+        return new Vector2f((int)currentGrid.x-posX,(int)currentGrid.y-posY);
     }
 
     List<Integer> from = new ArrayList<>();
