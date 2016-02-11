@@ -33,10 +33,6 @@ public class BattleMap {
     public int pathDistanceGrid[];
     public LinkedList<Vector2f> subsequentGrids;
     public List<Vector2f> changedArrayElements;
-    //Distance between adjacent grids.
-    public final int distBetweenAGrids = 1;
-    //Distance between diagonal grids.
-    public final int distBetweenDGrids = 141;
             
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this.mapWidth = mapWidth;
@@ -101,6 +97,7 @@ public class BattleMap {
             return new Vector2f(0,0);
         subsequentGrids.clear();
         int neighbourX, neighbourY;
+        int neighbours[][]={{0,1},{1,0},{0,-1},{-1,0},{1,1},{-1,1},{-1,-1},{1,-1}};
         Vector2f currentGrid = new Vector2f(posX,posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
         subsequentGrids.addLast(new Vector2f(posX,posY));
@@ -111,12 +108,10 @@ public class BattleMap {
                 return new Vector2f(0,0);
             else
                 currentGrid=subsequentGrids.remove();
-            for(int i=0; i<9; i++)
+            for(int i=0; i<8; i++)
             {
-                if(i==4)
-                    continue;
-                neighbourX=(int)(i/3)-1;
-                neighbourY=(int)(i%3)-1;
+                neighbourX=neighbours[i][0];
+                neighbourY=neighbours[i][1];
                 if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.y+neighbourY)+1>mapHeight || 
                 (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
                 {
@@ -128,17 +123,17 @@ public class BattleMap {
                     pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)]=pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1;
                     subsequentGrids.addLast(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
                     //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
-                }
+                }                
             }
         }
         currentGrid.x=destX;
         currentGrid.y=destY;
-        while(pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]!=distBetweenAGrids)
+        while(pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]!=1)
         {
-            for(int j=0; j<9; j++)
+            for(int j=0; j<8; j++)
             {
-                neighbourX=(int)(j/3)-1;
-                neighbourY=(int)(j%3)-1;
+                neighbourX=neighbours[j][0];
+                neighbourY=neighbours[j][1];
                 if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.y+neighbourY)+1>mapHeight || 
                 (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
                 {
