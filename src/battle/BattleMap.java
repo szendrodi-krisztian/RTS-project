@@ -61,17 +61,17 @@ public class BattleMap {
             for (int j = 0; j < mapHeight; j++) {
                 float n = noise.getNoise(3 * i, 3 * j);
                 if (n < -0.12) {
-                    grid[mapWidth * j + i] = TerrainElementManager.getInstance(assets).getElementByName("water");
+                    grid[i*mapHeight+j] = TerrainElementManager.getInstance(assets).getElementByName("water");
                     continue;
                 }
                 if (n < 0.015f) {
-                    grid[mapWidth * j + i] = TerrainElementManager.getInstance(assets).getElementByName("stone");
+                    grid[i*mapHeight+j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
                     continue;
                 }
                 if (treenoise.getNoise(20 * i, 20 * j) > 7f) {
-                    grid[mapWidth * j + i] = TerrainElementManager.getInstance(assets).getElementByName("tree");
+                    grid[i*mapHeight+j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
                 } else {
-                    grid[mapWidth * j + i] = TerrainElementManager.getInstance(assets).getElementByName("grass");
+                    grid[i*mapHeight+j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
                 }
             }
         }
@@ -118,7 +118,7 @@ public class BattleMap {
                     continue;
                 neighbourX=(int)(i/3)-1;
                 neighbourY=(int)(i%3)-1;
-                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.x+neighbourY)+1>mapHeight || 
+                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.y+neighbourY)+1>mapHeight || 
                 (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
                 {
                     continue;
@@ -140,7 +140,7 @@ public class BattleMap {
             {
                 neighbourX=(int)(j/3)-1;
                 neighbourY=(int)(j%3)-1;
-                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.x+neighbourY)+1>mapHeight || 
+                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.y+neighbourY)+1>mapHeight || 
                 (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
                 {
                     continue;
