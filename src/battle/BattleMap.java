@@ -38,28 +38,32 @@ public class BattleMap {
 
     public Unit units[];
 
-    public int n, m;
+    public int mapWidth, mapHeight;
     
     public int pathDistanceGrid[];
     public LinkedList<Vector2f> subsequentGrids;
     public List<Vector2f> changedArrayElements;
+    //Distance between adjacent grids.
+    public final int distBetweenAGrids = 1;
+    //Distance between diagonal grids.
+    public final int distBetweenDGrids = 141;
             
-    public BattleMap(int n, int m, Node rootNode, AssetManager assets) {
-        this.n = n;
-        this.m = m;
+    public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
         Unit.init(this, assets, rootNode);
-        units = new Unit[n * m];
+        units = new Unit[mapWidth * mapHeight];
         SimpleUnit u = new SimpleUnit(2, 2);
         
-        pathDistanceGrid = new int[n*m];
+        pathDistanceGrid = new int[mapWidth*mapHeight];
         subsequentGrids = new LinkedList<>();
 
         
 
 
-        units[n*2+2] = u;
+        units[mapWidth*2+2] = u;
 
-        grid = new TerrainElement[n * m];
+        grid = new TerrainElement[mapWidth * mapHeight];
         Map<String, TerrainElement> all = TerrainElementManager.getInstance(assets).getAllTerrains();
         for (int i = 0; i < grid.length; i++) {
             int random = FastMath.nextRandomInt(0, all.size());
@@ -69,7 +73,7 @@ public class BattleMap {
             }
             grid[i] = iter.next();
         }
-        buildGridMesh(n, m, rootNode, assets);
+        buildGridMesh(mapWidth, mapHeight, rootNode, assets);
 
     }
 
@@ -89,7 +93,7 @@ public class BattleMap {
     }
 
     public Vector2f dijkstra(int posX, int posY, int destX, int destY) {
-        if(!grid[destX*m+destY].isAccesible())
+        if(!grid[destX*mapHeight+destY].isAccesible())
             return new Vector2f(0,0);
         subsequentGrids.clear();        
         int x,y;
@@ -97,8 +101,8 @@ public class BattleMap {
         Vector2f currentGrid = new Vector2f(posX,posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
         subsequentGrids.addLast(new Vector2f(posX,posY));
-        pathDistanceGrid[posX*m+posY]=0; 
-        while(pathDistanceGrid[destX*m+destY]==Integer.MAX_VALUE)
+        pathDistanceGrid[posX*mapHeight+posY]=0; 
+        while(pathDistanceGrid[destX*mapHeight+destY]==Integer.MAX_VALUE)
         {
             if(subsequentGrids.isEmpty())
                 return new Vector2f(0,0);
@@ -110,15 +114,15 @@ public class BattleMap {
                     continue;
                 neighbourX=(int)(i/3)-1;
                 neighbourY=(int)(i%3)-1;
-                if((currentGrid.x+neighbourX)+1>n || (currentGrid.x+neighbourY)+1>m || 
+                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.x+neighbourY)+1>mapHeight || 
                 (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
                 {
                     continue;
                 }
-                if(grid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)].isAccesible() &&
-                pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y])
+                if(grid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)].isAccesible() &&
+                pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y])
                 {
-                    pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)]=pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y]+1;
+                    pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)]=pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1;
                     subsequentGrids.addLast(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
                     //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
                 }
@@ -126,18 +130,18 @@ public class BattleMap {
         }
         currentGrid.x=destX;
         currentGrid.y=destY;
-        for(int i=pathDistanceGrid[(int)destX*m+(int)destY]; i>1; i--)
+        while(pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]!=distBetweenAGrids)
         {
             for(int j=0; j<9; j++)
             {
                 neighbourX=(int)(j/3)-1;
                 neighbourY=(int)(j%3)-1;
-                if((currentGrid.x+neighbourX)+1>n || (currentGrid.x+neighbourY)+1>m || 
+                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.x+neighbourY)+1>mapHeight || 
                 (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
                 {
                     continue;
                 }
-                if(pathDistanceGrid[((int)currentGrid.x+neighbourX)*m+((int)currentGrid.y+neighbourY)] == pathDistanceGrid[(int)currentGrid.x*m+(int)currentGrid.y]-1)
+                if(pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] == pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]-1)
                 {
                     currentGrid.x+=neighbourX;
                     currentGrid.y+=neighbourY;

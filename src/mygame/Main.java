@@ -96,7 +96,7 @@ public class Main extends SimpleApplication {
                             return;
                         }
                         Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
-                        Unit unit = map.units[map.n * (int) hit_geom.z + (int) hit_geom.x];
+                        Unit unit = map.units[map.mapWidth * (int) hit_geom.z + (int) hit_geom.x];
                         System.out.println(unit);
                         //System.out.println((int) hit_geom.x + "  " + (int) hit_geom.z);
                         if (unit != null) {

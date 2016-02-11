@@ -158,7 +158,7 @@ public abstract class Unit {
         }
         if (FastMath.abs(fractal.y) >= 1) {
             System.out.print("move from " + pos + " to ");
-            ret = (int) (FastMath.sign(fractal.y) * map.n);
+            ret = (int) (FastMath.sign(fractal.y) * map.mapWidth);
             pos.y += FastMath.sign(fractal.y);
             System.out.println(pos + " ret: " + ret);
             fractal.y = 0;
