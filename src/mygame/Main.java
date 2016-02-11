@@ -20,6 +20,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.TransparentComparator;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 
 public class Main extends SimpleApplication {
@@ -39,8 +40,6 @@ public class Main extends SimpleApplication {
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         flyCam.setMoveSpeed(50);
         flyCam.setEnabled(false);
-        
-        
 
         AmbientLight light = new AmbientLight();
         light.setColor(ColorRGBA.White);

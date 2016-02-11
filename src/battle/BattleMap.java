@@ -12,11 +12,15 @@ import battle.terrain.render.TerrainDecorationMesh;
 import battle.terrain.render.TerrainGridMesh;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bounding.BoundingVolume;
+import com.jme3.material.Material;
+import com.jme3.material.MaterialDef;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.debug.WireBox;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -57,23 +61,45 @@ public class BattleMap {
             }
             grid[i] = iter.next();
         }
-        buildGridMesh(n, m, rootNode);
+        buildGridMesh(n, m, rootNode, assets);
 
     }
 
-    private void buildGridMesh(int n, int m, Node rootNode) {
+    private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
         Mesh mesh = new TerrainGridMesh(n, m, grid);
+        
+        BoundingBox b1 = new BoundingBox(new Vector3f(1,-20,1), 1, 1, 1);
+        mesh.setBound(b1);
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
-        geom.move(20, 20, 0);
+        geom.move(0, 0, 0);
+        geom.setCullHint(Spatial.CullHint.Never);
         rootNode.attachChild(geom);
 
         Mesh me = new TerrainDecorationMesh(n, m, grid);
+        
+        BoundingBox b2 = new BoundingBox(new Vector3f(2,-10,2), 1, 1, 1);
+        me.setBound(b2);
         Geometry g = new Geometry("BattleDecor", me);
-        g.move(0, 10, 0);
+        g.setCullHint(Spatial.CullHint.Never);
+        g.move(0, 0.1f, 0);
         g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
-       
         rootNode.attachChild(g);
+        rootNode.setCullHint(Spatial.CullHint.Never);
+        
+
+        Geometry wb1 = WireBox.makeGeometry((BoundingBox) geom.getMesh().getBound());
+        Material m1 = new Material(as, "Common/MatDefs/Misc/Unshaded.j3md");
+        m1.setColor("Color", ColorRGBA.BlackNoAlpha);
+        wb1.setMaterial(m1);
+        rootNode.attachChild(wb1);
+
+        Geometry wb2 = WireBox.makeGeometry((BoundingBox) g.getMesh().getBound());
+        Material m2 = new Material(as, "Common/MatDefs/Misc/Unshaded.j3md");
+        m2.setColor("Color", ColorRGBA.BlackNoAlpha);
+        wb2.setMaterial(m2);
+        rootNode.attachChild(wb2);
+
     }
 
     public Vector2f dijkstra(int posX, int posY, float destX, float destY) {

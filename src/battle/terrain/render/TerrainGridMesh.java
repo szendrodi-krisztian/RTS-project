@@ -55,7 +55,6 @@ public class TerrainGridMesh extends Mesh {
         setBuffer(VertexBuffer.Type.Position, 3, vertexbuffer);
         setBuffer(VertexBuffer.Type.Index, 3, indecies);
         setBuffer(VertexBuffer.Type.TexCoord, 2, texCoords);
-        updateBound();
 
     }
 
