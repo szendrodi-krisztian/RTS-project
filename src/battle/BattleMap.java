@@ -29,30 +29,28 @@ public class BattleMap {
     public Unit units[];
 
     public int mapWidth, mapHeight;
-    
+
     public int pathDistanceGrid[];
     public LinkedList<Vector2f> subsequentGrids;
     public List<Vector2f> changedArrayElements;
-            
+
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         Unit.init(this, assets, rootNode);
         units = new Unit[mapWidth * mapHeight];
         SimpleUnit u = new SimpleUnit(2, 2);
-        
-        pathDistanceGrid = new int[mapWidth*mapHeight];
+        SimpleUnit u2 = new SimpleUnit(2, 3);
+
+        pathDistanceGrid = new int[mapWidth * mapHeight];
         subsequentGrids = new LinkedList<>();
 
-        
-
-
-        units[mapHeight*2+2] = u;
-        
+        units[mapHeight * 2 + 2] = u;
+        units[mapHeight * 2 + 3] = u2;
 
         grid = new TerrainElement[mapWidth * mapHeight];
-        SimplexNoise noise = new SimplexNoise(128, 0.3f, FastMath.nextRandomInt());
-        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, FastMath.nextRandomInt());
+        SimplexNoise noise = new SimplexNoise(128, 0.3f, 0xCAFFEE);
+        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, 0xCAFFEE);
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
@@ -73,12 +71,13 @@ public class BattleMap {
             }
         }
         buildGridMesh(mapWidth, mapHeight, rootNode, assets);
-        u.moveTo(20, 20);
+       /// u.moveTo(10, 10);
+        //u2.moveTo(10, 20);
     }
 
     private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
         Mesh mesh = new TerrainGridMesh(n, m, grid);
-        
+
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
         geom.move(0, 0, 0);
@@ -92,64 +91,59 @@ public class BattleMap {
     }
 
     public Vector2f pathFinder(int posX, int posY, int destX, int destY) {
-        if(!grid[destX*mapHeight+destY].isAccesible())
-            return new Vector2f(0,0);
-        if(posX==destX && posY==destY)
-            return new Vector2f(0,0);
+        if (!grid[destX * mapHeight + destY].isAccesible()) {
+            return new Vector2f(0, 0);
+        }
+        if (posX == destX && posY == destY) {
+            return new Vector2f(0, 0);
+        }
         subsequentGrids.clear();
         int neighbourX, neighbourY;
-        int neighbours[][]={{0,1},{1,0},{0,-1},{-1,0},{1,1},{-1,1},{-1,-1},{1,-1}};
-        Vector2f currentGrid = new Vector2f(posX,posY);
+        int neighbours[][] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+        Vector2f currentGrid = new Vector2f(posX, posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
-        subsequentGrids.addLast(new Vector2f(posX,posY));
-        pathDistanceGrid[posX*mapHeight+posY]=0; 
-        while(pathDistanceGrid[destX*mapHeight+destY]==Integer.MAX_VALUE)
-        {
-            if(subsequentGrids.isEmpty())
-                return new Vector2f(0,0);
-            else
-                currentGrid=subsequentGrids.remove();
-            for(int i=0; i<8; i++)
-            {
-                neighbourX=neighbours[i][0];
-                neighbourY=neighbours[i][1];
-                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.y+neighbourY)+1>mapHeight || 
-                (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
-                {
+        subsequentGrids.addLast(new Vector2f(posX, posY));
+        pathDistanceGrid[posX * mapHeight + posY] = 0;
+        while (pathDistanceGrid[destX * mapHeight + destY] == Integer.MAX_VALUE) {
+            if (subsequentGrids.isEmpty()) {
+                return new Vector2f(0, 0);
+            } else {
+                currentGrid = subsequentGrids.remove();
+            }
+            for (int i = 0; i < 8; i++) {
+                neighbourX = neighbours[i][0];
+                neighbourY = neighbours[i][1];
+                if ((currentGrid.x + neighbourX) + 1 > mapWidth || (currentGrid.y + neighbourY) + 1 > mapHeight
+                        || (currentGrid.x + neighbourX) < 0 || (currentGrid.y + neighbourY) < 0) {
                     continue;
                 }
-                if(grid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)].isAccesible() &&
-                pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1 &&
-                units[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)]==null)
-                {
-                    pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)]=pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1;
-                    subsequentGrids.addLast(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
+                if (grid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)].isAccesible()
+                        && pathDistanceGrid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] > pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] + 1
+                        && units[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] == null) {
+                    pathDistanceGrid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] = pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] + 1;
+                    subsequentGrids.addLast(new Vector2f(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
                     //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
-                }                
+                }
             }
         }
-        currentGrid.x=destX;
-        currentGrid.y=destY;
-        while(pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]!=1)
-        {
-            for(int j=0; j<8; j++)
-            {
-                neighbourX=neighbours[j][0];
-                neighbourY=neighbours[j][1];
-                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.y+neighbourY)+1>mapHeight || 
-                (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
-                {
+        currentGrid.x = destX;
+        currentGrid.y = destY;
+        while (pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] != 1) {
+            for (int j = 0; j < 8; j++) {
+                neighbourX = neighbours[j][0];
+                neighbourY = neighbours[j][1];
+                if ((currentGrid.x + neighbourX) + 1 > mapWidth || (currentGrid.y + neighbourY) + 1 > mapHeight
+                        || (currentGrid.x + neighbourX) < 0 || (currentGrid.y + neighbourY) < 0) {
                     continue;
                 }
-                if(pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] == pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]-1)
-                {
-                    currentGrid.x+=neighbourX;
-                    currentGrid.y+=neighbourY;
+                if (pathDistanceGrid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] == pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] - 1) {
+                    currentGrid.x += neighbourX;
+                    currentGrid.y += neighbourY;
                     break;
                 }
             }
         }
-        return new Vector2f((int)currentGrid.x-posX,(int)currentGrid.y-posY);
+        return new Vector2f((int) currentGrid.x - posX, (int) currentGrid.y - posY);
     }
 
     List<Integer> from = new ArrayList<>();
@@ -173,7 +167,7 @@ public class BattleMap {
              * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
              * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
              */
-           // System.out.println("___move " + from.get(i) + " to " + to.get(i));
+            // System.out.println("___move " + from.get(i) + " to " + to.get(i));
             units[to.get(i)] = units[from.get(i)];
             units[from.get(i)] = null;
         }

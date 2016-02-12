@@ -11,6 +11,8 @@ public class SimpleUnit extends Unit {
         super(new Foot(), new SimpleWeapon());
         pos.x = x;
         pos.y = y;
+        dest.x = x;
+        dest.y = y;
     }
 
     @Override
