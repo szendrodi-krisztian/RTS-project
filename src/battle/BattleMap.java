@@ -119,7 +119,8 @@ public class BattleMap {
                     continue;
                 }
                 if(grid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)].isAccesible() &&
-                pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1)
+                pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1 &&
+                units[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)]==null)
                 {
                     pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)]=pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1;
                     subsequentGrids.addLast(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
