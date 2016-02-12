@@ -53,10 +53,10 @@ public abstract class Unit {
     public static final float N_STEP = 30;
 
     // The position on the grid
-    protected Vector2f pos = new Vector2f();
+    public Vector2f pos = new Vector2f();
     // positional value [0-1[
     private final Vector2f fractal = new Vector2f();
-    protected final Vector2f dest = new Vector2f();
+    public final Vector2f dest = new Vector2f();
     private Vector2f next = new Vector2f();
     // Health points
     private int health;

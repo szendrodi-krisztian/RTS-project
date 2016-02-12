@@ -20,11 +20,18 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.VertexBuffer;
+import com.jme3.util.BufferUtils;
+import java.nio.FloatBuffer;
+import java.util.List;
 
 /**
  *
@@ -102,6 +109,7 @@ public class BattleState extends AbstractAppState {
             ActionListener actl = new ActionListener() {
 
                 Unit select = null;
+                Mesh select_path;
 
                 @Override
                 public void onAction(String name, boolean isPressed, float tpf) {
@@ -126,6 +134,7 @@ public class BattleState extends AbstractAppState {
                             //System.out.println((int) hit_geom.x + "  " + (int) hit_geom.z);
                             if (unit != null) {
                                 select = unit;
+
                             }
                             break;
                         case "right click":
@@ -142,6 +151,23 @@ public class BattleState extends AbstractAppState {
                                 }
 
                                 select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z);
+                                List<Vector2f> p = map.getPath((int) select.pos.x, (int) select.pos.y, (int) select.dest.x, (int) select.dest.y);
+                                FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
+                                for (Vector2f v : p) {
+                                    vb.put(v.x).put(0.2f).put(v.y);
+                                }
+                                vb.put(select.pos.x).put(0.2f).put(select.pos.y);
+                                System.out.println("path size" + p.size());
+                                battleRoot.detachChildNamed("path");
+                                select_path = new Mesh();
+                                select_path.setBuffer(VertexBuffer.Type.Position, 3, vb);
+                                select_path.setMode(Mesh.Mode.LineStrip);
+                                select_path.updateBound();
+                                Geometry g = new Geometry("path", select_path);
+                                Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+                                m.setColor("Color", ColorRGBA.Pink);
+                                g.setMaterial(m);
+                                battleRoot.attachChild(g);
                             }
                             break;
                         case "to the menu":

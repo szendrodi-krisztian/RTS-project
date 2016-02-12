@@ -10,7 +10,7 @@ public class Foot implements IVehicle{
     private String textureName;
 
     public Foot() {
-        speed = 30.0f;
+        speed = 300.0f;
         textureName = "foot";
     }
     
