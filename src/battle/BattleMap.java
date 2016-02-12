@@ -33,6 +33,8 @@ public class BattleMap {
     public int pathDistanceGrid[];
     public LinkedList<Vector2f> subsequentGrids;
     public List<Vector2f> changedArrayElements;
+    public List<Vector2f> fullPath=new ArrayList<>();
+            
             
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this.mapWidth = mapWidth;
@@ -73,7 +75,7 @@ public class BattleMap {
             }
         }
         buildGridMesh(mapWidth, mapHeight, rootNode, assets);
-        u.moveTo(20, 20);
+
     }
 
     private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
@@ -91,11 +93,13 @@ public class BattleMap {
         rootNode.attachChild(g);
     }
 
-    public Vector2f pathFinder(int posX, int posY, int destX, int destY) {
-        if(!grid[destX*mapHeight+destY].isAccesible())
-            return new Vector2f(0,0);
-        if(posX==destX && posY==destY)
-            return new Vector2f(0,0);
+    public List<Vector2f> getPath(int posX, int posY, int destX, int destY) {
+        fullPath.clear();
+        if(!grid[destX*mapHeight+destY].isAccesible() || (posX==destX && posY==destY))
+        {
+            fullPath.add(new Vector2f(posX,posY));
+            return fullPath;
+        }   
         subsequentGrids.clear();
         int neighbourX, neighbourY;
         int neighbours[][]={{0,1},{1,0},{0,-1},{-1,0},{1,1},{-1,1},{-1,-1},{1,-1}};
@@ -106,7 +110,10 @@ public class BattleMap {
         while(pathDistanceGrid[destX*mapHeight+destY]==Integer.MAX_VALUE)
         {
             if(subsequentGrids.isEmpty())
-                return new Vector2f(0,0);
+            {
+                fullPath.add(new Vector2f(posX,posY));
+                return fullPath;
+            }   
             else
                 currentGrid=subsequentGrids.remove();
             for(int i=0; i<8; i++)
@@ -130,6 +137,7 @@ public class BattleMap {
         }
         currentGrid.x=destX;
         currentGrid.y=destY;
+        fullPath.add(currentGrid.clone());
         while(pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]!=1)
         {
             for(int j=0; j<8; j++)
@@ -145,11 +153,20 @@ public class BattleMap {
                 {
                     currentGrid.x+=neighbourX;
                     currentGrid.y+=neighbourY;
+                    fullPath.add(currentGrid.clone());
                     break;
                 }
             }
         }
-        return new Vector2f((int)currentGrid.x-posX,(int)currentGrid.y-posY);
+        return fullPath;
+    }
+    
+    public Vector2f pathFinder(int posX, int posY, int destX, int destY)
+    {
+        List<Vector2f> path = getPath(posX,posY,destX,destY);
+        Vector2f relative = path.get(path.size()-1);
+        relative.subtractLocal(posX, posY);
+        return relative;
     }
 
     List<Integer> from = new ArrayList<>();
