@@ -40,6 +40,8 @@ public class BattleState extends AbstractAppState {
 
     private Node battleRoot;
 
+    private Vector3f camPos;
+
     @Override
     public void cleanup() {
         super.cleanup();
@@ -60,8 +62,10 @@ public class BattleState extends AbstractAppState {
             if (map == null) {
                 map = new BattleMap(100, 100, battleRoot, app.getAssetManager());
             }
-            app.getCamera().setLocation(new Vector3f(0, 50, 0));
-            app.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+            app.getCamera().setLocation(camPos);
+            Vector3f look = camPos.clone();
+            look.y = 0;
+            app.getCamera().lookAt(look, Vector3f.UNIT_Y);
             app.getFlyByCamera().setMoveSpeed(50);
             app.getFlyByCamera().setEnabled(false);
 
@@ -73,24 +77,25 @@ public class BattleState extends AbstractAppState {
                 public void onAnalog(String name, float value, float tpf) {
                     switch (name.toLowerCase()) {
                         case "left":
-                            app.getCamera().setLocation(app.getCamera().getLocation().add(Vector3f.UNIT_X.mult(value * mult)));
+                            camPos.addLocal(Vector3f.UNIT_X.mult(value * mult));
                             break;
                         case "right":
-                            app.getCamera().setLocation(app.getCamera().getLocation().subtract(Vector3f.UNIT_X.mult(value * mult)));
+                            camPos.subtractLocal(Vector3f.UNIT_X.mult(value * mult));
                             break;
                         case "up":
-                            app.getCamera().setLocation(app.getCamera().getLocation().add(Vector3f.UNIT_Z.mult(value * mult)));
+                            camPos.addLocal(Vector3f.UNIT_Z.mult(value * mult));
                             break;
                         case "down":
-                            app.getCamera().setLocation(app.getCamera().getLocation().subtract(Vector3f.UNIT_Z.mult(value * mult)));
+                            camPos.subtractLocal(Vector3f.UNIT_Z.mult(value * mult));
                             break;
                         case "zoom in":
-                            app.getCamera().setLocation(app.getCamera().getLocation().subtract(Vector3f.UNIT_Y.mult(value * mult)));
+                            camPos.subtractLocal(Vector3f.UNIT_Y.mult(value * mult));
                             break;
                         case "zoom out":
-                            app.getCamera().setLocation(app.getCamera().getLocation().add(Vector3f.UNIT_Y.mult(value * mult)));
+                            camPos.addLocal(Vector3f.UNIT_Y.mult(value * mult));
                             break;
                     }
+                    app.getCamera().setLocation(camPos);
                 }
             };
 
@@ -171,6 +176,8 @@ public class BattleState extends AbstractAppState {
         battleRoot = new Node("Battle Root");
         light = new AmbientLight();
         light.setColor(ColorRGBA.White);
+        camPos = new Vector3f(0, 50, 0);
+
         battleRoot.addLight(light);
         setEnabled(false);
     }
