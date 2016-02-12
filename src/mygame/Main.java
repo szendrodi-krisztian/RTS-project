@@ -1,27 +1,9 @@
 package mygame;
 
 import battle.BattleMap;
-import battle.entity.Unit;
 import com.jme3.app.SimpleApplication;
-import com.jme3.collision.CollisionResult;
-import com.jme3.collision.CollisionResults;
-import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.light.AmbientLight;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Ray;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.renderer.queue.TransparentComparator;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Quad;
+import java.util.concurrent.Callable;
 
 public class Main extends SimpleApplication {
 
@@ -34,110 +16,16 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        final BattleState bs = new BattleState();
+        final MainMenuState ms = new MainMenuState();
+        stateManager.attach(bs);
+        stateManager.attach(ms);
 
-        map = new BattleMap(100, 100, rootNode, assetManager);
-        cam.setLocation(new Vector3f(0, 50, 0));
-        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        flyCam.setMoveSpeed(50);
-        flyCam.setEnabled(false);
-
-        AmbientLight light = new AmbientLight();
-        light.setColor(ColorRGBA.White);
-        rootNode.addLight(light);
-
-        AnalogListener al = new AnalogListener() {
-
-            final int mult = 10;
-
-            @Override
-            public void onAnalog(String name, float value, float tpf) {
-                switch (name.toLowerCase()) {
-                    case "left":
-                        cam.setLocation(cam.getLocation().add(Vector3f.UNIT_X.mult(value * mult)));
-                        break;
-                    case "right":
-                        cam.setLocation(cam.getLocation().subtract(Vector3f.UNIT_X.mult(value * mult)));
-                        break;
-                    case "up":
-                        cam.setLocation(cam.getLocation().add(Vector3f.UNIT_Z.mult(value * mult)));
-                        break;
-                    case "down":
-                        cam.setLocation(cam.getLocation().subtract(Vector3f.UNIT_Z.mult(value * mult)));
-                        break;
-                    case "zoom in":
-                        cam.setLocation(cam.getLocation().subtract(Vector3f.UNIT_Y.mult(value * mult)));
-                        break;
-                    case "zoom out":
-                        cam.setLocation(cam.getLocation().add(Vector3f.UNIT_Y.mult(value * mult)));
-                        break;
-                }
-            }
-        };
-
-        ActionListener actl = new ActionListener() {
-
-            Unit select = null;
-
-            @Override
-            public void onAction(String name, boolean isPressed, float tpf) {
-                if (!isPressed) {
-                    return;
-                }
-                switch (name.toLowerCase()) {
-                    case "left click":
-                        CollisionResults results = new CollisionResults();
-                        Vector2f cur = inputManager.getCursorPosition();
-                        Vector3f cur3d = cam.getWorldCoordinates(cur.clone(), 0f).clone();
-                        Vector3f dir = cam.getWorldCoordinates(cur.clone(), 1f).subtract(cur3d).normalizeLocal();
-                        Ray ray = new Ray(cur3d, dir);
-                        rootNode.collideWith(ray, results);
-                        CollisionResult coll = results.getClosestCollision();
-                        if (coll == null) {
-                            return;
-                        }
-                        Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
-                        Unit unit = map.units[map.mapHeight * (int) hit_geom.z + (int) hit_geom.x];
-                        System.out.println(unit);
-                        //System.out.println((int) hit_geom.x + "  " + (int) hit_geom.z);
-                        if (unit != null) {
-                            select = unit;
-                        }
-                        break;
-                    case "right click":
-                        if (select != null) {
-                            CollisionResults results2 = new CollisionResults();
-                            Vector2f cur2 = inputManager.getCursorPosition();
-                            Vector3f cur3d2 = cam.getWorldCoordinates(cur2.clone(), 0f).clone();
-                            Vector3f dir2 = cam.getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
-                            Ray ray2 = new Ray(cur3d2, dir2);
-                            rootNode.collideWith(ray2, results2);
-                            CollisionResult coll2 = results2.getClosestCollision();
-                            if (coll2 == null) {
-                                return;
-                            }
-
-                            select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z);
-                        }
-                        break;
-                }
-            }
-        };
-
-        inputManager.addListener(al, new String[]{"left", "right", "up", "down", "zoom in", "zoom out"});
-        inputManager.addListener(actl, new String[]{"left click", "right click"});
-        inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("up", new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping("down", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addMapping("zoom in", new KeyTrigger(KeyInput.KEY_Q));
-        inputManager.addMapping("zoom out", new KeyTrigger(KeyInput.KEY_E));
-        inputManager.addMapping("left click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addMapping("right click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        map.tick(tpf);
+
     }
 
     @Override

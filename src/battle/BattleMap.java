@@ -58,22 +58,22 @@ public class BattleMap {
             for (int j = 0; j < mapHeight; j++) {
                 float n = noise.getNoise(3 * i, 3 * j);
                 if (n < -0.12) {
-                    grid[i*mapHeight+j] = TerrainElementManager.getInstance(assets).getElementByName("water");
+                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
                     continue;
                 }
                 if (n < 0.015f) {
-                    grid[i*mapHeight+j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
+                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
                     continue;
                 }
                 if (treenoise.getNoise(20 * i, 20 * j) > 7f) {
-                    grid[i*mapHeight+j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
+                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
                 } else {
-                    grid[i*mapHeight+j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
+                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
                 }
             }
         }
         buildGridMesh(mapWidth, mapHeight, rootNode, assets);
-u.moveTo(20, 20);
+        u.moveTo(20, 20);
     }
 
     private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
