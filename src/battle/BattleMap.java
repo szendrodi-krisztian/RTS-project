@@ -48,6 +48,7 @@ public class BattleMap {
 
 
         units[mapHeight*2+2] = u;
+        
 
         grid = new TerrainElement[mapWidth * mapHeight];
         SimplexNoise noise = new SimplexNoise(128, 0.3f, FastMath.nextRandomInt());
@@ -72,7 +73,7 @@ public class BattleMap {
             }
         }
         buildGridMesh(mapWidth, mapHeight, rootNode, assets);
-
+u.moveTo(20, 20);
     }
 
     private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
@@ -171,7 +172,7 @@ public class BattleMap {
              * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
              * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
              */
-            System.out.println("___move " + from.get(i) + " to " + to.get(i));
+           // System.out.println("___move " + from.get(i) + " to " + to.get(i));
             units[to.get(i)] = units[from.get(i)];
             units[from.get(i)] = null;
         }

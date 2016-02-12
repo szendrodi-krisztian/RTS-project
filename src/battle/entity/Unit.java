@@ -134,40 +134,39 @@ public abstract class Unit {
      * @return
      */
     public final int move(float tpf) {
-        int ret = 0;
-        fractal.addLocal(next.mult(tpf * vehicle.getMovementSpeed() / N_STEP));
-        if (next.x == 0 && FastMath.abs(fractal.x) > 0.011f) {
-            fractal.x += -(tpf * vehicle.getMovementSpeed() / N_STEP) * FastMath.sign(fractal.x);
-            geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
-            return ret;
+        // get new only if im in place.
+        if (FastMath.abs(fractal.x) < 0.01f && FastMath.abs(fractal.y) < 0.01f) {
+            next = map.pathFinder((int) pos.x, (int) pos.y, (int) dest.x, (int) dest.y);
         }
-        if (next.y == 0 && FastMath.abs(fractal.y) > 0.011f) {
-            fractal.y += -(tpf * vehicle.getMovementSpeed() / N_STEP) * FastMath.sign(fractal.y);
+        // if reached next on x axis, refresh destination only on x axis.
+        if (FastMath.abs(fractal.x) < 0.01f) {
+            fractal.x = -next.x;
+            pos.x += next.x;
             geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
-            return ret;
+            // we must return here because in one movement there can be only one grid chage, in respect to the axes.
+            // if next is 0, that means we did not really move here.
+            if (next.x != 0) {
+                return (int) next.x;
+            }
         }
-        if (FastMath.abs(fractal.x) >= 1) {
-            System.out.print("move from " + pos + " to ");
-            pos.x += FastMath.sign(fractal.x);
-            ret = (int) FastMath.sign(fractal.x);
-            System.out.println(pos + "ret: " + ret);
-            fractal.x = 0;
-            next = map.pathFinder((int) pos.x, (int) pos.y, (int)dest.x,(int) dest.y); // map.disjk : gives next position on the path
+        if (FastMath.abs(fractal.y) < 0.01f) {
+            fractal.y = -next.y;
+            pos.y += next.y;
             geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
-            return ret;
+            if (next.y != 0) {
+                return (int) (next.y * map.mapHeight);
+            }
         }
-        if (FastMath.abs(fractal.y) >= 1) {
-            System.out.print("move from " + pos + " to ");
-            ret = (int) (FastMath.sign(fractal.y) * map.mapHeight);
-            pos.y += FastMath.sign(fractal.y);
-            System.out.println(pos + " ret: " + ret);
-            fractal.y = 0;
-            next = map.pathFinder((int) pos.x, (int) pos.y,(int) dest.x, (int)dest.y);
-            geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
-            return ret;
+        float speed = (tpf * vehicle.getMovementSpeed()) / N_STEP;
+        if (FastMath.abs(fractal.x) > 0.01f) {
+            fractal.x += (fractal.x > 0) ? -speed : speed;
         }
+        if (FastMath.abs(fractal.y) > 0.01f) {
+            fractal.y += (fractal.y > 0) ? -speed : speed;
+        }
+
         geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
-        return ret;
+        return 0;
     }
 
     /**
@@ -179,9 +178,6 @@ public abstract class Unit {
     public void moveTo(int x, int y) {
         dest.x = x;
         dest.y = y;
-        Vector2f d = map.pathFinder((int) pos.x, (int) pos.y,(int) dest.x,(int) dest.y);
-        next.x = d.x;
-        next.y = d.y;
     }
 
     public final void attack(int x, int y) {
