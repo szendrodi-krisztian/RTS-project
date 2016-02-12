@@ -56,7 +56,7 @@ public abstract class Unit {
     protected Vector2f pos = new Vector2f();
     // positional value [0-1[
     private final Vector2f fractal = new Vector2f();
-    private final Vector2f dest = new Vector2f();
+    protected final Vector2f dest = new Vector2f();
     private Vector2f next = new Vector2f();
     // Health points
     private int health;
@@ -134,6 +134,7 @@ public abstract class Unit {
      * @return
      */
     public final int move(float tpf) {
+        int ret = 0;
         // get new only if im in place.
         if (FastMath.abs(fractal.x) < 0.01f && FastMath.abs(fractal.y) < 0.01f) {
             next = map.pathFinder((int) pos.x, (int) pos.y, (int) dest.x, (int) dest.y);
@@ -146,7 +147,7 @@ public abstract class Unit {
             // we must return here because in one movement there can be only one grid chage, in respect to the axes.
             // if next is 0, that means we did not really move here.
             if (next.x != 0) {
-                return (int) next.x;
+                ret =  (int) (next.x * map.mapHeight);
             }
         }
         if (FastMath.abs(fractal.y) < 0.01f) {
@@ -154,7 +155,7 @@ public abstract class Unit {
             pos.y += next.y;
             geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
             if (next.y != 0) {
-                return (int) (next.y * map.mapHeight);
+                ret +=(int) (next.y);
             }
         }
         float speed = (tpf * vehicle.getMovementSpeed()) / N_STEP;
@@ -174,7 +175,7 @@ public abstract class Unit {
         }
 
         geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
-        return 0;
+        return ret;
     }
 
     /**

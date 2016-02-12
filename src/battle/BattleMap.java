@@ -29,7 +29,7 @@ public class BattleMap {
     public Unit units[];
 
     public int mapWidth, mapHeight;
-    
+
     public int pathDistanceGrid[];
     public LinkedList<Vector2f> subsequentGrids;
     public List<Vector2f> changedArrayElements;
@@ -42,19 +42,17 @@ public class BattleMap {
         Unit.init(this, assets, rootNode);
         units = new Unit[mapWidth * mapHeight];
         SimpleUnit u = new SimpleUnit(2, 2);
-        
-        pathDistanceGrid = new int[mapWidth*mapHeight];
+        SimpleUnit u2 = new SimpleUnit(2, 3);
+
+        pathDistanceGrid = new int[mapWidth * mapHeight];
         subsequentGrids = new LinkedList<>();
 
-        
-
-
-        units[mapHeight*2+2] = u;
-        
+        units[mapHeight * 2 + 2] = u;
+        units[mapHeight * 2 + 3] = u2;
 
         grid = new TerrainElement[mapWidth * mapHeight];
-        SimplexNoise noise = new SimplexNoise(128, 0.3f, FastMath.nextRandomInt());
-        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, FastMath.nextRandomInt());
+        SimplexNoise noise = new SimplexNoise(128, 0.3f, 0xCAFFEE);
+        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, 0xCAFFEE);
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
@@ -75,12 +73,13 @@ public class BattleMap {
             }
         }
         buildGridMesh(mapWidth, mapHeight, rootNode, assets);
-
+       /// u.moveTo(10, 10);
+        //u2.moveTo(10, 20);
     }
 
     private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
         Mesh mesh = new TerrainGridMesh(n, m, grid);
-        
+
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
         geom.move(0, 0, 0);
@@ -102,8 +101,8 @@ public class BattleMap {
         }   
         subsequentGrids.clear();
         int neighbourX, neighbourY;
-        int neighbours[][]={{0,1},{1,0},{0,-1},{-1,0},{1,1},{-1,1},{-1,-1},{1,-1}};
-        Vector2f currentGrid = new Vector2f(posX,posY);
+        int neighbours[][] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+        Vector2f currentGrid = new Vector2f(posX, posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
         subsequentGrids.addLast(new Vector2f(posX,posY));
         pathDistanceGrid[posX*mapHeight+posY]=0; 
@@ -125,14 +124,13 @@ public class BattleMap {
                 {
                     continue;
                 }
-                if(grid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)].isAccesible() &&
-                pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] > pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1 &&
-                units[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)]==null)
-                {
-                    pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)]=pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]+1;
-                    subsequentGrids.addLast(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
+                if (grid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)].isAccesible()
+                        && pathDistanceGrid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] > pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] + 1
+                        && units[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] == null) {
+                    pathDistanceGrid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] = pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] + 1;
+                    subsequentGrids.addLast(new Vector2f(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
                     //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
-                }                
+                }
             }
         }
         currentGrid.x=destX;
@@ -190,7 +188,7 @@ public class BattleMap {
              * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
              * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
              */
-           // System.out.println("___move " + from.get(i) + " to " + to.get(i));
+            // System.out.println("___move " + from.get(i) + " to " + to.get(i));
             units[to.get(i)] = units[from.get(i)];
             units[from.get(i)] = null;
         }
