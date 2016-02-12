@@ -50,7 +50,7 @@ public abstract class Unit {
 
     private Rotation rotation;
 
-    public static final float N_STEP = 5;
+    public static final float N_STEP = 30;
 
     // The position on the grid
     protected Vector2f pos = new Vector2f();
@@ -159,10 +159,18 @@ public abstract class Unit {
         }
         float speed = (tpf * vehicle.getMovementSpeed()) / N_STEP;
         if (FastMath.abs(fractal.x) > 0.01f) {
+            float sb = FastMath.sign(fractal.x);
             fractal.x += (fractal.x > 0) ? -speed : speed;
+            if (sb != FastMath.sign(fractal.x)) {
+                fractal.x = 0;
+            }
         }
         if (FastMath.abs(fractal.y) > 0.01f) {
+            float sb = FastMath.sign(fractal.y);
             fractal.y += (fractal.y > 0) ? -speed : speed;
+            if (sb != FastMath.sign(fractal.y)) {
+                fractal.y = 0;
+            }
         }
 
         geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);

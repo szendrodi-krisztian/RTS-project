@@ -60,7 +60,7 @@ public class BattleState extends AbstractAppState {
         if (enabled) {
             app.getRootNode().attachChild(battleRoot);
             if (map == null) {
-                map = new BattleMap(100, 100, battleRoot, app.getAssetManager());
+                map = new BattleMap(300, 300, battleRoot, app.getAssetManager());
             }
             app.getCamera().setLocation(camPos);
             Vector3f look = camPos.clone();

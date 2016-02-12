@@ -3,7 +3,6 @@ package mygame;
 import battle.BattleMap;
 import com.jme3.app.SimpleApplication;
 import com.jme3.renderer.RenderManager;
-import java.util.concurrent.Callable;
 
 public class Main extends SimpleApplication {
 
