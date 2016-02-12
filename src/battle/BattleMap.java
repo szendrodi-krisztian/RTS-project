@@ -15,7 +15,6 @@ import com.jme3.math.FastMath;
 import com.jme3.scene.Mesh;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -101,7 +100,7 @@ public class BattleMap {
             return fullPath;
         }   
         subsequentGrids.clear();
-        int neighbourX=0, neighbourY=0;
+        int neighbourX, neighbourY;
         int neighbours[][] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
         Vector2f currentGrid = new Vector2f(posX, posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
@@ -137,10 +136,8 @@ public class BattleMap {
         currentGrid.x=destX;
         currentGrid.y=destY;
         fullPath.add(currentGrid.clone());
-        List<Vector2f> options= new ArrayList<>();
         while(pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]!=1)
         {
-            options.clear();
             for(int j=0; j<8; j++)
             {
                 neighbourX=neighbours[j][0];
@@ -152,57 +149,11 @@ public class BattleMap {
                 }
                 if(pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] == pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]-1)
                 {
-                    options.add(currentGrid.add(new Vector2f(neighbourX,neighbourY)));
+                    currentGrid.x+=neighbourX;
+                    currentGrid.y+=neighbourY;
+                    fullPath.add(currentGrid.clone());
+                    break;
                 }
-            }
-            if(options.size()==1)
-            {
-                currentGrid=options.get(0);
-                fullPath.add(currentGrid.clone());
-            }
-            else
-            if(options.size()>1)
-            {
-                boolean yolo=true;
-                List<Float> distance = new ArrayList<>(options.size());
-                double nominator = Math.hypot(destX-posX, destY-posY);
-                for(Vector2f s:options)
-                {
-                    distance.add(FastMath.abs(((destY-posY)*s.x)-((destX-posX)*s.y)+(destX*posY)-(destY*posX))/(float)nominator);
-                }
-                int minIndex=0;
-                float min=Integer.MAX_VALUE;
-                for(int i=0; i<options.size(); i++)
-                {
-                    //If it gets further away
-                    if(options.get(i).subtract(new Vector2f(destX,destY)).lengthSquared()>currentGrid.subtract(new Vector2f(destX,destY)).lengthSquared())
-                        yolo=false;
-                }
-                if(!yolo)
-                {
-                    for(int i=0; i<distance.size(); i++)
-                    {
-                        if(min>distance.get(i))
-                        {
-                            min=distance.get(i);
-                            minIndex=i;
-                        }
-                    }
-                }
-                else
-                {
-                    min=Integer.MIN_VALUE;
-                    for(int i=0; i<distance.size(); i++)
-                    {
-                        if(min<distance.get(i))
-                        {
-                            min=distance.get(i);
-                            minIndex=i;
-                        }
-                    }
-                }
-                currentGrid=options.get(minIndex);
-                fullPath.add(options.get(minIndex));
             }
         }
         return fullPath;
