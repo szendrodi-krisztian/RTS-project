@@ -6,6 +6,7 @@
 package mygame;
 
 import battle.BattleMap;
+import battle.entity.Group;
 import battle.entity.Unit;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -108,7 +109,7 @@ public class BattleState extends AbstractAppState {
 
             ActionListener actl = new ActionListener() {
 
-                Unit select = null;
+                Group select = null;
                 Mesh select_path;
 
                 @Override
@@ -131,9 +132,8 @@ public class BattleState extends AbstractAppState {
                             Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
                             Unit unit = map.units[map.mapHeight * (int) hit_geom.x + (int) hit_geom.z];
                             System.out.println(unit);
-                            //System.out.println((int) hit_geom.x + "  " + (int) hit_geom.z);
                             if (unit != null) {
-                                select = unit;
+                                select = unit.getGroup();
 
                             }
                             break;
@@ -151,12 +151,12 @@ public class BattleState extends AbstractAppState {
                                 }
 
                                 select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z);
-                                List<Vector2f> p = map.getPath((int) select.pos.x, (int) select.pos.y, (int) select.dest.x, (int) select.dest.y);
+                                List<Vector2f> p = map.getPath((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().dest.x, (int) select.getLeader().dest.y);
                                 FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
                                 for (Vector2f v : p) {
                                     vb.put(v.x).put(0.2f).put(v.y);
                                 }
-                                vb.put(select.pos.x).put(0.2f).put(select.pos.y);
+                                vb.put(select.getLeader().pos.x).put(0.2f).put(select.getLeader().pos.y);
                                 System.out.println("path size" + p.size());
                                 battleRoot.detachChildNamed("path");
                                 select_path = new Mesh();
@@ -202,7 +202,7 @@ public class BattleState extends AbstractAppState {
         battleRoot = new Node("Battle Root");
         light = new AmbientLight();
         light.setColor(ColorRGBA.White);
-        camPos = new Vector3f(0, 50, 0);
+        camPos = new Vector3f(0, 20, 0);
 
         battleRoot.addLight(light);
         setEnabled(false);

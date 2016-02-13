@@ -41,7 +41,7 @@ public abstract class Unit {
 
     private final Geometry geometry;
 
-    private static BattleMap map;
+    public  static BattleMap map;
 
     private final IVehicle vehicle;
     private final IWeapon weapon;
@@ -51,13 +51,15 @@ public abstract class Unit {
     private Rotation rotation;
 
     public static final float N_STEP = 30;
+    
+    public boolean moved;
 
     // The position on the grid
     public Vector2f pos = new Vector2f();
     // positional value [0-1[
     private final Vector2f fractal = new Vector2f();
     public final Vector2f dest = new Vector2f();
-    private Vector2f next = new Vector2f();
+    public  Vector2f next = new Vector2f();
     // Health points
     private int health;
     // Angle in rads
@@ -74,14 +76,22 @@ public abstract class Unit {
     private static AssetManager assets;
     //
     private static Node node;
+    //
+    private static Group group;
 
     public static void init(BattleMap map, AssetManager assets, Node root) {
         Unit.node = root;
         Unit.assets = assets;
         Unit.map = map;
     }
+    
+    public Group getGroup(){
+        return group;
+    }
 
-    public Unit(IVehicle vehicle, IWeapon weapon) {
+    public Unit(IVehicle vehicle, IWeapon weapon, Group g) {
+        this.group = g;
+        group.join(this);
         this.vehicle = vehicle;
         this.weapon = weapon;
         Material m = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
@@ -148,6 +158,7 @@ public abstract class Unit {
             // if next is 0, that means we did not really move here.
             if (next.x != 0) {
                 ret =  (int) (next.x * map.mapHeight);
+                group.onUnitMovedGrid(this);
             }
         }
         if (FastMath.abs(fractal.y) < 0.01f) {
@@ -156,9 +167,10 @@ public abstract class Unit {
             geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
             if (next.y != 0) {
                 ret +=(int) (next.y);
+                group.onUnitMovedGrid(this);
             }
         }
-        float speed = (tpf * vehicle.getMovementSpeed()) / N_STEP;
+        float speed = (tpf * vehicle.getMovementSpeed()) / (N_STEP*(FastMath.abs(next.x)+FastMath.abs(next.y)+((next.x==0&&next.y==0)?1:0)));
         if (FastMath.abs(fractal.x) > 0.01f) {
             float sb = FastMath.sign(fractal.x);
             fractal.x += (fractal.x > 0) ? -speed : speed;

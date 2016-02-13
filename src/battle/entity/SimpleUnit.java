@@ -7,8 +7,8 @@ package battle.entity;
  */
 public class SimpleUnit extends Unit {
 
-    public SimpleUnit(int x, int y) {
-        super(new Foot(), new SimpleWeapon());
+    public SimpleUnit(int x, int y, Group g) {
+        super(new Foot(), new SimpleWeapon(), g);
         pos.x = x;
         pos.y = y;
         dest.x = x;

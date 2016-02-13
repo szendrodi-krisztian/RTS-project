@@ -1,7 +1,9 @@
 package battle;
 
+import battle.entity.Group;
 import battle.entity.SimpleUnit;
 import battle.entity.Unit;
+import battle.terrain.MyVector2f;
 import battle.terrain.SimplexNoise;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
@@ -9,13 +11,12 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
+import battle.terrain.VectorPool;
 import battle.terrain.render.TerrainDecorationMesh;
 import battle.terrain.render.TerrainGridMesh;
-import com.jme3.math.FastMath;
 import com.jme3.scene.Mesh;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -28,27 +29,34 @@ public class BattleMap {
 
     public Unit units[];
 
+    public List<Group> groups = new ArrayList<>();
+
     public int mapWidth, mapHeight;
 
     public int pathDistanceGrid[];
-    public LinkedList<Vector2f> subsequentGrids;
+    public List<MyVector2f> subsequentGrids;
     public List<Vector2f> changedArrayElements;
-    public List<Vector2f> fullPath=new ArrayList<>();
-            
-            
+    public List<Vector2f> fullPath = new ArrayList<>();
+
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         Unit.init(this, assets, rootNode);
         units = new Unit[mapWidth * mapHeight];
-        SimpleUnit u = new SimpleUnit(2, 2);
-        SimpleUnit u2 = new SimpleUnit(2, 3);
+        Group g1 = new Group();
+
+        SimpleUnit u = new SimpleUnit(2, 2, g1);
+        SimpleUnit u2 = new SimpleUnit(2, 3, g1);
+        SimpleUnit u3 = new SimpleUnit(3, 2, g1);
+        SimpleUnit u4 = new SimpleUnit(3, 3, g1);
 
         pathDistanceGrid = new int[mapWidth * mapHeight];
-        subsequentGrids = new LinkedList<>();
+        subsequentGrids = new ArrayList<>();
 
         units[mapHeight * 2 + 2] = u;
         units[mapHeight * 2 + 3] = u2;
+        units[mapHeight * 3 + 2] = u3;
+        units[mapHeight * 3 + 3] = u4;
 
         grid = new TerrainElement[mapWidth * mapHeight];
         SimplexNoise noise = new SimplexNoise(128, 0.3f, 0xCAFFEE);
@@ -56,7 +64,7 @@ public class BattleMap {
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
-                float n = noise.getNoise(3 * i, 3 * j);
+                float n = noise.getNoise(0.3f * i, 0.3f * j);
                 if (n < -0.12) {
                     grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
                     continue;
@@ -73,7 +81,7 @@ public class BattleMap {
             }
         }
         buildGridMesh(mapWidth, mapHeight, rootNode, assets);
-       /// u.moveTo(10, 10);
+        /// u.moveTo(10, 10);
         //u2.moveTo(10, 20);
     }
 
@@ -91,106 +99,109 @@ public class BattleMap {
         g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
         rootNode.attachChild(g);
     }
+    public static final int neighbours[][] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
 
-    public List<Vector2f> getPath(int posX, int posY, int destX, int destY) {
+    public final List<Vector2f> getPath(int posX, int posY, int destX, int destY) {
+
         fullPath.clear();
-        if(!grid[destX*mapHeight+destY].isAccesible() || (posX==destX && posY==destY))
-        {
-            fullPath.add(new Vector2f(posX,posY));
+        if (!grid[destX * mapHeight + destY].isAccesible() || (posX == destX && posY == destY)) {
+            fullPath.add(new Vector2f(posX, posY));
             return fullPath;
-        }   
-        subsequentGrids.clear();
+        }
+
         int neighbourX, neighbourY;
-        int neighbours[][] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
-        Vector2f currentGrid = new Vector2f(posX, posY);
+        MyVector2f currentGrid = VectorPool.getInstance().createVector(posX, posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
-        subsequentGrids.addLast(new Vector2f(posX,posY));
-        pathDistanceGrid[posX*mapHeight+posY]=0; 
-        while(pathDistanceGrid[destX*mapHeight+destY]==Integer.MAX_VALUE)
-        {
-            if(subsequentGrids.isEmpty())
-            {
-                fullPath.add(new Vector2f(posX,posY));
+        subsequentGrids.add(VectorPool.getInstance().createVector(posX, posY));
+        pathDistanceGrid[posX * mapHeight + posY] = 0;
+        while (pathDistanceGrid[destX * mapHeight + destY] == Integer.MAX_VALUE) {
+            //System.out.println("currentgrid");
+            //VectorPool.getInstance().destroyVector(currentGrid);
+            if (subsequentGrids.isEmpty()) {
+                fullPath.add(new Vector2f(posX, posY));
                 return fullPath;
-            }   
-            else
-                currentGrid=subsequentGrids.remove();
-            for(int i=0; i<8; i++)
-            {
-                neighbourX=neighbours[i][0];
-                neighbourY=neighbours[i][1];
-                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.y+neighbourY)+1>mapHeight || 
-                (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
-                {
+            } else {
+                VectorPool.getInstance().destroyVector(currentGrid);
+                currentGrid = subsequentGrids.remove(0);
+
+            }
+            for (int i = 0; i < 8; i++) {
+                neighbourX = neighbours[i][0];
+                neighbourY = neighbours[i][1];
+                if ((currentGrid.x + neighbourX) + 1 > mapWidth || (currentGrid.y + neighbourY) + 1 > mapHeight
+                        || (currentGrid.x + neighbourX) < 0 || (currentGrid.y + neighbourY) < 0) {
                     continue;
                 }
-                if (grid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)].isAccesible()
-                        && pathDistanceGrid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] > pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] + 1
-                        && units[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] == null) {
-                    pathDistanceGrid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] = pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] + 1;
-                    subsequentGrids.addLast(new Vector2f(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
+                int opt1 = ((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY);
+                int opt2 = (int) currentGrid.x * mapHeight + (int) currentGrid.y;
+                if (grid[opt1].isAccesible()
+                        && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1
+                        && units[opt1] == null) {
+                    pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
+                    subsequentGrids.add(VectorPool.getInstance().createVector(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
                     //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
                 }
             }
         }
-        currentGrid.x=destX;
-        currentGrid.y=destY;
-        fullPath.add(currentGrid.clone());
-        while(pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]!=1)
-        {
-            for(int j=0; j<8; j++)
-            {
-                neighbourX=neighbours[j][0];
-                neighbourY=neighbours[j][1];
-                if((currentGrid.x+neighbourX)+1>mapWidth || (currentGrid.y+neighbourY)+1>mapHeight || 
-                (currentGrid.x+neighbourX)<0 || (currentGrid.y+neighbourY)<0)
-                {
+        currentGrid.x = destX;
+        currentGrid.y = destY;
+        fullPath.add(new Vector2f(currentGrid.x, currentGrid.y));
+        while (pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] != 1) {
+            for (int j = 0; j < 8; j++) {
+                neighbourX = neighbours[j][0];
+                neighbourY = neighbours[j][1];
+                if ((currentGrid.x + neighbourX) + 1 > mapWidth || (currentGrid.y + neighbourY) + 1 > mapHeight
+                        || (currentGrid.x + neighbourX) < 0 || (currentGrid.y + neighbourY) < 0) {
                     continue;
                 }
-                if(pathDistanceGrid[((int)currentGrid.x+neighbourX)*mapHeight+((int)currentGrid.y+neighbourY)] == pathDistanceGrid[(int)currentGrid.x*mapHeight+(int)currentGrid.y]-1)
-                {
-                    currentGrid.x+=neighbourX;
-                    currentGrid.y+=neighbourY;
-                    fullPath.add(currentGrid.clone());
+                if (pathDistanceGrid[((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY)] == pathDistanceGrid[(int) currentGrid.x * mapHeight + (int) currentGrid.y] - 1) {
+                    currentGrid.x += neighbourX;
+                    currentGrid.y += neighbourY;
+                    fullPath.add(new Vector2f(currentGrid.x, currentGrid.y));
                     break;
                 }
             }
         }
+        for (int i = 0; i < subsequentGrids.size(); i++) {
+            //System.out.println("subsequent " + i);
+            VectorPool.getInstance().destroyVector(subsequentGrids.get(i));
+            subsequentGrids.set(i, null);
+        }
+        subsequentGrids.clear();
         return fullPath;
     }
-    
-    public Vector2f pathFinder(int posX, int posY, int destX, int destY)
-    {
-        List<Vector2f> path = getPath(posX,posY,destX,destY);
-        Vector2f relative = path.get(path.size()-1);
+
+    public Vector2f pathFinder(int posX, int posY, int destX, int destY) {
+        List<Vector2f> path = getPath(posX, posY, destX, destY);
+        Vector2f relative = path.get(path.size() - 1);
+        int index = (int) (mapHeight*relative.x+relative.y);
+        if(units[index]!=null){
+            return Vector2f.ZERO;
+        }
         relative.subtractLocal(posX, posY);
         return relative;
     }
 
-    List<Integer> from = new ArrayList<>();
-    List<Integer> to = new ArrayList<>();
-
     public void tick(float tpf) {
-        from.clear();
-        to.clear();
-        for (int i = 0; i < units.length; i++) {
-            if (units[i] != null) {
-                int r = units[i].move(tpf);
-                if (r != 0) {
-                    from.add(i);
-                    to.add(i + r);
-                }
+        for (Unit unit : units) {
+            if (unit != null) {
+                unit.moved = false;
             }
         }
-        for (int i = 0; i < from.size(); i++) {
-            /*
-             * BE CAREFUL DRAGONS AHEAD!
-             * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
-             * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
-             */
-            // System.out.println("___move " + from.get(i) + " to " + to.get(i));
-            units[to.get(i)] = units[from.get(i)];
-            units[from.get(i)] = null;
+        /*
+         * BE CAREFUL DRAGONS AHEAD!
+         * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
+         * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
+         */
+        for (int i = 0; i < units.length; i++) {
+            if (units[i] != null && !units[i].moved) {
+                int r = units[i].move(tpf);
+                if (r != 0) {
+                    units[i + r] = units[i];
+                    units[i] = null;
+                }
+                units[i + r].moved = true;
+            }
         }
     }
 
