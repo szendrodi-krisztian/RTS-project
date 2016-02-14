@@ -157,7 +157,6 @@ public class BattleState extends AbstractAppState {
                                     vb.put(v.x).put(0.2f).put(v.y);
                                 }
                                 vb.put(select.getLeader().pos.x).put(0.2f).put(select.getLeader().pos.y);
-                                System.out.println("path size" + p.size());
                                 battleRoot.detachChildNamed("path");
                                 select_path = new Mesh();
                                 select_path.setBuffer(VertexBuffer.Type.Position, 3, vb);

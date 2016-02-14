@@ -46,17 +46,15 @@ public class BattleMap {
         Group g1 = new Group();
 
         SimpleUnit u = new SimpleUnit(2, 2, g1);
-        SimpleUnit u2 = new SimpleUnit(2, 3, g1);
-        SimpleUnit u3 = new SimpleUnit(3, 2, g1);
-        SimpleUnit u4 = new SimpleUnit(3, 3, g1);
+        SimpleUnit u2 = new SimpleUnit(3, 2, g1);
+        SimpleUnit u3 = new SimpleUnit(1, 2, g1);
+
+        units[mapHeight * 2 + 2] = u;
+        units[mapHeight * 3 + 2] = u2;
+        units[mapHeight * 1 + 2] = u3;
 
         pathDistanceGrid = new int[mapWidth * mapHeight];
         subsequentGrids = new ArrayList<>();
-
-        units[mapHeight * 2 + 2] = u;
-        units[mapHeight * 2 + 3] = u2;
-        units[mapHeight * 3 + 2] = u3;
-        units[mapHeight * 3 + 3] = u4;
 
         grid = new TerrainElement[mapWidth * mapHeight];
         SimplexNoise noise = new SimplexNoise(128, 0.3f, 0xCAFFEE);
@@ -81,8 +79,6 @@ public class BattleMap {
             }
         }
         buildGridMesh(mapWidth, mapHeight, rootNode, assets);
-        /// u.moveTo(10, 10);
-        //u2.moveTo(10, 20);
     }
 
     private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
@@ -115,8 +111,6 @@ public class BattleMap {
         subsequentGrids.add(VectorPool.getInstance().createVector(posX, posY));
         pathDistanceGrid[posX * mapHeight + posY] = 0;
         while (pathDistanceGrid[destX * mapHeight + destY] == Integer.MAX_VALUE) {
-            //System.out.println("currentgrid");
-            //VectorPool.getInstance().destroyVector(currentGrid);
             if (subsequentGrids.isEmpty()) {
                 fullPath.add(new Vector2f(posX, posY));
                 return fullPath;
@@ -163,7 +157,6 @@ public class BattleMap {
             }
         }
         for (int i = 0; i < subsequentGrids.size(); i++) {
-            //System.out.println("subsequent " + i);
             VectorPool.getInstance().destroyVector(subsequentGrids.get(i));
             subsequentGrids.set(i, null);
         }

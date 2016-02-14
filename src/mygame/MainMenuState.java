@@ -60,6 +60,7 @@ public class MainMenuState extends AbstractAppState {
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
         menuNode = new Node("Menu Node");
+        System.out.println((int)(1%2));
         setEnabled(true);
     }
 

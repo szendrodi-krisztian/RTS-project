@@ -58,7 +58,7 @@ public abstract class Unit {
     public Vector2f pos = new Vector2f();
     // positional value [0-1[
     private final Vector2f fractal = new Vector2f();
-    public final Vector2f dest = new Vector2f();
+    public Vector2f dest = new Vector2f();
     public  Vector2f next = new Vector2f();
     // Health points
     private int health;
@@ -199,6 +199,10 @@ public abstract class Unit {
     public void moveTo(int x, int y) {
         dest.x = x;
         dest.y = y;
+    }
+    
+    public void moveTo(Vector2f v){
+        dest = v;
     }
 
     public final void attack(int x, int y) {
