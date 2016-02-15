@@ -5,24 +5,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * TODO:
+ * -Change the groupDirection, after the leader changed direction
+ * -Stop the leader until the group is not inPosition
+ * -twoLine formation
+ * -threeLine formation
+ * -triangle formation
  * @author szend
  */
 public final class Group {
 
     int leaderIndex = 0;
-    int groupDirection=5;
+    int groupDirection=3;
     Vector2f relPos = new Vector2f();
     Vector2f leaderDest = new Vector2f();
-    Vector2f Directions[]={
-    new Vector2f(1,0),  //Left
-    new Vector2f(1,1),  //Left Up
-    new Vector2f(0,1),  //Up
-    new Vector2f(-1,1), //Right Up
-    new Vector2f(-1,0), //Right
+    static final Vector2f directions[]={
     new Vector2f(-1,-1),//Right Down
+    new Vector2f(-1,0), //Right
+    new Vector2f(-1,1), //Right Up
     new Vector2f(0,-1), //Down
-    new Vector2f(1,-1)  //Left Down
+    new Vector2f(0,0),  //None
+    new Vector2f(0,1),  //Up
+    new Vector2f(1,-1), //Left Down
+    new Vector2f(1,0),  //Left
+    new Vector2f(1,1)   //Left Up
     };
     List<Unit> units = new ArrayList<>();
 
@@ -37,10 +43,9 @@ public final class Group {
      */
     public Vector2f oneLine(int n){
         relPos.x=Math.round((float)n/2f);
-        relPos.x*=(((n+1)%2)==0?-1:1)*Directions[groupDirection].y;
+        relPos.x*=(((n+1)%2)==0?-1:1)*directions[groupDirection].y;
         relPos.y=Math.round((float)n/2f);
-        relPos.y*=(((n+1)%2)==0?-1:1)*-Directions[groupDirection].x;    
-        System.out.println(n + " " + relPos.toString());
+        relPos.y*=(((n+1)%2)==0?-1:1)*-directions[groupDirection].x;    
         return relPos;
     }
     
@@ -77,18 +82,27 @@ public final class Group {
 
     public void onUnitMovedGrid(Unit u) {
         if (getLeader().equals(u)) {            
-            for(int i=0; i<units.size(); i++)
+            onLeaderMovedGrid(u);
+        }
+    }
+    
+    public void onLeaderMovedGrid(Unit leader)
+    { 
+        if(!leader.next.equals(Vector2f.ZERO))
+        {
+            groupDirection=(int) ((leader.next.x+1)*3+leader.next.y+1);
+        }
+        for(int i=0; i<units.size(); i++)
+        {
+            if(i == leaderIndex)
             {
-                if(i == leaderIndex)
-                {
-                    continue;
-                }
-                units.get(i).moveTo((int)getLeader().pos.x+(int)(oneLine(i)).x,(int)getLeader().pos.y+(int)(oneLine(i)).y);
+                continue;
             }
-            if(inPosition())
-            {
-                getLeader().moveTo(leaderDest);
-            }
+            units.get(i).moveTo((int)getLeader().pos.x+(int)(oneLine(i)).x,(int)getLeader().pos.y+(int)(oneLine(i)).y);
+        }
+        if(inPosition())
+        {
+            getLeader().moveTo(leaderDest);
         }
     }
 }
