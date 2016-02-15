@@ -98,7 +98,7 @@ public class BattleMap {
     public static final int neighbours[][] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
 
     public final List<Vector2f> getPath(int posX, int posY, int destX, int destY) {
-
+        
         fullPath.clear();
         if (!grid[destX * mapHeight + destY].isAccesible() || (posX == destX && posY == destY)) {
             fullPath.add(new Vector2f(posX, posY));

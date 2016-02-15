@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * TODO:
- * -Stop the leader until the group is not inPosition
+ * -Dont send two unit to the same position (same distance from them)
  * -twoLine formation
  * -threeLine formation
  * -triangle formation
@@ -30,6 +30,7 @@ public final class Group {
     new Vector2f(1,1)   //Left Up
     };
     List<Unit> units = new ArrayList<>();
+    Vector2f formation[];
 
     public Group() {
         
@@ -40,14 +41,20 @@ public final class Group {
      * @param n Index of the unit in the group.
      * @return Returns the relative positon to the leader.
      */
+    int posShift=0;
     public Vector2f oneLine(int n){
-        for(int i=0; i<5; i++){
+        for(int i=posShift; i<10; i++){
             relPos.x=Math.round((float)(n+i)/2f);
-            relPos.x*=(((n+i+1)%2)==0?-1:1)*directions[groupDirection].y;
+            relPos.x*=(((n+i+1)%2)==0?1:-1)*directions[groupDirection].y;
             relPos.y=Math.round((float)(n+i)/2f);
-            relPos.y*=(((n+i+1)%2)==0?-1:1)*-directions[groupDirection].x;
-            if(units.get(n).map.grid[(int)((units.get(n).pos.x+relPos.x)*units.get(n).map.mapHeight)+(int)(units.get(n).pos.y+relPos.y)].isAccesible())
+            relPos.y*=(((n+i+1)%2)==0?1:-1)*-directions[groupDirection].x;
+            if((int)((units.get(n).pos.x+relPos.x)*Unit.map.mapHeight)*(int)(units.get(n).pos.y+relPos.y)<0)
+                continue;
+            if(Unit.map.grid[(int)((units.get(leaderIndex).pos.x+relPos.x)*Unit.map.mapHeight)+(int)(units.get(leaderIndex).pos.y+relPos.y)].isAccesible() &&
+            Unit.map.units[(int)((units.get(leaderIndex).pos.x+relPos.x)*Unit.map.mapHeight)+(int)(units.get(leaderIndex).pos.y+relPos.y)]==null)
             {
+                System.out.println(relPos.toString());
+                posShift+=i;
                 return relPos;
             }
         }
@@ -61,11 +68,11 @@ public final class Group {
         {
             if(i == leaderIndex)
             {
-                System.out.println("leader: "+units.get(i).pos.toString());
                 continue;
             }
-            if(!units.get(i).pos.equals(getLeader().pos.add(oneLine(i).subtract(getLeader().next))))
+            if(false)
             {
+                System.out.println("unit: "+units.get(i).pos.toString()+" leader+form: "+getLeader().pos.add(formation[i]));
                 a=false;
             }
         }
@@ -100,33 +107,57 @@ public final class Group {
     
     public void onLeaderMovedGrid(Unit leader)
     { 
+        this.formation = new Vector2f[units.size()];
+        float distance[][]=new float[units.size()][units.size()];
         if(!leader.next.equals(Vector2f.ZERO))
         {
             groupDirection=(int) ((leader.next.x+1)*3+leader.next.y+1);
         }
         for(int i=0; i<units.size(); i++)
         {
+            formation[i]=new Vector2f(leader.pos.add(oneLine(i)));
+        }
+        posShift=0;
+        for(int i=0; i<units.size(); i++)
+        {
             if(i == leaderIndex)
             {
                 continue;
             }
-            units.get(i).moveTo((int)getLeader().pos.x+(int)(oneLine(i)).x,(int)getLeader().pos.y+(int)(oneLine(i)).y);
-        }
-        if(inPosition())
-        {
-            getLeader().moveTo((int)leaderDest.x,(int)leaderDest.y);
-        }
-        else
-        {
-            getLeader().moveTo((int)getLeader().pos.x, (int)getLeader().pos.y);
-            for(int i=0; i<units.size(); i++)
+            for(int j=0; j<units.size();j++)
             {
-                if(i == leaderIndex)
+                distance[i][j]=units.get(i).pos.distance(formation[j]);
+            }
+        }
+        for(int i=0; i<units.size(); i++)
+        {
+            float min=Float.MAX_VALUE;
+            int minIndex=0;
+            if(i == leaderIndex)
+            {
+                continue;
+            }
+            for(int j=0; j<units.size(); j++)
+            {
+                if(j == leaderIndex)
                 {
                     continue;
                 }
-                units.get(i).moveTo((int)getLeader().pos.x+(int)(oneLine(i)).x,(int)getLeader().pos.y+(int)(oneLine(i)).y);
+                if(min>distance[i][j])
+                {
+                    min=distance[i][j];
+                    minIndex=j;
+                }
             }
+            units.get(i).moveTo((int)formation[minIndex].x,(int)formation[minIndex].y);            
+        }
+        if(inPosition())
+        {
+            leader.moveTo((int)leaderDest.x,(int)leaderDest.y);
+        }
+        else
+        {
+            //leader.moveTo((int)leader.pos.x, (int)leader.pos.y);
         }
     }
 }
