@@ -5,80 +5,77 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO:
- * -Dont send two unit to the same position (same distance from them)
- * -twoLine formation
- * -threeLine formation
- * -triangle formation
+ * TODO: -Dont send two unit to the same position (same distance from them)
+ * -twoLine formation -threeLine formation -triangle formation
+ *
  * @author szend
  */
 public final class Group {
 
     int leaderIndex = 0;
-    int groupDirection=3;
+    int groupDirection = 3;
     Vector2f relPos = new Vector2f();
     Vector2f leaderDest = new Vector2f();
-    static final Vector2f directions[]={
-    new Vector2f(-1,-1),//Right Down
-    new Vector2f(-1,0), //Right
-    new Vector2f(-1,1), //Right Up
-    new Vector2f(0,-1), //Down
-    new Vector2f(0,0),  //None
-    new Vector2f(0,1),  //Up
-    new Vector2f(1,-1), //Left Down
-    new Vector2f(1,0),  //Left
-    new Vector2f(1,1)   //Left Up
+    static final Vector2f directions[] = {
+        new Vector2f(-1, -1),//Right Down
+        new Vector2f(-1, 0), //Right
+        new Vector2f(-1, 1), //Right Up
+        new Vector2f(0, -1), //Down
+        new Vector2f(0, 0), //None
+        new Vector2f(0, 1), //Up
+        new Vector2f(1, -1), //Left Down
+        new Vector2f(1, 0), //Left
+        new Vector2f(1, 1) //Left Up
     };
     List<Unit> units = new ArrayList<>();
     Vector2f formation[];
 
     public Group() {
-        
+
     }
-    
+
     /**
      * One line formation
+     *
      * @param n Index of the unit in the group.
      * @return Returns the relative positon to the leader.
      */
-    int posShift=0;
-    public Vector2f oneLine(int n){
-        for(int i=posShift; i<10; i++){
-            relPos.x=Math.round((float)(n+i)/2f);
-            relPos.x*=(((n+i+1)%2)==0?1:-1)*directions[groupDirection].y;
-            relPos.y=Math.round((float)(n+i)/2f);
-            relPos.y*=(((n+i+1)%2)==0?1:-1)*-directions[groupDirection].x;
-            if((int)((units.get(n).pos.x+relPos.x)*Unit.map.mapHeight)*(int)(units.get(n).pos.y+relPos.y)<0)
+    int posShift = 0;
+
+    public Vector2f oneLine(int n) {
+        for (int i = posShift; i < 10; i++) {
+            relPos.x = Math.round((float) (n + i) / 2f);
+            relPos.x *= (((n + i + 1) % 2) == 0 ? 1 : -1) * directions[groupDirection].y;
+            relPos.y = Math.round((float) (n + i) / 2f);
+            relPos.y *= (((n + i + 1) % 2) == 0 ? 1 : -1) * -directions[groupDirection].x;
+            if ((int) ((units.get(n).pos.x + relPos.x) * Unit.map.mapHeight) * (int) (units.get(n).pos.y + relPos.y) < 0) {
                 continue;
-            if(Unit.map.grid[(int)((units.get(leaderIndex).pos.x+relPos.x)*Unit.map.mapHeight)+(int)(units.get(leaderIndex).pos.y+relPos.y)].isAccesible() &&
-            Unit.map.units[(int)((units.get(leaderIndex).pos.x+relPos.x)*Unit.map.mapHeight)+(int)(units.get(leaderIndex).pos.y+relPos.y)]==null)
-            {
+            }
+            if (Unit.map.terrain.getGrid()[(int) ((units.get(leaderIndex).pos.x + relPos.x) * Unit.map.mapHeight) + (int) (units.get(leaderIndex).pos.y + relPos.y)].isAccesible()
+                    && Unit.map.units.getUnitAt(units.get(leaderIndex).pos.add(relPos)
+                    ) == null) {
                 System.out.println(relPos.toString());
-                posShift+=i;
+                posShift += i;
                 return relPos;
             }
         }
         return relPos;
     }
-    
-    public boolean inPosition()
-    {
-        boolean a=true;
-        for(int i=0; i<units.size(); i++)
-        {
-            if(i == leaderIndex)
-            {
+
+    public boolean inPosition() {
+        boolean a = true;
+        for (int i = 0; i < units.size(); i++) {
+            if (i == leaderIndex) {
                 continue;
             }
-            if(false)
-            {
-                System.out.println("unit: "+units.get(i).pos.toString()+" leader+form: "+getLeader().pos.add(formation[i]));
-                a=false;
+            if (false) {
+                System.out.println("unit: " + units.get(i).pos.toString() + " leader+form: " + getLeader().pos.add(formation[i]));
+                a = false;
             }
         }
         return a;
     }
-    
+
     public Unit getLeader() {
         return units.get(leaderIndex);
     }
@@ -88,75 +85,59 @@ public final class Group {
     }
 
     public void moveTo(int x, int y) {
-        leaderDest.x=x;
-        leaderDest.y=y;
+        leaderDest.x = x;
+        leaderDest.y = y;
         getLeader().moveTo(x, y);
     }
 
     public void onUnitMovedGrid(Unit u) {
-        if (getLeader().equals(u)) {            
+        if (getLeader().equals(u)) {
             onLeaderMovedGrid(u);
-        }
-        else
-        {
+        } else {
             if (inPosition()) {
-                getLeader().moveTo((int)leaderDest.x,(int)leaderDest.y);
+                getLeader().moveTo((int) leaderDest.x, (int) leaderDest.y);
             }
         }
     }
-    
-    public void onLeaderMovedGrid(Unit leader)
-    { 
+
+    public void onLeaderMovedGrid(Unit leader) {
         this.formation = new Vector2f[units.size()];
-        float distance[][]=new float[units.size()][units.size()];
-        if(!leader.next.equals(Vector2f.ZERO))
-        {
-            groupDirection=(int) ((leader.next.x+1)*3+leader.next.y+1);
+        float distance[][] = new float[units.size()][units.size()];
+        if (!leader.nextStepDirection().equals(Vector2f.ZERO)) {
+            groupDirection = (int) ((leader.nextStepDirection().x + 1) * 3 + leader.nextStepDirection().y + 1);
         }
-        for(int i=0; i<units.size(); i++)
-        {
-            formation[i]=new Vector2f(leader.pos.add(oneLine(i)));
+        for (int i = 0; i < units.size(); i++) {
+            formation[i] = new Vector2f(leader.pos.add(oneLine(i)));
         }
-        posShift=0;
-        for(int i=0; i<units.size(); i++)
-        {
-            if(i == leaderIndex)
-            {
+        posShift = 0;
+        for (int i = 0; i < units.size(); i++) {
+            if (i == leaderIndex) {
                 continue;
             }
-            for(int j=0; j<units.size();j++)
-            {
-                distance[i][j]=units.get(i).pos.distance(formation[j]);
+            for (int j = 0; j < units.size(); j++) {
+                distance[i][j] = units.get(i).pos.distance(formation[j]);
             }
         }
-        for(int i=0; i<units.size(); i++)
-        {
-            float min=Float.MAX_VALUE;
-            int minIndex=0;
-            if(i == leaderIndex)
-            {
+        for (int i = 0; i < units.size(); i++) {
+            float min = Float.MAX_VALUE;
+            int minIndex = 0;
+            if (i == leaderIndex) {
                 continue;
             }
-            for(int j=0; j<units.size(); j++)
-            {
-                if(j == leaderIndex)
-                {
+            for (int j = 0; j < units.size(); j++) {
+                if (j == leaderIndex) {
                     continue;
                 }
-                if(min>distance[i][j])
-                {
-                    min=distance[i][j];
-                    minIndex=j;
+                if (min > distance[i][j]) {
+                    min = distance[i][j];
+                    minIndex = j;
                 }
             }
-            units.get(i).moveTo((int)formation[minIndex].x,(int)formation[minIndex].y);            
+            units.get(i).moveTo((int) formation[minIndex].x, (int) formation[minIndex].y);
         }
-        if(inPosition())
-        {
-            leader.moveTo((int)leaderDest.x,(int)leaderDest.y);
-        }
-        else
-        {
+        if (inPosition()) {
+            leader.moveTo((int) leaderDest.x, (int) leaderDest.y);
+        } else {
             //leader.moveTo((int)leader.pos.x, (int)leader.pos.y);
         }
     }

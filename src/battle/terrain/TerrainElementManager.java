@@ -1,6 +1,6 @@
 package battle.terrain;
 
-import battle.terrain.render.CustomTextureAtlas;
+import battle.gfx.CustomTextureAtlas;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;

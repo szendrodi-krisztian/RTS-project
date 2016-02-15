@@ -2,7 +2,7 @@ package battle.terrain;
 
 import java.util.Random;
 
-public class SimplexNoise {
+public final class SimplexNoise {
 
     private final SimplexNoise_octave[] octaves;
     private final float[] frequencys;

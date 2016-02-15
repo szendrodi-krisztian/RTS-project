@@ -1,5 +1,7 @@
 package battle.entity;
 
+import com.jme3.math.Vector2f;
+
 /**
  * Placeholder class for testing porpouses only.
  * @author Krisz
@@ -107,7 +109,7 @@ public class SimpleWeapon implements IWeapon {
     }
 
     @Override
-    public void attack(Unit.Pose pose, float acc, float dmg_mult, int sx, int sy, int dx, int dy) {
+    public void attack(Unit.Pose pose, float acc, float dmg_mult, Vector2f source, int dx, int dy) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

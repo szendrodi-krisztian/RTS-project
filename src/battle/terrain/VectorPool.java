@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battle.terrain;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  *
@@ -16,14 +10,13 @@ import java.util.LinkedList;
  */
 public final class VectorPool {
 
-    private static class Loader {
+    private final static class Loader {
 
         static final VectorPool instance = new VectorPool();
     }
     private static final int INITIAL_POOL_SIZE = 0;
-    private BiMap<MyVector2f, Long> poolMap;
+    private final BiMap<MyVector2f, Long> poolMap;
     private long count = 0;
-    private long count2 = 0;
     private final ArrayList<Long> freeIndex;
 
     public static VectorPool getInstance() {
@@ -31,7 +24,6 @@ public final class VectorPool {
     }
 
     private VectorPool() {
-
         this.freeIndex = new ArrayList<>();
         this.poolMap = (HashBiMap.create(INITIAL_POOL_SIZE));
         for (long i = 0; i < INITIAL_POOL_SIZE; i++) {
@@ -40,7 +32,7 @@ public final class VectorPool {
         }
     }
 
-    public final MyVector2f createVector(float x, float y) {
+    public MyVector2f createVector(float x, float y) {
         MyVector2f vec;
         Long index = null;
         if (!freeIndex.isEmpty()) {
@@ -49,8 +41,6 @@ public final class VectorPool {
         if (index == null) {
             vec = new MyVector2f();
             poolMap.put(vec, count++);
-            count2++;
-            //System.out.println(count+" "+count2+" "+poolMap.size());
         } else {
             vec = poolMap.inverse().get(index);
         }
@@ -59,7 +49,7 @@ public final class VectorPool {
         return vec;
     }
 
-    public final void destroyVector(MyVector2f c) {
+    public void destroyVector(MyVector2f c) {
         Long index = poolMap.get(c);
         if(index == null) return;
             freeIndex.add(poolMap.get(c));

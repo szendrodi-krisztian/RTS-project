@@ -8,6 +8,7 @@ package mygame;
 import battle.BattleMap;
 import battle.entity.Group;
 import battle.entity.Unit;
+import battle.path.Path;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -130,7 +131,7 @@ public class BattleState extends AbstractAppState {
                                 return;
                             }
                             Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
-                            Unit unit = map.units[map.mapHeight * (int) hit_geom.x + (int) hit_geom.z];
+                            Unit unit = map.units.getUnitAt(hit_geom.x, hit_geom.z);
                             System.out.println(unit);
                             if (unit != null) {
                                 select = unit.getGroup();
@@ -151,7 +152,7 @@ public class BattleState extends AbstractAppState {
                                 }
 
                                 select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z);
-                                List<Vector2f> p = map.getPath((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().dest.x, (int) select.getLeader().dest.y);
+                                List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().dest.x, (int) select.getLeader().dest.y, map.terrain.raw(), map.units);
                                 FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
                                 for (Vector2f v : p) {
                                     vb.put(v.x).put(0.2f).put(v.y);

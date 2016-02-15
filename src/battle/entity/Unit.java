@@ -1,23 +1,16 @@
 package battle.entity;
 
 import battle.BattleMap;
+import battle.path.Path;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.material.Material;
-import com.jme3.material.RenderState;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
-import com.jme3.scene.debug.WireBox;
 import com.jme3.texture.Texture;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -27,12 +20,8 @@ import org.lwjgl.BufferUtils;
  *
  * @author Krisz
  */
-public abstract class Unit {
+public abstract class Unit extends RawUnit{
 
-    public enum Pose {
-
-        STANDING, CROUCHING, LAYING
-    }
 
     public enum Rotation {
 
@@ -43,10 +32,7 @@ public abstract class Unit {
 
     public  static BattleMap map;
 
-    private final IVehicle vehicle;
-    private final IWeapon weapon;
-
-    private Pose pose;
+    
 
     private Rotation rotation;
 
@@ -55,29 +41,15 @@ public abstract class Unit {
     public boolean moved;
 
     // The position on the grid
-    public Vector2f pos = new Vector2f();
+    
     // positional value [0-1[
     private final Vector2f fractal = new Vector2f();
-    public Vector2f dest = new Vector2f();
-    public  Vector2f next = new Vector2f();
-    // Health points
-    private int health;
-    // Angle in rads
-    private float accuracy;
-    // [0-100]
-    private int stamina;
-    //
-    private float discipline;
-    //
-    private float morale;
-    //
-    private float dmg_mult;
+
     //
     private static AssetManager assets;
     //
     private static Node node;
     //
-    private static Group group;
 
     public static void init(BattleMap map, AssetManager assets, Node root) {
         Unit.node = root;
@@ -85,15 +57,11 @@ public abstract class Unit {
         Unit.map = map;
     }
     
-    public Group getGroup(){
-        return group;
-    }
+   
 
-    public Unit(IVehicle vehicle, IWeapon weapon, Group g) {
-        this.group = g;
+    public Unit(IVehicle vehicle, IWeapon weapon, Group group) {
+        super(vehicle, weapon, group, Pose.STANDING);
         group.join(this);
-        this.vehicle = vehicle;
-        this.weapon = weapon;
         Material m = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
         Texture t = assets.loadTexture(new TextureKey("Textures/units/unit.png", false));
 
@@ -147,30 +115,30 @@ public abstract class Unit {
         int ret = 0;
         // get new only if im in place.
         if (FastMath.abs(fractal.x) < 0.01f && FastMath.abs(fractal.y) < 0.01f) {
-            next = map.pathFinder((int) pos.x, (int) pos.y, (int) dest.x, (int) dest.y);
+            moveTo(dest, map);
         }
         // if reached next on x axis, refresh destination only on x axis.
         if (FastMath.abs(fractal.x) < 0.01f) {
-            fractal.x = -next.x;
-            pos.x += next.x;
+            fractal.x = -nextStepDirection().x;
+            pos.x += nextStepDirection().x;
             geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
             // we must return here because in one movement there can be only one grid chage, in respect to the axes.
             // if next is 0, that means we did not really move here.
-            if (next.x != 0) {
-                ret =  (int) (next.x * map.mapHeight);
+            if (nextStepDirection().x != 0) {
+                ret =  (int) (nextStepDirection().x * map.mapHeight);
                 group.onUnitMovedGrid(this);
             }
         }
         if (FastMath.abs(fractal.y) < 0.01f) {
-            fractal.y = -next.y;
-            pos.y += next.y;
+            fractal.y = -nextStepDirection().y;
+            pos.y += nextStepDirection().y;
             geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
-            if (next.y != 0) {
-                ret +=(int) (next.y);
+            if (nextStepDirection().y != 0) {
+                ret +=(int) (nextStepDirection().y);
                 group.onUnitMovedGrid(this);
             }
         }
-        float speed = (tpf * vehicle.getMovementSpeed()) / (N_STEP*(FastMath.abs(next.x)+FastMath.abs(next.y)+((next.x==0&&next.y==0)?1:0)));
+        float speed = (tpf * vehicle.getMovementSpeed()) / (N_STEP*(FastMath.abs(nextStepDirection().x)+FastMath.abs(nextStepDirection().y)+((nextStepDirection().x==0&&nextStepDirection().y==0)?1:0)));
         if (FastMath.abs(fractal.x) > 0.01f) {
             float sb = FastMath.sign(fractal.x);
             fractal.x += (fractal.x > 0) ? -speed : speed;
@@ -197,21 +165,9 @@ public abstract class Unit {
      * @param y
      */
     public void moveTo(int x, int y) {
-        dest.x = x;
-        dest.y = y;
-    }
-    
-    public void moveTo(Vector2f v){
-        dest = v;
+        moveTo(new Vector2f(x, y), map);
     }
 
-    public final void attack(int x, int y) {
-        weapon.attack(pose, accuracy, dmg_mult, (int) pos.x, (int) pos.y, x, y);
-    }
-
-    public void setPose(Pose p) {
-        pose = p;
-    }
 
     public Pose getPose() {
         return pose;
@@ -220,8 +176,10 @@ public abstract class Unit {
     public abstract String getTexture();
 
     @Override
-    public final String toString() {
-        return "Unit{" + "vehicle=" + vehicle + ", weapon=" + weapon + ", pos.x=" + pos.x + ", pos.y=" + pos.y + ", fractal.x=" + fractal.x + ", fractal.y=" + fractal.y + ", dest.x=" + dest.x + ", dest.y=" + dest.y + ", next.x=" + next.x + ", next.y=" + next.y + ", health=" + health + ", accuracy=" + accuracy + ", stamina=" + stamina + ", discipline=" + discipline + ", morale=" + morale + ", dmg_mult=" + dmg_mult + '}';
+    public String toString() {
+        return "Unit{" + "geometry=" + geometry + ", rotation=" + rotation + ", moved=" + moved + ", fractal=" + fractal + '}';
     }
+
+    
 
 }

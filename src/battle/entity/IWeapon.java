@@ -5,7 +5,9 @@
  */
 package battle.entity;
 
-import battle.entity.Unit.Pose;
+import battle.entity.RawUnit.Pose;
+import com.jme3.math.Vector2f;
+
 
 /**
  *
@@ -49,7 +51,7 @@ public interface IWeapon {
 
     public void setReady(boolean r);
     
-    public void attack(Pose pose, float acc, float dmg_mult, int sx, int sy, int dx, int dy);
+    public void attack(Pose pose, float acc, float dmg_mult, Vector2f source, int dx, int dy);
     
 
 }

@@ -1,4 +1,4 @@
-package battle.terrain.render;
+package battle.gfx;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
