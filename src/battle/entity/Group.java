@@ -6,7 +6,6 @@ import java.util.List;
 
 /**
  * TODO:
- * -Change the groupDirection, after the leader changed direction
  * -Stop the leader until the group is not inPosition
  * -twoLine formation
  * -threeLine formation
@@ -42,10 +41,16 @@ public final class Group {
      * @return Returns the relative positon to the leader.
      */
     public Vector2f oneLine(int n){
-        relPos.x=Math.round((float)n/2f);
-        relPos.x*=(((n+1)%2)==0?-1:1)*directions[groupDirection].y;
-        relPos.y=Math.round((float)n/2f);
-        relPos.y*=(((n+1)%2)==0?-1:1)*-directions[groupDirection].x;    
+        for(int i=0; i<5; i++){
+            relPos.x=Math.round((float)(n+i)/2f);
+            relPos.x*=(((n+i+1)%2)==0?-1:1)*directions[groupDirection].y;
+            relPos.y=Math.round((float)(n+i)/2f);
+            relPos.y*=(((n+i+1)%2)==0?-1:1)*-directions[groupDirection].x;
+            if(units.get(n).map.grid[(int)((units.get(n).pos.x+relPos.x)*units.get(n).map.mapHeight)+(int)(units.get(n).pos.y+relPos.y)].isAccesible())
+            {
+                return relPos;
+            }
+        }
         return relPos;
     }
     
@@ -56,9 +61,10 @@ public final class Group {
         {
             if(i == leaderIndex)
             {
+                System.out.println("leader: "+units.get(i).pos.toString());
                 continue;
             }
-            if(!units.get(i).pos.equals(getLeader().pos.add(oneLine(i))))
+            if(!units.get(i).pos.equals(getLeader().pos.add(oneLine(i).subtract(getLeader().next))))
             {
                 a=false;
             }
@@ -84,6 +90,12 @@ public final class Group {
         if (getLeader().equals(u)) {            
             onLeaderMovedGrid(u);
         }
+        else
+        {
+            if (inPosition()) {
+                getLeader().moveTo((int)leaderDest.x,(int)leaderDest.y);
+            }
+        }
     }
     
     public void onLeaderMovedGrid(Unit leader)
@@ -102,7 +114,19 @@ public final class Group {
         }
         if(inPosition())
         {
-            getLeader().moveTo(leaderDest);
+            getLeader().moveTo((int)leaderDest.x,(int)leaderDest.y);
+        }
+        else
+        {
+            getLeader().moveTo((int)getLeader().pos.x, (int)getLeader().pos.y);
+            for(int i=0; i<units.size(); i++)
+            {
+                if(i == leaderIndex)
+                {
+                    continue;
+                }
+                units.get(i).moveTo((int)getLeader().pos.x+(int)(oneLine(i)).x,(int)getLeader().pos.y+(int)(oneLine(i)).y);
+            }
         }
     }
 }
