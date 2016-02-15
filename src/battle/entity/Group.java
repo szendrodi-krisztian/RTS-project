@@ -50,7 +50,7 @@ public final class Group {
             relPos.y*=(((n+i+1)%2)==0?1:-1)*-directions[groupDirection].x;
             if((int)((units.get(n).pos.x+relPos.x)*Unit.map.mapHeight)*(int)(units.get(n).pos.y+relPos.y)<0)
                 continue;
-            if(Unit.map.grid[(int)((units.get(leaderIndex).pos.x+relPos.x)*Unit.map.mapHeight)+(int)(units.get(leaderIndex).pos.y+relPos.y)].isAccesible() &&
+            if(Unit.map.terrain.getGrid()[(int)((units.get(leaderIndex).pos.x+relPos.x)*Unit.map.mapHeight)+(int)(units.get(leaderIndex).pos.y+relPos.y)].isAccesible() &&
             Unit.map.units[(int)((units.get(leaderIndex).pos.x+relPos.x)*Unit.map.mapHeight)+(int)(units.get(leaderIndex).pos.y+relPos.y)]==null)
             {
                 System.out.println(relPos.toString());

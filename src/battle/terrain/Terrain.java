@@ -1,0 +1,53 @@
+package battle.terrain;
+
+import com.jme3.asset.AssetManager;
+
+/**
+ *
+ * @author szend
+ */
+public final class Terrain {
+
+    public final TerrainElement grid[];
+    protected final int mapWidth, mapHeight;
+
+    public Terrain(int mapWidth, int mapHeight, AssetManager assets) {
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+        grid = new TerrainElement[mapWidth * mapHeight];
+        SimplexNoise noise = new SimplexNoise(128, 0.3f, 0xCAFFEE);
+        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, 0xCAFFEE);
+
+        for (int i = 0; i < mapWidth; i++) {
+            for (int j = 0; j < mapHeight; j++) {
+                float n = noise.getNoise(0.3f * i, 0.3f * j);
+                if (n < -0.12) {
+                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
+                    continue;
+                }
+                if (n < 0.015f) {
+                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
+                    continue;
+                }
+                if (treenoise.getNoise(20 * i, 20 * j) > 7f) {
+                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
+                } else {
+                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
+                }
+            }
+        }
+    }
+
+    public boolean isAccessible(int x, int y) {
+        return grid[x * mapHeight + y].isAccesible();
+    }
+
+    public int width() {
+        return mapWidth;
+    }
+
+    public int height() {
+        return mapHeight;
+    }
+
+}

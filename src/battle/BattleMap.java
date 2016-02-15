@@ -3,18 +3,13 @@ package battle;
 import battle.entity.Group;
 import battle.entity.SimpleUnit;
 import battle.entity.Unit;
+import battle.terrain.MeshedTerrain;
 import battle.terrain.MyVector2f;
-import battle.terrain.SimplexNoise;
+import battle.terrain.Terrain;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import battle.terrain.TerrainElement;
-import battle.terrain.TerrainElementManager;
 import battle.terrain.VectorPool;
-import battle.terrain.render.TerrainDecorationMesh;
-import battle.terrain.render.TerrainGridMesh;
-import com.jme3.scene.Mesh;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +20,7 @@ import java.util.List;
  */
 public class BattleMap {
 
-    public TerrainElement grid[];
+    public MeshedTerrain terrain;
 
     public Unit units[];
 
@@ -41,6 +36,7 @@ public class BattleMap {
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
+        terrain = new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets), rootNode);
         Unit.init(this, assets, rootNode);
         units = new Unit[mapWidth * mapHeight];
         Group g1 = new Group();
@@ -56,51 +52,15 @@ public class BattleMap {
         pathDistanceGrid = new int[mapWidth * mapHeight];
         subsequentGrids = new ArrayList<>();
 
-        grid = new TerrainElement[mapWidth * mapHeight];
-        SimplexNoise noise = new SimplexNoise(128, 0.3f, 0xCAFFEE);
-        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, 0xCAFFEE);
 
-        for (int i = 0; i < mapWidth; i++) {
-            for (int j = 0; j < mapHeight; j++) {
-                float n = noise.getNoise(0.3f * i, 0.3f * j);
-                if (n < -0.12) {
-                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
-                    continue;
-                }
-                if (n < 0.015f) {
-                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
-                    continue;
-                }
-                if (treenoise.getNoise(20 * i, 20 * j) > 7f) {
-                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
-                } else {
-                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
-                }
-            }
-        }
-        buildGridMesh(mapWidth, mapHeight, rootNode, assets);
     }
 
-    private void buildGridMesh(int n, int m, Node rootNode, AssetManager as) {
-        Mesh mesh = new TerrainGridMesh(n, m, grid);
-
-        Geometry geom = new Geometry("BattleTerrain", mesh);
-        geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
-        geom.move(0, 0, 0);
-        rootNode.attachChild(geom);
-
-        Mesh me = new TerrainDecorationMesh(n, m, grid);
-        Geometry g = new Geometry("BattleDecor", me);
-        g.move(0, 0.1f, 0);
-        g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
-        rootNode.attachChild(g);
-    }
     public static final int neighbours[][] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
 
     public final List<Vector2f> getPath(int posX, int posY, int destX, int destY) {
         
         fullPath.clear();
-        if (!grid[destX * mapHeight + destY].isAccesible() || (posX == destX && posY == destY)) {
+        if (!terrain.getGrid()[destX * mapHeight + destY].isAccesible() || (posX == destX && posY == destY)) {
             fullPath.add(new Vector2f(posX, posY));
             return fullPath;
         }
@@ -128,7 +88,7 @@ public class BattleMap {
                 }
                 int opt1 = ((int) currentGrid.x + neighbourX) * mapHeight + ((int) currentGrid.y + neighbourY);
                 int opt2 = (int) currentGrid.x * mapHeight + (int) currentGrid.y;
-                if (grid[opt1].isAccesible()
+                if (terrain.getGrid()[opt1].isAccesible()
                         && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1
                         && units[opt1] == null) {
                     pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
