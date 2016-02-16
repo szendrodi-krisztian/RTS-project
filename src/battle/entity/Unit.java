@@ -54,16 +54,17 @@ public abstract class Unit extends RawUnit {
     // NOTE: This may be wrong, needs code review
     public final void move(float tpf) {
         updateGfx();
-        Vector2f next = nextStepDirection();
         if (FastMath.abs(fractal.x) <= 0.01f) {
-            fractal.x = -next.x;
-            pos.x += next.x;
-            move();
+            fractal.x = -dest.x;
+            pos.x += dest.x;
+            dest.x = 0;
+            getGroup().onUnitMovedGrid(this);
         }
         if (FastMath.abs(fractal.y) <= 0.01f) {
-            fractal.y = -next.y;
-            pos.y += next.y;
-            move();
+            fractal.y = -dest.y;
+            pos.y += dest.y;
+            dest.y = 0;
+            getGroup().onUnitMovedGrid(this);
         }
         float s = (tpf * vehicle.getMovementSpeed()) / (N_STEP);
 

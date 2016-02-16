@@ -130,6 +130,7 @@ public final class Path extends ArrayList<Vector2f> {
 
     public Vector2f first() {
         Vector2f relative = get(size()-1);
+       
         return relative.subtract(posX, posY);
     }
 

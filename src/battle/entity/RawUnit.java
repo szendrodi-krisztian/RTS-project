@@ -1,6 +1,5 @@
 package battle.entity;
 
-import battle.path.Path;
 import com.jme3.math.Vector2f;
 
 /**
@@ -33,8 +32,6 @@ public abstract class RawUnit {
     protected float dmg_mult;
     public Vector2f pos;
     public Vector2f dest;
-    //
-    private Path path;
 
     public RawUnit(IVehicle vehicle, IWeapon weapon, Group group, Pose pose) {
         this.dest = new Vector2f();
@@ -43,7 +40,7 @@ public abstract class RawUnit {
         this.vehicle = vehicle;
         this.weapon = weapon;
         this.pose = pose;
-        path = new Path(pos, dest, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
+        //path = new Path(real_pos, dest, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
     }
 
     public final Group getGroup() {
@@ -62,26 +59,12 @@ public abstract class RawUnit {
         return dest;
     }
 
-    public final Vector2f nextStepDirection() {
-        return path.first();
-    }
-
     public final void moveTo(Vector2f dest) {
         this.dest = dest;
-        path = new Path(pos, dest, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
-    }
-
-    public final void move() {
-        path = new Path(pos, dest, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
     }
 
     public final Pose pose() {
         return pose;
-    }
-
-    @Override
-    public String toString() {
-        return "RawUnit{pos=" + pos + ", dest=" + dest + ", path=" + path + '}';
     }
 
 }
