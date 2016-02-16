@@ -48,9 +48,9 @@ public final class Path extends ArrayList<Vector2f> {
         reCalculate();
     }
 
+    // FIXME: Check the algorithm, because units move onto trees and eachother.(Im sorry..again)
     public void reCalculate() {
-        this.clear();
-
+        clear();
         if (!terrain.isAccessible(destX, destY) || (posX == destX && posY == destY)) {
             this.add(new Vector2f(posX, posY));
             return;
@@ -79,7 +79,7 @@ public final class Path extends ArrayList<Vector2f> {
                 }
                 int opt1 = ((int) currentGrid.x + neighbourX) * terrain.height() + ((int) currentGrid.y + neighbourY);
                 int opt2 = (int) currentGrid.x * terrain.height() + (int) currentGrid.y;
-                if (terrain.grid[opt1].isAccesible()
+                if (/*terrain.grid[opt1].isAccesible()*/terrain.isAccessible(currentGrid.x+neighbourX, currentGrid.y+neighbourY) 
                         && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1
                         && units.getUnitAt(((int) currentGrid.x + neighbourX), ((int) currentGrid.y + neighbourY)) == null) {
                     pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
@@ -107,21 +107,18 @@ public final class Path extends ArrayList<Vector2f> {
                 }
             }
         }
-        for (int i = 0; i < subsequentGrids.size(); i++) {
-            VectorPool.getInstance().destroyVector(subsequentGrids.get(i));
-            subsequentGrids.set(i, null);
+        for (MyVector2f subsequentGrid : subsequentGrids) {
+            VectorPool.getInstance().destroyVector(subsequentGrid);
         }
         subsequentGrids.clear();
     }
 
     public Vector2f first() {
-        Vector2f relative = get(size()-1).clone();
+        Vector2f relative = get(size()-1);
         if (units.getUnitAt(relative) != null) {
             return Vector2f.ZERO;
         }
-        System.out.println("rel: "+relative+" posx: "+posX+" posy: "+posY);
-        relative.subtractLocal(posX, posY);
-        return relative;
+        return relative.subtract(posX, posY);
     }
 
 }

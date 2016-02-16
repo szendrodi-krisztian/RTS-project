@@ -4,6 +4,7 @@ import com.jme3.math.Vector2f;
 
 /**
  * Abstracts a flat 2D array of Units.
+ *
  * @author szend
  */
 public class UnitGrid {
@@ -19,6 +20,7 @@ public class UnitGrid {
 
     /**
      * Place the given unit on the grid.
+     *
      * @param x The position.
      * @param y The position.
      * @param u The unit.
@@ -27,9 +29,12 @@ public class UnitGrid {
         units[mapHeight * x + y] = u;
     }
 
+    
+    // NOTE: This may be wrong, needs code review.
     /**
      * Move all units in this grid.
-     * @param tpf 
+     *
+     * @param tpf
      */
     public void move(float tpf) {
         for (Unit unit : units) {
@@ -42,20 +47,33 @@ public class UnitGrid {
          * If for any reason two units overlap one of them is DELETED, but the geometry stucks in the scene
          * Theoretically, the pathfinding wont let this happen but if it does, this could be the problem you are looking for.
          */
-        for (int i = 0; i < units.length; i++) {
-            if (units[i] != null && !units[i].moved) {
-                int r = units[i].move(tpf);
-                if (r != 0) {
-                    units[i + r] = units[i];
-                    units[i] = null;
+        for (int i = 0; i < mapWidth; i++) {
+            for (int j = 0; j < mapHeight; j++) {
+                Unit unit = getUnitAt(i, j);
+                if (unit != null && !unit.moved) {
+                    unit.move(tpf);
+                    unit.moved = true;
+                    Vector2f pos_before = unit.position();
+                    if (!(i == pos_before.x && j == pos_before.y)) {
+                        moveUnitFromTo(i, j, pos_before);
+                    }
                 }
-                units[i + r].moved = true;
             }
         }
+
+    }
+
+    private void moveUnitFromTo(int fromX, int fromY, Vector2f to) {
+        moveUnitFromTo(fromX, fromY, (int) (to.x), (int) (to.y));
+    }
+
+    private void moveUnitFromTo(int fromX, int fromY, int toX, int toY) {
+        units[mapHeight * toX + toY] = units[mapHeight * fromX + fromY];
+        units[mapHeight * fromX + fromY] = null;
     }
 
     /**
-     * @param position 
+     * @param position
      * @return The unit at (pos) or null if there is no unit there
      */
     public Unit getUnitAt(Vector2f position) {
@@ -63,7 +81,7 @@ public class UnitGrid {
     }
 
     /**
-     * @param x 
+     * @param x
      * @param y
      * @return The unit at (x,y) or null if there is no unit there
      */
@@ -72,7 +90,7 @@ public class UnitGrid {
     }
 
     /**
-     * @param x 
+     * @param x
      * @param y
      * @return The unit at (x,y) or null if there is no unit there
      */

@@ -1,6 +1,5 @@
 package battle.entity;
 
-import battle.BattleMap;
 import battle.path.Path;
 import com.jme3.math.Vector2f;
 
@@ -32,18 +31,19 @@ public abstract class RawUnit {
     protected float morale;
     //
     protected float dmg_mult;
-    //
-    public Vector2f pos = new Vector2f();
-    //
-    public Vector2f dest = new Vector2f();
+    public Vector2f pos;
+    public Vector2f dest;
     //
     private Path path;
 
     public RawUnit(IVehicle vehicle, IWeapon weapon, Group group, Pose pose) {
+        this.dest = new Vector2f();
+        this.pos = new Vector2f();
         this.group = group;
         this.vehicle = vehicle;
         this.weapon = weapon;
         this.pose = pose;
+        path = new Path(pos, dest, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
     }
 
     public final Group getGroup() {
@@ -63,21 +63,25 @@ public abstract class RawUnit {
     }
 
     public final Vector2f nextStepDirection() {
-        if (path != null) {
-            return path.first();
-        } else {
-            System.out.println("nulllll");
-            return Vector2f.ZERO.clone();
-        }
+        return path.first();
     }
 
-    public final void moveTo(Vector2f dest, BattleMap map) {
+    public final void moveTo(Vector2f dest) {
         this.dest = dest;
-        path = new Path(pos, dest, map.terrain.raw(), map.units);
+        path = new Path(pos, dest, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
     }
 
-    public void move() {
+    public final void move() {
+        path = new Path(pos, dest, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
+    }
 
+    public final Pose pose() {
+        return pose;
+    }
+
+    @Override
+    public String toString() {
+        return "RawUnit{pos=" + pos + ", dest=" + dest + ", path=" + path + '}';
     }
 
 }

@@ -1,12 +1,16 @@
 package battle.entity;
 
+import battle.BattleMap;
 import com.jme3.math.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * FIXME:-Check everything again (im really sorry i broke it altogether)
  * TODO: -Dont send two unit to the same position (same distance from them)
- * -twoLine formation -threeLine formation -triangle formation
+ * TODO: -twoLine formation 
+ * TODO: -threeLine formation 
+ * TODO: -triangle formation
  *
  * @author szend
  */
@@ -27,11 +31,16 @@ public final class Group {
         new Vector2f(1, 0), //Left
         new Vector2f(1, 1) //Left Up
     };
-    List<Unit> units = new ArrayList<>();
-    Vector2f formation[];
+    private final List<Unit> units = new ArrayList<>();
+    private Vector2f formation[];
+    private final BattleMap map;
 
-    public Group() {
-
+    public Group(BattleMap map) {
+        this.map = map;
+    }
+    
+    public BattleMap getMap(){
+        return map;
     }
 
     /**
@@ -48,11 +57,11 @@ public final class Group {
             relPos.x *= (((n + i + 1) % 2) == 0 ? 1 : -1) * directions[groupDirection].y;
             relPos.y = Math.round((float) (n + i) / 2f);
             relPos.y *= (((n + i + 1) % 2) == 0 ? 1 : -1) * -directions[groupDirection].x;
-            if ((int) ((units.get(n).pos.x + relPos.x) * Unit.map.mapHeight) * (int) (units.get(n).pos.y + relPos.y) < 0) {
+            if ((int) ((units.get(n).pos.x + relPos.x) * map.mapHeight) * (int) (units.get(n).pos.y + relPos.y) < 0) {
                 continue;
             }
-            if (Unit.map.terrain.getGrid()[(int) ((units.get(leaderIndex).pos.x + relPos.x) * Unit.map.mapHeight) + (int) (units.get(leaderIndex).pos.y + relPos.y)].isAccesible()
-                    && Unit.map.units.getUnitAt(units.get(leaderIndex).pos.add(relPos)
+            if (map.terrain.getGrid()[(int) ((units.get(leaderIndex).pos.x + relPos.x) * map.mapHeight) + (int) (units.get(leaderIndex).pos.y + relPos.y)].isAccesible()
+                    && map.units.getUnitAt(units.get(leaderIndex).pos.add(relPos)
                     ) == null) {
                 System.out.println(relPos.toString());
                 posShift += i;
@@ -87,7 +96,7 @@ public final class Group {
     public void moveTo(int x, int y) {
         leaderDest.x = x;
         leaderDest.y = y;
-        getLeader().moveTo(x, y);
+        getLeader().moveTo(new Vector2f(x, y));
     }
 
     public void onUnitMovedGrid(Unit u) {
@@ -95,7 +104,7 @@ public final class Group {
             onLeaderMovedGrid(u);
         } else {
             if (inPosition()) {
-                getLeader().moveTo((int) leaderDest.x, (int) leaderDest.y);
+                getLeader().moveTo(leaderDest);
             }
         }
     }
@@ -133,10 +142,10 @@ public final class Group {
                     minIndex = j;
                 }
             }
-            units.get(i).moveTo((int) formation[minIndex].x, (int) formation[minIndex].y);
+            units.get(i).moveTo(formation[minIndex].clone());
         }
         if (inPosition()) {
-            leader.moveTo((int) leaderDest.x, (int) leaderDest.y);
+            leader.moveTo(leaderDest);
         } else {
             //leader.moveTo((int)leader.pos.x, (int)leader.pos.y);
         }
@@ -144,47 +153,47 @@ public final class Group {
 }
 
 /*
-A groupoknak szükségük van egy irányra amerre a group néz.
-{{-1,-1},{0,-1},{-1,0},{1,0},{0,1},{1,1}  ,{-1,1}  ,{1,-1}}
+ A groupoknak szükségük van egy irányra amerre a group néz.
+ {{-1,-1},{0,-1},{-1,0},{1,0},{0,1},{1,1}  ,{-1,1}  ,{1,-1}}
  jobb le,le    ,jobb  ,bal  ,fel  ,bal fel,jobb fel,bal le
 
-Először a legegyszerűbb formációt kell létrehoznunk, ez az egysoros alakzat.
-A groupok mozgás metódusai formáció függetlenek kellenek, hogy legyenek,
-azaz minden formáció egy fügvény, amely megadja a mozgató metódusnak, hogy
-az x-edik embernek hova kell állni.
-A groupok mozgatását atomira kell szétszedni, azaz ha a leader megmozdul
-mozgatni kell utána a groupját, és a leader addig vár amíg az alakzat feláll.
-Ez a játékmenet és a programozás szempontjából is a legjobb megoldás.
-Mivel a group nyolc irányba nézhet mikor elindul, és nyolc irányba
-nézhet a mozgatás után, ezért ezeket mind külön kellene nézni.
-Azonban ezeket két fő részre oszthatjuk, amelyek csak 
-egységnyi (1 grid-nyi elmozdulás) mozgást írnak le:
--Mozgatás a 8 irányba
--Forgás egyhelyben
+ Először a legegyszerűbb formációt kell létrehoznunk, ez az egysoros alakzat.
+ A groupok mozgás metódusai formáció függetlenek kellenek, hogy legyenek,
+ azaz minden formáció egy fügvény, amely megadja a mozgató metódusnak, hogy
+ az x-edik embernek hova kell állni.
+ A groupok mozgatását atomira kell szétszedni, azaz ha a leader megmozdul
+ mozgatni kell utána a groupját, és a leader addig vár amíg az alakzat feláll.
+ Ez a játékmenet és a programozás szempontjából is a legjobb megoldás.
+ Mivel a group nyolc irányba nézhet mikor elindul, és nyolc irányba
+ nézhet a mozgatás után, ezért ezeket mind külön kellene nézni.
+ Azonban ezeket két fő részre oszthatjuk, amelyek csak 
+ egységnyi (1 grid-nyi elmozdulás) mozgást írnak le:
+ -Mozgatás a 8 irányba
+ -Forgás egyhelyben
 
-Mozgatás 8 iányba:
-Akkor történik, ha az "a->b"-be való mozgás során a group egyazon
-irányba néz.
-Forgás egyhelyben:
-Akkor történik, ha a leader már a megfelelő pozíción áll, azonban
-a többi unitnak még fel kell vennie a group irányának megfelelő alakzatot.
+ Mozgatás 8 iányba:
+ Akkor történik, ha az "a->b"-be való mozgás során a group egyazon
+ irányba néz.
+ Forgás egyhelyben:
+ Akkor történik, ha a leader már a megfelelő pozíción áll, azonban
+ a többi unitnak még fel kell vennie a group irányának megfelelő alakzatot.
 
-Ahoz, hogy az alakzat tartása ne lassítsa túlságosan a csapatot, ezért
-azokban az esetekben amikor az alakzat tartása egy unittól megköveteli,
-hogy két vagy több gridnyi utat tegyen meg, a unit mozgási sebességét
-megnöveljük, mintha a helyére "futna".
+ Ahoz, hogy az alakzat tartása ne lassítsa túlságosan a csapatot, ezért
+ azokban az esetekben amikor az alakzat tartása egy unittól megköveteli,
+ hogy két vagy több gridnyi utat tegyen meg, a unit mozgási sebességét
+ megnöveljük, mintha a helyére "futna".
 
-A group tartalmazhasson "tartalákosokat"(másodlagos unitok), azaz 
-olyan unitokat, amelyek nem lőnek, továbbá nem részei a group eredeti 
-formációjának, hanem azt a cél szolgálják, hogy ha a formációban 
-egy unit meghal, akkor átvegyék a helyét. Ezek a unitok a többi mögött 
-helyezkednek el.
-A másodlagos unitok továbbá lehetnek olyan unitok amelyek a terep 
-adottságai miatt nem tudják elfoglalni ésszerű határok között
-az alakzatban betöltött pozíciójukat. Azonban ha a group elmozdul
-és a formációban betöltött helyük felszabadul vissza lépnek
-az elsődleges unitok közé.
+ A group tartalmazhasson "tartalákosokat"(másodlagos unitok), azaz 
+ olyan unitokat, amelyek nem lőnek, továbbá nem részei a group eredeti 
+ formációjának, hanem azt a cél szolgálják, hogy ha a formációban 
+ egy unit meghal, akkor átvegyék a helyét. Ezek a unitok a többi mögött 
+ helyezkednek el.
+ A másodlagos unitok továbbá lehetnek olyan unitok amelyek a terep 
+ adottságai miatt nem tudják elfoglalni ésszerű határok között
+ az alakzatban betöltött pozíciójukat. Azonban ha a group elmozdul
+ és a formációban betöltött helyük felszabadul vissza lépnek
+ az elsődleges unitok közé.
 
-Később a két vagy több soros alakzatokat relatíve könnyedén leírhatjuk
-két vagy több darab egy soros groupként.
-*/
+ Később a két vagy több soros alakzatokat relatíve könnyedén leírhatjuk
+ két vagy több darab egy soros groupként.
+ */

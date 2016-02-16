@@ -28,14 +28,20 @@ public class BattleMap {
     public List<Group> groups = new ArrayList<>();
 
     public int mapWidth, mapHeight;
+    
+    public AssetManager assets;
+    
+    public Node rootNode;
 
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
+        this.assets = assets;
+        this.rootNode = rootNode;
         terrain = new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets), rootNode);
-        Unit.init(this, assets, rootNode);
+        
         units = new UnitGrid(mapWidth, mapHeight);
-        Group g1 = new Group();
+        Group g1 = new Group(this);
 
         spawn(2, 2, g1, SimpleUnit.class);
         spawn(3, 2, g1, SimpleUnit.class);

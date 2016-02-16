@@ -10,11 +10,9 @@ public class Foot implements IVehicle{
     private String textureName;
 
     public Foot() {
-        speed = 300.0f;
+        speed = 30.0f;
         textureName = "foot";
     }
-    
-    
 
     @Override
     public float getMovementSpeed() {
