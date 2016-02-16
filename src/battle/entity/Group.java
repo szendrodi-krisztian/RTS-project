@@ -109,8 +109,8 @@ public final class Group {
         }
     }
 
-    public void onLeaderMovedGrid(Unit leader) {
-        this.formation = new Vector2f[units.size()];
+    public void onLeaderMovedGrid(Unit leader) {}
+        /*this.formation = new Vector2f[units.size()];
         float distance[][] = new float[units.size()][units.size()];
         if (!leader.nextStepDirection().equals(Vector2f.ZERO)) {
             groupDirection = (int) ((leader.nextStepDirection().x + 1) * 3 + leader.nextStepDirection().y + 1);
@@ -149,7 +149,7 @@ public final class Group {
         } else {
             //leader.moveTo((int)leader.pos.x, (int)leader.pos.y);
         }
-    }
+    }*/
 }
 
 /*
