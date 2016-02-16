@@ -77,9 +77,10 @@ public final class Path extends ArrayList<Vector2f> {
                         || (currentGrid.x + neighbourX) < 0 || (currentGrid.y + neighbourY) < 0) {
                     continue;
                 }
+                
                 int opt1 = ((int) currentGrid.x + neighbourX) * terrain.height() + ((int) currentGrid.y + neighbourY);
                 int opt2 = (int) currentGrid.x * terrain.height() + (int) currentGrid.y;
-                if (/*terrain.grid[opt1].isAccesible()*/terrain.isAccessible(currentGrid.x+neighbourX, currentGrid.y+neighbourY) 
+                if (terrain.isAccessible(currentGrid.x+neighbourX, currentGrid.y+neighbourY) 
                         && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1
                         && units.getUnitAt(((int) currentGrid.x + neighbourX), ((int) currentGrid.y + neighbourY)) == null) {
                     pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
@@ -111,13 +112,24 @@ public final class Path extends ArrayList<Vector2f> {
             VectorPool.getInstance().destroyVector(subsequentGrid);
         }
         subsequentGrids.clear();
+        //printGrid();
+    }
+    
+    private void printGrid(){
+        System.out.println("----------------------------------------------------------------------");
+        System.out.println("from: ("+posX+", "+posY+") to ("+destX+", "+destY+")");
+        System.out.println("path: "+this);
+        for(int i = terrain.width()-1;i>=0;i--){
+            for(int j = terrain.height()-1;j>=0;j--){
+                System.out.print(((pathDistanceGrid[j*terrain.height()+i]==Integer.MAX_VALUE)?"X":pathDistanceGrid[j*terrain.height()+i])+" ");
+            }
+            System.out.println();
+        }
+        System.out.println("----------------------------------------------------------------------");
     }
 
     public Vector2f first() {
         Vector2f relative = get(size()-1);
-        if (units.getUnitAt(relative) != null) {
-            return Vector2f.ZERO;
-        }
         return relative.subtract(posX, posY);
     }
 

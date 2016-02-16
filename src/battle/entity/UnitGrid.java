@@ -29,7 +29,6 @@ public class UnitGrid {
         units[mapHeight * x + y] = u;
     }
 
-    
     // NOTE: This may be wrong, needs code review.
     /**
      * Move all units in this grid.
@@ -56,6 +55,7 @@ public class UnitGrid {
                     Vector2f pos_before = unit.position();
                     if (!(i == pos_before.x && j == pos_before.y)) {
                         moveUnitFromTo(i, j, pos_before);
+                        System.out.println(this);
                     }
                 }
             }
@@ -103,6 +103,21 @@ public class UnitGrid {
      */
     private Unit getUnitAt(int index) {
         return units[index];
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("--------------------------------------------\n");
+        sb.append("UnitGrid:\n");
+        for(int i = mapWidth-1;i>=0;i--){
+            for(int j = mapHeight-1;j>=0;j--){
+                sb.append((getUnitAt(j, i)==null)?'0':'X');
+            }
+            sb.append('\n');
+        }
+        sb.append("--------------------------------------------");
+        return sb.toString();
     }
 
 }
