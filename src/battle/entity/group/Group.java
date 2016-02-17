@@ -42,7 +42,8 @@ public final class Group {
     public void moveTo(int x, int y) {
         Vector2f leader = new Vector2f(x, y);
         float rotation = (FastMath.RAD_TO_DEG * (new Vector2f(x, y).subtractLocal(getLeader().position()).angleBetween(new Vector2f(0, 1))));
-        rotation -= rotation % 45;
+        System.out.println(rotation);
+        //rotation -= rotation % 45;
         rotation = FastMath.DEG_TO_RAD * rotation;
         for (int i = 0; i < units.size(); i++) {
             Vector2f v = formation.getRelativePosition(i, leader, rotation);

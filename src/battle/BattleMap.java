@@ -49,6 +49,7 @@ public class BattleMap {
         spawn(4, 2, g1, SimpleUnit.class);
         spawn(5, 2, g1, SimpleUnit.class);
         spawn(6, 2, g1, SimpleUnit.class);
+        spawn(7, 2, g1, SimpleUnit.class);
     }
 
     /**
