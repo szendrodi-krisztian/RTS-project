@@ -5,6 +5,7 @@ import battle.gfx.UnitMesh;
 import battle.path.Path;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
@@ -37,8 +38,9 @@ public abstract class Unit extends RawUnit {
     public Unit(IVehicle vehicle, IWeapon weapon, Group group) {
         super(vehicle, weapon, group, Pose.STANDING);
         Material m = new Material(getGroup().getMap().assets, "Common/MatDefs/Light/Lighting.j3md");
-        Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unit.png", false));
-        Texture t2 = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unitalpha.png", false));
+        m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/le.png", false));
+        Texture t2 = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/le_alpha.png", false));
         m.setTexture("DiffuseMap", t);
         m.setTexture("AlphaMap", t2);
         Mesh mesh = new UnitMesh();
