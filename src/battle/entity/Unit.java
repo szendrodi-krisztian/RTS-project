@@ -41,6 +41,10 @@ public abstract class Unit extends RawUnit {
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/le.png", false));
         Texture t2 = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/le_alpha.png", false));
+        t.setMagFilter(Texture.MagFilter.Nearest);
+        t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
+        t2.setMagFilter(Texture.MagFilter.Nearest);
+        t2.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
         m.setTexture("DiffuseMap", t);
         m.setTexture("AlphaMap", t2);
         Mesh mesh = new UnitMesh();
