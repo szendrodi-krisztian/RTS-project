@@ -21,10 +21,10 @@ public class OneLineFormation extends AbstractFormation {
 
     @Override
     public Vector2f getRelativePosition(int unit_index, Vector2f leaderPosition, float rotationAngle) {
-        quater.fromAngleNormalAxis(rotationAngle, Vector3f.UNIT_Y);
+        quater.fromAngleNormalAxis(rotationAngle*FastMath.DEG_TO_RAD, Vector3f.UNIT_Y);
         float index = ((unit_index % 2 == 0) ? -1 : 1) * ((unit_index + 1) / 2);
         Vector3f v = new Vector3f(index, 0, 0);
-        if ((rotationAngle * FastMath.RAD_TO_DEG / 45) % 2 == 1) {
+        if ((rotationAngle / 45) % 2 == 1) {
             v.multLocal(FastMath.sqrt(2));
         }
         Vector3f rot = quater.mult(v);

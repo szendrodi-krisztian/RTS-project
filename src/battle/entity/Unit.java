@@ -105,7 +105,7 @@ public abstract class Unit extends RawUnit {
 
     @Override
     public String toString() {
-        return super.toString() + "Unit{" + "geometry=" + geometry + ", rotation=" + rotation + ", moved=" + moved + ", fractal=" + fractal + '}';
+        return super.toString() + "Unit{" + "geometry=" + geometry + ", rotation=" + rotation + ", moved=" + moved + ", fractal=" + fractal + ", destination=" + destination + ", path=" + path + '}';
     }
 
 }

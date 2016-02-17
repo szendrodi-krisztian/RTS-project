@@ -14,6 +14,9 @@ public abstract class RawUnit {
         STANDING, CROUCHING, LAYING
     }
 
+    public Vector2f pos;
+    public Vector2f dest;
+
     protected final Pose pose;
     protected final Group group;
     protected final IVehicle vehicle;
@@ -31,8 +34,6 @@ public abstract class RawUnit {
     protected float morale;
     //
     protected float dmg_mult;
-    public Vector2f pos;
-    public Vector2f dest;
 
     public RawUnit(IVehicle vehicle, IWeapon weapon, Group group, Pose pose) {
         this.dest = new Vector2f(0, 0);
@@ -62,6 +63,11 @@ public abstract class RawUnit {
 
     public final Pose pose() {
         return pose;
+    }
+
+    @Override
+    public String toString() {
+        return "RawUnit{" + "pos=" + pos + ", dest=" + dest + ", pose=" + pose + ", group=" + group + ", vehicle=" + vehicle + ", weapon=" + weapon + ", health=" + health + ", accuracy=" + accuracy + ", stamina=" + stamina + ", discipline=" + discipline + ", morale=" + morale + ", dmg_mult=" + dmg_mult + '}';
     }
 
 }

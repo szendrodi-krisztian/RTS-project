@@ -126,12 +126,12 @@ public final class Path extends ArrayList<Vector2f> {
         sb.append("----------------------------------------------------------------------\n");
         sb.append("from: (").append(posX).append(", ").append(posY).append(") to (").append(destX).append(", ").append(destY).append(")\n");
         sb.append("path: ").append(super.toString()).append("\n");
-        for (int i = terrain.width() - 1; i >= 0; i--) {
+       /* for (int i = terrain.width() - 1; i >= 0; i--) {
             for (int j = terrain.height() - 1; j >= 0; j--) {
                 sb.append((pathDistanceGrid[j * terrain.height() + i] == Integer.MAX_VALUE) ? "X" : pathDistanceGrid[j * terrain.height() + i]).append(" ");
             }
             sb.append('\n');
-        }
+        }*/
         sb.append("----------------------------------------------------------------------\n");
         return sb.toString();
     }
