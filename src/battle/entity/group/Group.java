@@ -45,7 +45,9 @@ public final class Group {
         rotation -= rotation % 45;
         rotation = FastMath.DEG_TO_RAD * rotation;
         for (int i = 0; i < units.size(); i++) {
-            units.get(i).moveTo(formation.getRelativePosition(i, leader, rotation));
+            Vector2f v = formation.getRelativePosition(i, leader, rotation);
+           // System.out.println("vec: " + v + " rot: " + rotation);
+            units.get(i).moveTo(v);
         }
     }
 
