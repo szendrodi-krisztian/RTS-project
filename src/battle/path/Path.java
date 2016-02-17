@@ -56,7 +56,7 @@ public final class Path extends ArrayList<Vector2f> {
 
     public void reCalculate() {
         clear();
-        if (!terrain.isAccessible(destX, destY) || (posX == destX && posY == destY) || destX<0 || destY<0) {
+        if (destX<0 || destY<0 || !terrain.isAccessible(destX, destY) || (posX == destX && posY == destY) ) {
             this.add(new Vector2f(posX, posY));
             return;
         }

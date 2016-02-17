@@ -38,7 +38,9 @@ public abstract class Unit extends RawUnit {
         super(vehicle, weapon, group, Pose.STANDING);
         Material m = new Material(getGroup().getMap().assets, "Common/MatDefs/Light/Lighting.j3md");
         Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unit.png", false));
+        Texture t2 = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unitalpha.png", false));
         m.setTexture("DiffuseMap", t);
+        m.setTexture("AlphaMap", t2);
         Mesh mesh = new UnitMesh();
         geometry = new Geometry("unit", mesh);
         geometry.setMaterial(m);
