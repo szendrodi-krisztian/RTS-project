@@ -1,9 +1,9 @@
 package battle;
 
-import battle.entity.Group;
 import battle.entity.SimpleUnit;
 import battle.entity.Unit;
 import battle.entity.UnitGrid;
+import battle.entity.group.Group;
 import battle.terrain.MeshedTerrain;
 import battle.terrain.Terrain;
 import com.jme3.asset.AssetManager;
@@ -43,9 +43,12 @@ public class BattleMap {
         units = new UnitGrid(mapWidth, mapHeight);
         Group g1 = new Group(this);
 
-        spawn(2, 2, g1, SimpleUnit.class);
         spawn(3, 2, g1, SimpleUnit.class);
         spawn(1, 2, g1, SimpleUnit.class);
+        spawn(2, 2, g1, SimpleUnit.class);
+        spawn(4, 2, g1, SimpleUnit.class);
+        spawn(5, 2, g1, SimpleUnit.class);
+        spawn(6, 2, g1, SimpleUnit.class);
     }
 
     /**

@@ -1,6 +1,8 @@
 package battle.entity;
 
+import battle.entity.group.Group;
 import battle.gfx.UnitMesh;
+import battle.path.Path;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -51,36 +53,43 @@ public abstract class Unit extends RawUnit {
         geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
     }
 
-    // NOTE: This may be wrong, needs code review
+    public final void moveTo(Vector2f dest) {
+        this.destination = dest;
+        path = new Path(pos, destination, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
+    }
+
+    public Vector2f destination;
+
+    public Path path;
+
+    private void nextStep() {
+        if (destination.equals(pos)) {
+            dest.x = 0;
+            dest.y = 0;
+            return;
+        }
+        path.setStart((int) pos.x, (int) pos.y);
+        path.reCalculate();
+        dest = path.first();
+    }
+
     public final void move(float tpf) {
         updateGfx();
-        if (FastMath.abs(fractal.x) <= 0.01f) {
-            fractal.x = -dest.x;
-            pos.x += dest.x;
-            dest.x = 0;
+        if (fractal.lengthSquared() == 0) {
+            nextStep();
+            fractal.subtractLocal(dest);
+            pos.addLocal(dest);
             getGroup().onUnitMovedGrid(this);
-        }
-        if (FastMath.abs(fractal.y) <= 0.01f) {
-            fractal.y = -dest.y;
-            pos.y += dest.y;
-            dest.y = 0;
-            getGroup().onUnitMovedGrid(this);
-        }
-        float s = (tpf * vehicle.getMovementSpeed()) / (N_STEP);
-
-        if (FastMath.abs(fractal.x) > 0.01f) {
-            float sb = FastMath.sign(fractal.x);
-            fractal.x -= FastMath.sign(fractal.x) * (s);
-            if (FastMath.sign(fractal.x) != sb) {
-                fractal.x = 0;
+        } else {
+            float sx = FastMath.sign(fractal.x) * vehicle.getMovementSpeed() * tpf;
+            float sy = FastMath.sign(fractal.y) * vehicle.getMovementSpeed() * tpf;
+            if (FastMath.sign(fractal.x - sx) != FastMath.sign(fractal.x)) {
+                sx = fractal.x;
             }
-        }
-        if (FastMath.abs(fractal.y) > 0.01f) {
-            float sb = FastMath.sign(fractal.y);
-            fractal.y -= FastMath.sign(fractal.y) * (s);
-            if (FastMath.sign(fractal.y) != sb) {
-                fractal.y = 0;
+            if (FastMath.sign(fractal.y - sy) != FastMath.sign(fractal.y)) {
+                sy = fractal.y;
             }
+            fractal.subtractLocal(sx, sy);
         }
     }
 

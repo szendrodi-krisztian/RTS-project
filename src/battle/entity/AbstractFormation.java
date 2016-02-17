@@ -16,11 +16,11 @@ public abstract class AbstractFormation {
     }
    
     
-    public abstract Vector2f getRelativePosition(int unit_index, Vector2f leaderPosition);
+    public abstract Vector2f getRelativePosition(int unit_index, Vector2f leaderPosition, float rotation);
    
     public Vector2f getReservistPosition(int unit_index, Vector2f leaderPosition){
         // TODO: write reservist placement code here.
-        return Vector2f.ZERO;
+        return leaderPosition;
     }
     
 }

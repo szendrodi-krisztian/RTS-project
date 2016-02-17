@@ -6,8 +6,8 @@
 package mygame;
 
 import battle.BattleMap;
-import battle.entity.Group;
 import battle.entity.Unit;
+import battle.entity.group.Group;
 import battle.path.Path;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -69,7 +69,7 @@ public class BattleState extends AbstractAppState {
         if (enabled) {
             app.getRootNode().attachChild(battleRoot);
             if (map == null) {
-                map = new BattleMap(10, 10, battleRoot, app.getAssetManager());
+                map = new BattleMap(100, 100, battleRoot, app.getAssetManager());
             }
             app.getCamera().setLocation(camPos);
             Vector3f look = camPos.clone();
@@ -152,7 +152,7 @@ public class BattleState extends AbstractAppState {
                                 }
 
                                 select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z);
-                                List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().dest.x, (int) select.getLeader().dest.y, map.terrain.raw(), map.units);
+                                List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map.terrain.raw(), map.units);
                                 FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
                                 for (Vector2f v : p) {
                                     vb.put(v.x).put(0.2f).put(v.y);
@@ -167,6 +167,7 @@ public class BattleState extends AbstractAppState {
                                 Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
                                 m.setColor("Color", ColorRGBA.Pink);
                                 g.setMaterial(m);
+                                g.move(0.5f, 0, 0.5f);
                                 battleRoot.attachChild(g);
                             }
                             break;

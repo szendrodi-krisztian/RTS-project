@@ -1,5 +1,6 @@
 package battle.path;
 
+import battle.entity.Unit;
 import battle.entity.UnitGrid;
 import battle.terrain.MyVector2f;
 import battle.terrain.Terrain;
@@ -25,7 +26,7 @@ public final class Path extends ArrayList<Vector2f> {
         {-1, -1},
         {+1, -1},};
 
-    private final int posX, posY, destX, destY;
+    private int posX, posY, destX, destY;
     private final Terrain terrain;
     private final UnitGrid units;
 
@@ -48,7 +49,11 @@ public final class Path extends ArrayList<Vector2f> {
         reCalculate();
     }
 
-    // FIXME: Check the algorithm, because units move onto trees and eachother.(Im sorry..again)
+    public void setStart(int posX, int posY) {
+        this.posX = posX;
+        this.posY = posY;
+    }
+
     public void reCalculate() {
         clear();
         if (!terrain.isAccessible(destX, destY) || (posX == destX && posY == destY)) {
@@ -77,10 +82,10 @@ public final class Path extends ArrayList<Vector2f> {
                         || (currentGrid.x + neighbourX) < 0 || (currentGrid.y + neighbourY) < 0) {
                     continue;
                 }
-                
+
                 int opt1 = ((int) currentGrid.x + neighbourX) * terrain.height() + ((int) currentGrid.y + neighbourY);
                 int opt2 = (int) currentGrid.x * terrain.height() + (int) currentGrid.y;
-                if (terrain.isAccessible(currentGrid.x+neighbourX, currentGrid.y+neighbourY) 
+                if (terrain.isAccessible(currentGrid.x + neighbourX, currentGrid.y + neighbourY)
                         && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1
                         && units.getUnitAt(((int) currentGrid.x + neighbourX), ((int) currentGrid.y + neighbourY)) == null) {
                     pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
@@ -114,24 +119,30 @@ public final class Path extends ArrayList<Vector2f> {
         subsequentGrids.clear();
         //printGrid();
     }
-    
-    private void printGrid(){
-        System.out.println("----------------------------------------------------------------------");
-        System.out.println("from: ("+posX+", "+posY+") to ("+destX+", "+destY+")");
-        System.out.println("path: "+this);
-        for(int i = terrain.width()-1;i>=0;i--){
-            for(int j = terrain.height()-1;j>=0;j--){
-                System.out.print(((pathDistanceGrid[j*terrain.height()+i]==Integer.MAX_VALUE)?"X":pathDistanceGrid[j*terrain.height()+i])+" ");
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("----------------------------------------------------------------------\n");
+        sb.append("from: (").append(posX).append(", ").append(posY).append(") to (").append(destX).append(", ").append(destY).append(")\n");
+        sb.append("path: ").append(super.toString()).append("\n");
+        for (int i = terrain.width() - 1; i >= 0; i--) {
+            for (int j = terrain.height() - 1; j >= 0; j--) {
+                sb.append((pathDistanceGrid[j * terrain.height() + i] == Integer.MAX_VALUE) ? "X" : pathDistanceGrid[j * terrain.height() + i]).append(" ");
             }
-            System.out.println();
+            sb.append('\n');
         }
-        System.out.println("----------------------------------------------------------------------");
+        sb.append("----------------------------------------------------------------------\n");
+        return sb.toString();
+    }
+
+    private void printGrid() {
+
     }
 
     public Vector2f first() {
-        Vector2f relative = get(size()-1);
-       
-        return relative.subtract(posX, posY);
+        Vector2f relative = remove(size() - 1);
+        return relative.subtractLocal(posX, posY);
     }
 
 }

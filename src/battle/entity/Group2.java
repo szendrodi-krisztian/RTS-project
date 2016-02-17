@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author szend
  */
-public final class Group {
+public final class Group2 {
 
     int leaderIndex = 0;
     int groupDirection = 3;
@@ -35,7 +35,7 @@ public final class Group {
     private Vector2f formation[];
     private final BattleMap map;
 
-    public Group(BattleMap map) {
+    public Group2(BattleMap map) {
         this.map = map;
     }
     

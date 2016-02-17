@@ -1,5 +1,6 @@
 package battle.entity;
 
+import battle.entity.group.Group;
 import com.jme3.math.Vector2f;
 
 /**
@@ -34,7 +35,7 @@ public abstract class RawUnit {
     public Vector2f dest;
 
     public RawUnit(IVehicle vehicle, IWeapon weapon, Group group, Pose pose) {
-        this.dest = new Vector2f();
+        this.dest = new Vector2f(0, 0);
         this.pos = new Vector2f();
         this.group = group;
         this.vehicle = vehicle;
@@ -57,10 +58,6 @@ public abstract class RawUnit {
 
     public final Vector2f destination() {
         return dest;
-    }
-
-    public final void moveTo(Vector2f dest) {
-        this.dest = dest;
     }
 
     public final Pose pose() {

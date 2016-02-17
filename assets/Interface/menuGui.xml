@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <nifty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://nifty-gui.lessvoid.com/nifty-gui" xsi:schemaLocation="https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd">
+    <useControls filename="nifty-default-controls.xml"/>
+    <useStyles filename="nifty-default-styles.xml"/>
     <screen id="start" controller="mygame.MainMenuState">
         <layer id="GLayer1" childLayout="absolute">
-            <panel id="GPanel0" childLayout="absolute" width="50%" x="200" y="103" style="nifty-panel-simple" height="30%">
-                <control name="label" id="GLabel0" width="100px" x="185" y="80" text="GLabel0" height="50px" font="aurulent-sans-16.fnt"/>
+            <panel id="GPanel0" childLayout="absolute" width="50%" x="27%" y="32%" style="nifty-panel-simple" height="30%">
+                <control name="button" id="GButton0" childLayout="center" width="38%" x="33%" y="43%" label="To the battlefield!" height="25%">
+                    <interact onClick="toTheBattleField()"/>
+                    
+                </control>
             </panel>
         </layer>
     </screen>
+    <screen id="ingame"></screen>
 </nifty>

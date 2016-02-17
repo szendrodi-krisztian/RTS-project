@@ -21,7 +21,7 @@ public final class Terrain {
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
-                float n = noise.getNoise(0.3f * i, 0.3f * j);
+                float n = noise.getNoise(0.6f * i, 0.6f * j);
                 if (n < -0.12) {
                     grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
                     continue;
