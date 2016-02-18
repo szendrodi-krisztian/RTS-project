@@ -1,6 +1,8 @@
 package battle;
 
+import battle.entity.OneLineFormation;
 import battle.entity.SimpleUnit;
+import battle.entity.TwoLineFormation;
 import battle.entity.Unit;
 import battle.entity.UnitGrid;
 import battle.entity.group.Group;
@@ -41,8 +43,13 @@ public class BattleMap {
         terrain = new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets), rootNode);
 
         units = new UnitGrid(mapWidth, mapHeight);
-        Group g1 = new Group(this);
-
+        Group g1 = null;
+        Group g2 = null;
+        try {
+            g1 = new Group(this, OneLineFormation.class);
+            g2 = new Group(this, TwoLineFormation.class);
+        } catch (Exception e) {
+        }
         spawn(3, 2, g1, SimpleUnit.class);
         spawn(1, 2, g1, SimpleUnit.class);
         spawn(2, 2, g1, SimpleUnit.class);
@@ -55,6 +62,19 @@ public class BattleMap {
         spawn(2, 3, g1, SimpleUnit.class);
         spawn(4, 3, g1, SimpleUnit.class);
         spawn(5, 3, g1, SimpleUnit.class);
+
+        spawn(3, 2, g2, SimpleUnit.class);
+        spawn(1, 2, g2, SimpleUnit.class);
+        spawn(2, 2, g2, SimpleUnit.class);
+        spawn(4, 2, g2, SimpleUnit.class);
+        spawn(5, 2, g2, SimpleUnit.class);
+        spawn(6, 2, g2, SimpleUnit.class);
+        spawn(7, 2, g2, SimpleUnit.class);
+        spawn(3, 3, g2, SimpleUnit.class);
+        spawn(1, 3, g2, SimpleUnit.class);
+        spawn(2, 3, g2, SimpleUnit.class);
+        spawn(4, 3, g2, SimpleUnit.class);
+        spawn(5, 3, g2, SimpleUnit.class);
     }
 
     /**

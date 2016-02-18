@@ -21,8 +21,8 @@ public final class Terrain {
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
-                float n = noise.getNoise(2f * i, 2f * j);
-                if (n < -0.12) {
+                float n = noise.getNoise(4f * i, 4f * j);
+                if (n < -0.06) {
                     grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
                     continue;
                 }
@@ -30,7 +30,7 @@ public final class Terrain {
                     grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
                     continue;
                 }
-                if (treenoise.getNoise(20 * i, 20 * j) > 8f) {
+                if (treenoise.getNoise(20 * i, 20 * j) > 9f) {
                     grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
                 } else {
                     grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");

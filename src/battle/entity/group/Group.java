@@ -2,7 +2,6 @@ package battle.entity.group;
 
 import battle.BattleMap;
 import battle.entity.AbstractFormation;
-import battle.entity.TwoLineFormation;
 import battle.entity.Unit;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
@@ -20,10 +19,10 @@ public final class Group {
 
     private final AbstractFormation formation;
 
-    public Group(BattleMap map) {
+    public Group(BattleMap map, Class<? extends AbstractFormation> form) throws Exception {
         this.units = new ArrayList<>();
         this.map = map;
-        formation = new TwoLineFormation(map);
+        formation = (AbstractFormation) form.getConstructors()[0].newInstance(map);
     }
 
     public BattleMap getMap() {

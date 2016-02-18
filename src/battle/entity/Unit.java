@@ -77,8 +77,12 @@ public abstract class Unit extends RawUnit {
             return;
         }
         path.setStart((int) pos.x, (int) pos.y);
-        path.reCalculate(true);
-        dest = path.first();
+        path.reValidate();
+        if (!path.isEmpty()) {
+            dest = path.first();
+        }else{
+            
+        }
     }
 
     public final void move(float tpf) {
