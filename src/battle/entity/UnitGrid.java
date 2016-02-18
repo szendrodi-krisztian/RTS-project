@@ -115,6 +115,16 @@ public class UnitGrid {
         return units[index];
     }
 
+    public boolean isEmpty(int x, int y)
+    {
+        return units[x*mapHeight+y].isEmpty();
+    }
+    
+    public boolean isEmpty(float x, float y)
+    {
+        return units[(int)x*mapHeight+(int)y].isEmpty();
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

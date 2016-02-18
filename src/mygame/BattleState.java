@@ -108,8 +108,9 @@ public class BattleState extends AbstractAppState {
                 }
             };
 
-            ActionListener actl = new ActionListener() {
-
+            ActionListener actl;
+            actl = new ActionListener() {
+                
                 Group select = null;
                 Mesh select_path;
 
@@ -131,11 +132,13 @@ public class BattleState extends AbstractAppState {
                                 return;
                             }
                             Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
-                            Unit unit = map.units.getUnitsAt(hit_geom.x, hit_geom.z).get(0);
+                            Unit unit=null;
+                            if(!map.units.isEmpty(hit_geom.x, hit_geom.z)) {
+                                unit = map.units.getUnitsAt(hit_geom.x, hit_geom.z).get(0);
+                            }
                             System.out.println(unit);
                             if (unit != null) {
                                 select = unit.getGroup();
-
                             }
                             break;
                         case "right click":
