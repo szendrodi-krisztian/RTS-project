@@ -1,5 +1,6 @@
 package battle.path;
 
+import battle.entity.Unit;
 import battle.entity.UnitGrid;
 import battle.terrain.MyVector2f;
 import battle.terrain.ObjectPool;
@@ -31,7 +32,7 @@ public final class Path extends ArrayList<Vector2f> {
 
     private int pathDistanceGrid[];
     private List<MyVector2f> subsequentGrids;
-    
+
     private static final ObjectPool<MyVector2f> pool = new ObjectPool<>(MyVector2f.class);
 
     public Path(Vector2f from, Vector2f to, Terrain terrain, UnitGrid units) {
@@ -97,13 +98,11 @@ public final class Path extends ArrayList<Vector2f> {
                 int opt2 = (int) currentGrid.x * terrain.height() + (int) currentGrid.y;
                 if (terrain.isAccessible(currentGrid.x + neighbourX, currentGrid.y + neighbourY)
                         && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1) {
-                    if (!checkUnits || units.getUnitsAt(((int) currentGrid.x + neighbourX), ((int) currentGrid.y + neighbourY)).isEmpty()) {
 
-                        pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
-                        subsequentGrids.add(pool.create(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
+                    pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
+                    subsequentGrids.add(pool.create(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
                         //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
 
-                    }
                 }
             }
         }
@@ -150,11 +149,24 @@ public final class Path extends ArrayList<Vector2f> {
     }
 
     public void reValidate() {
-        for (Vector2f v : this) {
-            if (!units.getUnitsAt(v).isEmpty()) {
-                reCalculate(true);
+        if(size()==0) return;
+        Vector2f next = get(size() - 1);
+        List<Unit> list = units.getUnitsAt(next);
+
+        if (list.isEmpty()) {
+            return;
+        }
+        boolean will_move = true;
+        for (Unit u : list) {
+            if (u.position().equals(u.destination)) {
+                will_move = false;
                 break;
             }
+        }
+        if (will_move) {
+            add(new Vector2f(posX, posY));
+        }else{
+            reCalculate(true);
         }
     }
 
