@@ -2,10 +2,9 @@ package battle.path;
 
 import battle.entity.UnitGrid;
 import battle.terrain.MyVector2f;
+import battle.terrain.ObjectPool;
 import battle.terrain.Terrain;
-import battle.terrain.VectorPool;
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +31,8 @@ public final class Path extends ArrayList<Vector2f> {
 
     private int pathDistanceGrid[];
     private List<MyVector2f> subsequentGrids;
+    
+    private static final ObjectPool<MyVector2f> pool = new ObjectPool<>(MyVector2f.class);
 
     public Path(Vector2f from, Vector2f to, Terrain terrain, UnitGrid units) {
         this((int) from.x, (int) from.y, (int) to.x, (int) to.y, terrain, units);
@@ -57,7 +58,7 @@ public final class Path extends ArrayList<Vector2f> {
     public void reCalculate(boolean checkUnits) {
         clear();
         for (MyVector2f subsequentGrid : subsequentGrids) {
-            VectorPool.getInstance().destroyVector(subsequentGrid);
+            pool.destroy(subsequentGrid);
         }
         subsequentGrids.clear();
         if (destX < 0 || destY < 0 || !terrain.isAccessible(destX, destY) || (posX == destX && posY == destY)) {
@@ -66,9 +67,9 @@ public final class Path extends ArrayList<Vector2f> {
         }
 
         int neighbourX, neighbourY;
-        MyVector2f currentGrid = VectorPool.getInstance().createVector(posX, posY);
+        MyVector2f currentGrid = pool.create(posX, posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
-        subsequentGrids.add(VectorPool.getInstance().createVector(posX, posY));
+        subsequentGrids.add(pool.create(posX, posY));
         pathDistanceGrid[posX * terrain.height() + posY] = 0;
         while (pathDistanceGrid[destX * terrain.height() + destY] == Integer.MAX_VALUE) {
             if (subsequentGrids.isEmpty()) {
@@ -80,7 +81,7 @@ public final class Path extends ArrayList<Vector2f> {
                     return;
                 }
             } else {
-                VectorPool.getInstance().destroyVector(currentGrid);
+                pool.destroy(currentGrid);
                 currentGrid = subsequentGrids.remove(0);
 
             }
@@ -99,7 +100,7 @@ public final class Path extends ArrayList<Vector2f> {
                     if (!checkUnits || units.getUnitsAt(((int) currentGrid.x + neighbourX), ((int) currentGrid.y + neighbourY)).isEmpty()) {
 
                         pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
-                        subsequentGrids.add(VectorPool.getInstance().createVector(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
+                        subsequentGrids.add(pool.create(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
                         //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
 
                     }
@@ -126,7 +127,7 @@ public final class Path extends ArrayList<Vector2f> {
             }
         }
         for (MyVector2f subsequentGrid : subsequentGrids) {
-            VectorPool.getInstance().destroyVector(subsequentGrid);
+            pool.destroy(subsequentGrid);
         }
         subsequentGrids.clear();
         //printGrid();
