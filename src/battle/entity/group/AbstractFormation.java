@@ -9,8 +9,10 @@ import com.jme3.math.Vector2f;
  */
 public abstract class AbstractFormation {
     
-    private final BattleMap map;
+    protected final BattleMap map;
     public boolean rev = false;
+    public int position_offset;
+    public int position_offset_neg;
 
     public AbstractFormation(BattleMap map) {
         this.map = map;

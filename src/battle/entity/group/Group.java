@@ -43,6 +43,8 @@ public final class Group {
         // negative angles mess up Quaternion constructor...
         rotation = (rotation < 0) ? 360 + rotation : rotation;
         rotation -= (rotation % 45);
+        formation.position_offset = 0;
+        formation.position_offset_neg = 0;
         if (FastMath.abs(rot_bef - rotation) >= 90) {
             formation.rev = !formation.rev;
         }
