@@ -46,7 +46,7 @@ public final class Path extends ArrayList<Vector2f> {
         this.units = units;
         pathDistanceGrid = new int[terrain.width() * terrain.height()];
         subsequentGrids = new ArrayList<>();
-        reCalculate();
+        reCalculate(true);
     }
 
     public void setStart(int posX, int posY) {
@@ -54,9 +54,9 @@ public final class Path extends ArrayList<Vector2f> {
         this.posY = posY;
     }
 
-    public void reCalculate() {
+    public void reCalculate(boolean checkUnits) {
         clear();
-        if (destX<0 || destY<0 || !terrain.isAccessible(destX, destY) || (posX == destX && posY == destY) ) {
+        if (destX < 0 || destY < 0 || !terrain.isAccessible(destX, destY) || (posX == destX && posY == destY)) {
             this.add(new Vector2f(posX, posY));
             return;
         }
@@ -68,8 +68,13 @@ public final class Path extends ArrayList<Vector2f> {
         pathDistanceGrid[posX * terrain.height() + posY] = 0;
         while (pathDistanceGrid[destX * terrain.height() + destY] == Integer.MAX_VALUE) {
             if (subsequentGrids.isEmpty()) {
-                this.add(new Vector2f(posX, posY));
-                return;
+                if (checkUnits) {
+                    reCalculate(false);
+                    return;
+                } else {
+                    this.add(new Vector2f(posX, posY));
+                    return;
+                }
             } else {
                 VectorPool.getInstance().destroyVector(currentGrid);
                 currentGrid = subsequentGrids.remove(0);
@@ -86,11 +91,14 @@ public final class Path extends ArrayList<Vector2f> {
                 int opt1 = ((int) currentGrid.x + neighbourX) * terrain.height() + ((int) currentGrid.y + neighbourY);
                 int opt2 = (int) currentGrid.x * terrain.height() + (int) currentGrid.y;
                 if (terrain.isAccessible(currentGrid.x + neighbourX, currentGrid.y + neighbourY)
-                        && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1
-                        && units.getUnitAt(((int) currentGrid.x + neighbourX), ((int) currentGrid.y + neighbourY)) == null) {
-                    pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
-                    subsequentGrids.add(VectorPool.getInstance().createVector(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
-                    //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
+                        && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1) {
+                    if (!checkUnits || units.getUnitsAt(((int) currentGrid.x + neighbourX), ((int) currentGrid.y + neighbourY)).isEmpty()) {
+                        
+                            pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
+                            subsequentGrids.add(VectorPool.getInstance().createVector(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
+                            //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
+                        
+                    }
                 }
             }
         }
@@ -126,12 +134,12 @@ public final class Path extends ArrayList<Vector2f> {
         sb.append("----------------------------------------------------------------------\n");
         sb.append("from: (").append(posX).append(", ").append(posY).append(") to (").append(destX).append(", ").append(destY).append(")\n");
         sb.append("path: ").append(super.toString()).append("\n");
-       /* for (int i = terrain.width() - 1; i >= 0; i--) {
-            for (int j = terrain.height() - 1; j >= 0; j--) {
-                sb.append((pathDistanceGrid[j * terrain.height() + i] == Integer.MAX_VALUE) ? "X" : pathDistanceGrid[j * terrain.height() + i]).append(" ");
-            }
-            sb.append('\n');
-        }*/
+        /* for (int i = terrain.width() - 1; i >= 0; i--) {
+         for (int j = terrain.height() - 1; j >= 0; j--) {
+         sb.append((pathDistanceGrid[j * terrain.height() + i] == Integer.MAX_VALUE) ? "X" : pathDistanceGrid[j * terrain.height() + i]).append(" ");
+         }
+         sb.append('\n');
+         }*/
         sb.append("----------------------------------------------------------------------\n");
         return sb.toString();
     }

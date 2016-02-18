@@ -61,8 +61,8 @@ public final class Group2 {
                 continue;
             }
             if (map.terrain.getGrid()[(int) ((units.get(leaderIndex).pos.x + relPos.x) * map.mapHeight) + (int) (units.get(leaderIndex).pos.y + relPos.y)].isAccesible()
-                    && map.units.getUnitAt(units.get(leaderIndex).pos.add(relPos)
-                    ) == null) {
+                    /*&& map.units.getUnitAt(units.get(leaderIndex).pos.add(relPos)
+                    ) == null*/) {
                 System.out.println(relPos.toString());
                 posShift += i;
                 return relPos;

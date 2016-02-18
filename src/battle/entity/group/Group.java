@@ -2,12 +2,11 @@ package battle.entity.group;
 
 import battle.BattleMap;
 import battle.entity.AbstractFormation;
-import battle.entity.OneLineFormation;
+import battle.entity.TwoLineFormation;
 import battle.entity.Unit;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,7 +23,7 @@ public final class Group {
     public Group(BattleMap map) {
         this.units = new ArrayList<>();
         this.map = map;
-        formation = new OneLineFormation(map);
+        formation = new TwoLineFormation(map);
     }
 
     public BattleMap getMap() {

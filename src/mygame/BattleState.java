@@ -131,7 +131,7 @@ public class BattleState extends AbstractAppState {
                                 return;
                             }
                             Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
-                            Unit unit = map.units.getUnitAt(hit_geom.x, hit_geom.z);
+                            Unit unit = map.units.getUnitsAt(hit_geom.x, hit_geom.z).get(0);
                             System.out.println(unit);
                             if (unit != null) {
                                 select = unit.getGroup();

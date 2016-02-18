@@ -77,7 +77,7 @@ public abstract class Unit extends RawUnit {
             return;
         }
         path.setStart((int) pos.x, (int) pos.y);
-        path.reCalculate();
+        path.reCalculate(true);
         dest = path.first();
     }
 

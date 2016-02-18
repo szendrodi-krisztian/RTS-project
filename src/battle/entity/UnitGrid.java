@@ -1,6 +1,8 @@
 package battle.entity;
 
 import com.jme3.math.Vector2f;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Abstracts a flat 2D array of Units.
@@ -9,13 +11,16 @@ import com.jme3.math.Vector2f;
  */
 public class UnitGrid {
 
-    private final Unit units[];
+    private final ArrayList<Unit> units[];
     private final int mapWidth, mapHeight;
 
     public UnitGrid(int mapWidth, int mapHeight) {
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
-        units = new Unit[mapWidth * mapHeight];
+        units = new ArrayList[mapWidth * mapHeight];
+        for(int i = 0;i<mapWidth * mapHeight;i++){
+            units[i] = new ArrayList<>(2);
+        }
     }
 
     /**
@@ -26,7 +31,7 @@ public class UnitGrid {
      * @param u The unit.
      */
     public void place(int x, int y, Unit u) {
-        units[mapHeight * x + y] = u;
+        units[mapHeight * x + y].add(u);
     }
 
     // NOTE: This may be wrong, needs code review.
@@ -36,9 +41,11 @@ public class UnitGrid {
      * @param tpf
      */
     public void move(float tpf) {
-        for (Unit unit : units) {
-            if (unit != null) {
-                unit.moved = false;
+        for (ArrayList<Unit> list : units) {
+            for (Unit unit : list) {
+                if (unit != null) {
+                    unit.moved = false;
+                }
             }
         }
         /*
@@ -48,14 +55,17 @@ public class UnitGrid {
          */
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
-                Unit unit = getUnitAt(i, j);
-                if (unit != null && !unit.moved) {
-                    unit.move(tpf);
-                    unit.moved = true;
-                    Vector2f pos_before = unit.position();
-                    if (!(i == pos_before.x && j == pos_before.y)) {
-                        moveUnitFromTo(i, j, pos_before);
-                        //System.out.println(this);
+                ArrayList<Unit> list = getUnitsAt(i, j);
+                for (Iterator<Unit> it = list.iterator(); it.hasNext();) {
+                    Unit unit = it.next();
+                    if (unit != null && !unit.moved) {
+                        unit.move(tpf);
+                        unit.moved = true;
+                        Vector2f pos_before = unit.position();
+                        if (!(i == pos_before.x && j == pos_before.y)) {
+                            moveUnitFromTo(unit, i, j, pos_before, it);
+                            //System.out.println(this);
+                        }
                     }
                 }
             }
@@ -63,25 +73,21 @@ public class UnitGrid {
 
     }
 
-    private void moveUnitFromTo(int fromX, int fromY, Vector2f to) {
-        moveUnitFromTo(fromX, fromY, (int) (to.x), (int) (to.y));
+    private void moveUnitFromTo(Unit u, int fromX, int fromY, Vector2f to, Iterator<Unit> it) {
+        moveUnitFromTo(u, fromX, fromY, (int) (to.x), (int) (to.y), it);
     }
 
-    private void moveUnitFromTo(int fromX, int fromY, int toX, int toY) {
-        Unit temp = units[mapHeight * toX + toY];
-        if (temp != null) {
-            return;
-        }
-        units[mapHeight * toX + toY] = units[mapHeight * fromX + fromY];
-        units[mapHeight * fromX + fromY] = null;
+    private void moveUnitFromTo(Unit u, int fromX, int fromY, int toX, int toY, Iterator<Unit> it) {
+        units[mapHeight * toX + toY].add(u);
+        it.remove();
     }
 
     /**
      * @param position
      * @return The unit at (pos) or null if there is no unit there
      */
-    public Unit getUnitAt(Vector2f position) {
-        return getUnitAt(position.x, position.y);
+    public ArrayList<Unit> getUnitsAt(Vector2f position) {
+        return getUnitsAt(position.x, position.y);
     }
 
     /**
@@ -89,8 +95,8 @@ public class UnitGrid {
      * @param y
      * @return The unit at (x,y) or null if there is no unit there
      */
-    public Unit getUnitAt(float x, float y) {
-        return getUnitAt((int) x, (int) y);
+    public ArrayList<Unit> getUnitsAt(float x, float y) {
+        return getUnitsAt((int) x, (int) y);
     }
 
     /**
@@ -98,14 +104,14 @@ public class UnitGrid {
      * @param y
      * @return The unit at (x,y) or null if there is no unit there
      */
-    public Unit getUnitAt(int x, int y) {
-        return getUnitAt(mapHeight * x + y);
+    public ArrayList<Unit> getUnitsAt(int x, int y) {
+        return getUnitsAt(mapHeight * x + y);
     }
 
     /**
      * @return Unit at given index or null if there is no unit there.
      */
-    private Unit getUnitAt(int index) {
+    private ArrayList<Unit> getUnitsAt(int index) {
         return units[index];
     }
 
@@ -116,7 +122,7 @@ public class UnitGrid {
         sb.append("UnitGrid:\n");
         for (int i = mapWidth - 1; i >= 0; i--) {
             for (int j = mapHeight - 1; j >= 0; j--) {
-                sb.append((getUnitAt(j, i) == null) ? '0' : 'X');
+                //sb.append((getUnitAt(j, i) == null) ? '0' : 'X');
             }
             sb.append('\n');
         }

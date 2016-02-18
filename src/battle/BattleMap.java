@@ -28,9 +28,9 @@ public class BattleMap {
     public List<Group> groups = new ArrayList<>();
 
     public int mapWidth, mapHeight;
-    
+
     public AssetManager assets;
-    
+
     public Node rootNode;
 
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
@@ -39,7 +39,7 @@ public class BattleMap {
         this.assets = assets;
         this.rootNode = rootNode;
         terrain = new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets), rootNode);
-        
+
         units = new UnitGrid(mapWidth, mapHeight);
         Group g1 = new Group(this);
 
@@ -50,6 +50,11 @@ public class BattleMap {
         spawn(5, 2, g1, SimpleUnit.class);
         spawn(6, 2, g1, SimpleUnit.class);
         spawn(7, 2, g1, SimpleUnit.class);
+        spawn(3, 3, g1, SimpleUnit.class);
+        spawn(1, 3, g1, SimpleUnit.class);
+        spawn(2, 3, g1, SimpleUnit.class);
+        spawn(4, 3, g1, SimpleUnit.class);
+        spawn(5, 3, g1, SimpleUnit.class);
     }
 
     /**
