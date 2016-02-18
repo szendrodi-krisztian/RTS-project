@@ -16,6 +16,7 @@ public abstract class RawUnit {
 
     public Vector2f pos;
     public Vector2f dest;
+    public float rotationAngle;
 
     protected final Pose pose;
     protected final Group group;

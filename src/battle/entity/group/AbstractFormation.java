@@ -1,4 +1,4 @@
-package battle.entity;
+package battle.entity.group;
 
 import battle.BattleMap;
 import com.jme3.math.Vector2f;
@@ -10,12 +10,12 @@ import com.jme3.math.Vector2f;
 public abstract class AbstractFormation {
     
     private final BattleMap map;
+    public boolean rev = false;
 
     public AbstractFormation(BattleMap map) {
         this.map = map;
     }
    
-    
     public abstract Vector2f getRelativePosition(int unit_index, Vector2f leaderPosition, float rotation);
    
     public Vector2f getReservistPosition(int unit_index, Vector2f leaderPosition){

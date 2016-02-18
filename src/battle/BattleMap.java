@@ -1,8 +1,8 @@
 package battle;
 
-import battle.entity.OneLineFormation;
+import battle.entity.group.OneLineFormation;
 import battle.entity.SimpleUnit;
-import battle.entity.TwoLineFormation;
+import battle.entity.group.TwoLineFormation;
 import battle.entity.Unit;
 import battle.entity.UnitGrid;
 import battle.entity.group.Group;

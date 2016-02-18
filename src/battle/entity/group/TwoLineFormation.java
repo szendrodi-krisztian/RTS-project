@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package battle.entity;
+package battle.entity.group;
 
+import battle.entity.group.AbstractFormation;
 import battle.BattleMap;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -28,21 +29,29 @@ public class TwoLineFormation extends AbstractFormation {
     public Vector2f getRelativePosition(int unit_index, Vector2f leaderPosition, float rotation) {
         quater.fromAngleNormalAxis(rotation * FastMath.DEG_TO_RAD, Vector3f.UNIT_Y);
         //float index = ((unit_index % 2 == 0) ? -1 : 1) * ((unit_index + 1) / 2);
-        float index = ((unit_index % 4 <2)?-1:1)*((unit_index+2)/4);
-        float index_y = ((unit_index % 2 == 0) ? 1 : -1)*(unit_index%2);
+
+        float index;
+        float index_y;
+        if (rev) {
+            index = ((unit_index % 4 < 2) ? 1 : -1) * ((unit_index + 2) / 4);
+            index_y = ((unit_index % 2 == 0) ? -1 : 1) * (unit_index % 2);
+        } else {
+            index = ((unit_index % 4 < 2) ? -1 : 1) * ((unit_index + 2) / 4);
+            index_y = ((unit_index % 2 == 0) ? 1 : -1) * (unit_index % 2);
+        }
         /*
-        0  -0 +0
-        1  -0 -1
-        2  +1 +0
-        3  +1 -1
-        4  -1 +0
-        5  -1 -1
-        6  +2 +0
-        7  +2 -1
-        8  -2 +0
-        9  -2 -1
-        10 +3 +0
-        */
+         0  -0 +0
+         1  -0 -1
+         2  +1 +0
+         3  +1 -1
+         4  -1 +0
+         5  -1 -1
+         6  +2 +0
+         7  +2 -1
+         8  -2 +0
+         9  -2 -1
+         10 +3 +0
+         */
         Vector3f v = new Vector3f(index, 0, index_y);
         if ((rotation / 45) % 2 == 1) {
             v.multLocal(FastMath.sqrt(2));
