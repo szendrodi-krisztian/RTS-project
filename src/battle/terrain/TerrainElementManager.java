@@ -106,12 +106,13 @@ public class TerrainElementManager {
             Texture am = null;
             if (e.has_alpha) {
                 am = assets.loadTexture("Textures/terrain/" + e.getName() + "alpha.png");
+            } else {
+                am = assets.loadTexture("Textures/terrain/terrainalpha.png");
             }
             if (e.getTexture_heigth() == 128) {
                 atlas.addTexture(t, e.getName(), false);
-                if (e.has_alpha) {
-                    atlas.addTexture(am, e.getName(), true);
-                }
+                atlas.addTexture(am, e.getName(), true);
+
             }
             if (e.getTexture_heigth() == 256) {
                 bigAtlas.addTexture(t, e.getName(), false);
@@ -124,7 +125,10 @@ public class TerrainElementManager {
         bigAtlas.create();
         terrainMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
         terrainMaterial.setTexture("DiffuseMap", atlas.getTexture());
+        terrainMaterial.setTexture("AlphaMap", atlas.getAlphaTexture());
         terrainMaterial.getAdditionalRenderState().setDepthWrite(false);
+        terrainMaterial.getAdditionalRenderState().setDepthTest(false);
+        terrainMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         decorMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
         decorMaterial.setTexture("DiffuseMap", bigAtlas.getTexture());
         decorMaterial.setTexture("AlphaMap", bigAtlas.getAlphaTexture());

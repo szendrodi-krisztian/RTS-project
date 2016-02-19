@@ -27,11 +27,11 @@ public class TerrainGridMesh extends Mesh {
         int index = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-
-                vertexbuffer.put(i).put(0).put(j);
-                vertexbuffer.put(i + 1).put(0).put(j);
-                vertexbuffer.put(i + 1).put(0).put(j + 1);
-                vertexbuffer.put(i).put(0).put(j + 1);
+                float off = 0.2f;
+                vertexbuffer.put(i-off).put(0).put(j-off);
+                vertexbuffer.put(i + 1+off).put(0).put(j-off);
+                vertexbuffer.put(i + 1+off).put(0).put(j + 1+off);
+                vertexbuffer.put(i-off).put(0).put(j + 1+off);
                 
                 normalbuffer.put(0).put(1).put(0);
                 normalbuffer.put(0).put(1).put(0);
@@ -49,7 +49,7 @@ public class TerrainGridMesh extends Mesh {
                     // TODO: specify whats underneath tree's and such.
                     base_tex = TerrainElementManager.getInstance(null).getTextureOffset("grass");
                 }
-                float bleed = 0.01f;
+                float bleed = 0.0001f;
                 texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 0 * 128) / 2048f + bleed);
                 texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 1 * 128) / 2048f - bleed);
                 texCoords.put((base_tex.x + 1 * 128) / 2048f - bleed).put((base_tex.y + 1 * 128) / 2048f - bleed);
