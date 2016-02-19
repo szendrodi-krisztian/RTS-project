@@ -1,7 +1,10 @@
-package battle.terrain;
+package battle.gfx;
 
-import battle.terrain.render.TerrainDecorationMesh;
-import battle.terrain.render.TerrainGridMesh;
+import battle.gfx.TerrainDecorationMesh;
+import battle.gfx.TerrainGridMesh;
+import battle.terrain.Terrain;
+import battle.terrain.TerrainElement;
+import battle.terrain.TerrainElementManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;

@@ -1,7 +1,7 @@
 package battle.terrain;
 
+import util.SimplexNoise;
 import com.jme3.asset.AssetManager;
-import com.jme3.math.Vector2f;
 
 /**
  *
@@ -10,7 +10,7 @@ import com.jme3.math.Vector2f;
 public final class Terrain {
 
     public final TerrainElement grid[];
-    protected final int mapWidth, mapHeight;
+    public final int mapWidth, mapHeight;
 
     public Terrain(int mapWidth, int mapHeight, AssetManager assets) {
         this.mapWidth = mapWidth;

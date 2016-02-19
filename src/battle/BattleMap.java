@@ -1,12 +1,12 @@
 package battle;
 
-import battle.entity.group.OneLineFormation;
-import battle.entity.SimpleUnit;
-import battle.entity.group.TwoLineFormation;
-import battle.entity.Unit;
-import battle.entity.UnitGrid;
 import battle.entity.group.Group;
-import battle.terrain.MeshedTerrain;
+import battle.entity.group.OneLineFormation;
+import battle.entity.group.TwoLineFormation;
+import battle.entity.UnitGrid;
+import battle.entity.Unit;
+import battle.entity.SimpleUnit;
+import battle.gfx.MeshedTerrain;
 import battle.terrain.Terrain;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
@@ -39,40 +39,20 @@ public class BattleMap {
         this.assets = assets;
         this.rootNode = rootNode;
         terrain = new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets), rootNode);
-
         units = new UnitGrid(mapWidth, mapHeight);
-        Group g1 = null;
-        Group g2 = null;
-        try {
-            g1 = new Group(this, new OneLineFormation(this));
-            g2 = new Group(this, new TwoLineFormation(this));
-        } catch (Exception e) {
-        }
-        spawn(3, 2, g1, SimpleUnit.class);
-        spawn(1, 2, g1, SimpleUnit.class);
-        spawn(2, 2, g1, SimpleUnit.class);
-        spawn(4, 2, g1, SimpleUnit.class);
-        spawn(5, 2, g1, SimpleUnit.class);
-        spawn(6, 2, g1, SimpleUnit.class);
-        spawn(7, 2, g1, SimpleUnit.class);
-        spawn(3, 3, g1, SimpleUnit.class);
-        spawn(1, 3, g1, SimpleUnit.class);
-        spawn(2, 3, g1, SimpleUnit.class);
-        spawn(4, 3, g1, SimpleUnit.class);
-        spawn(5, 3, g1, SimpleUnit.class);
 
-        spawn(3, 2, g2, SimpleUnit.class);
-        spawn(1, 2, g2, SimpleUnit.class);
-        spawn(2, 2, g2, SimpleUnit.class);
-        spawn(4, 2, g2, SimpleUnit.class);
-        spawn(5, 2, g2, SimpleUnit.class);
-        spawn(6, 2, g2, SimpleUnit.class);
-        spawn(7, 2, g2, SimpleUnit.class);
-        spawn(3, 3, g2, SimpleUnit.class);
-        spawn(1, 3, g2, SimpleUnit.class);
-        spawn(2, 3, g2, SimpleUnit.class);
-        spawn(4, 3, g2, SimpleUnit.class);
-        spawn(5, 3, g2, SimpleUnit.class);
+        Group g1 = new Group(this, new OneLineFormation(this));
+        for (int i = 0; i < 12; i++) {
+            spawn(0, 0, g1, SimpleUnit.class);
+        }
+        g1.moveTo(10, 10);
+
+        Group g2 = new Group(this, new TwoLineFormation(this));
+        for (int i = 0; i < 12; i++) {
+            spawn(0, 0, g2, SimpleUnit.class);
+        }
+        g2.moveTo(5, 15);
+
     }
 
     /**

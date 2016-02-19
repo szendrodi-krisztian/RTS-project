@@ -1,4 +1,4 @@
-package battle.terrain.render;
+package battle.gfx;
 
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;

@@ -1,4 +1,4 @@
-package battle.terrain;
+package util;
 
 /**
  *

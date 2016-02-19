@@ -11,6 +11,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.texture.Texture;
+import java.text.MessageFormat;
 
 /**
  *
@@ -18,25 +19,23 @@ import com.jme3.texture.Texture;
  */
 public abstract class Unit extends RawUnit {
 
-    public enum Rotation {
-
-        NORTH, SOUTH, EAST, WEST
-    }
-
-    private final Geometry geometry;
-
-    private Rotation rotation;
+    private static final float Y_LEVEL = 0.02f;
 
     public static final float N_STEP = 10;
 
+    private final Geometry geometry;
+
     public boolean moved;
 
-    // The position on the grid
-    // positional value [0-1[
-    private final Vector2f fractal = new Vector2f();
+    private final Vector2f fractal;
+
+    public Vector2f destination;
+
+    public Path path;
 
     public Unit(IVehicle vehicle, IWeapon weapon, Group group) {
         super(vehicle, weapon, group, Pose.STANDING);
+        this.fractal = new Vector2f();
         Material m = new Material(getGroup().getMap().assets, "Common/MatDefs/Light/Lighting.j3md");
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/le.png", false));
@@ -53,9 +52,8 @@ public abstract class Unit extends RawUnit {
         getGroup().getMap().rootNode.attachChild(geometry);
         getGroup().join(this);
         moved = false;
+        System.out.println(this);
     }
-
-    private static final float Y_LEVEL = 0.02f;
 
     private void updateGfx() {
         geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
@@ -65,10 +63,6 @@ public abstract class Unit extends RawUnit {
         this.destination = dest;
         path = new Path(pos, destination, getGroup().getMap());
     }
-
-    public Vector2f destination;
-
-    public Path path;
 
     private void nextStep() {
         if (destination.equals(pos)) {
@@ -80,8 +74,8 @@ public abstract class Unit extends RawUnit {
         path.reValidate();
         if (!path.isEmpty()) {
             dest = path.first();
-        }else{
-            
+        } else {
+
         }
     }
 
@@ -108,7 +102,9 @@ public abstract class Unit extends RawUnit {
 
     @Override
     public String toString() {
-        return super.toString() + "Unit{" + "geometry=" + geometry + ", rotation=" + rotation + ", moved=" + moved + ", fractal=" + fractal + ", destination=" + destination + ", path=" + path + '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format("Unit\n{0}\n\tfractal is {1}\n\tfinal destination is {2}", super.toString(), fractal, destination));
+        return sb.toString();
     }
 
 }

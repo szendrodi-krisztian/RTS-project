@@ -2,6 +2,7 @@ package battle.entity;
 
 import battle.entity.group.Group;
 import com.jme3.math.Vector2f;
+import java.text.MessageFormat;
 
 /**
  *
@@ -43,7 +44,6 @@ public abstract class RawUnit {
         this.vehicle = vehicle;
         this.weapon = weapon;
         this.pose = pose;
-        //path = new Path(real_pos, dest, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
     }
 
     public final Group getGroup() {
@@ -68,7 +68,9 @@ public abstract class RawUnit {
 
     @Override
     public String toString() {
-        return "RawUnit{" + "pos=" + pos + ", dest=" + dest + ", pose=" + pose + ", group=" + group + ", vehicle=" + vehicle + ", weapon=" + weapon + ", health=" + health + ", accuracy=" + accuracy + ", stamina=" + stamina + ", discipline=" + discipline + ", morale=" + morale + ", dmg_mult=" + dmg_mult + '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format("RawUnit\n\tcurrently at {0}\n\tmoving to {1}\n\tfacing {2}\n\triding {3}\n\tequipped {4}\n\tin group{5}", pos, dest, rotationAngle, vehicle, weapon, group));
+        return sb.toString();
     }
 
 }
