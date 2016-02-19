@@ -63,7 +63,7 @@ public abstract class Unit extends RawUnit {
 
     public final void moveTo(Vector2f dest) {
         this.destination = dest;
-        path = new Path(pos, destination, getGroup().getMap().terrain.raw(), getGroup().getMap().units);
+        path = new Path(pos, destination, getGroup().getMap());
     }
 
     public Vector2f destination;
@@ -91,7 +91,6 @@ public abstract class Unit extends RawUnit {
             nextStep();
             fractal.subtractLocal(dest);
             pos.addLocal(dest);
-            getGroup().onUnitMovedGrid(this);
         } else {
             float sx = FastMath.sign(fractal.x) * vehicle.getMovementSpeed() * tpf;
             float sy = FastMath.sign(fractal.y) * vehicle.getMovementSpeed() * tpf;

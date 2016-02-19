@@ -1,5 +1,6 @@
 package battle.path;
 
+import battle.BattleMap;
 import battle.entity.Unit;
 import battle.entity.UnitGrid;
 import battle.terrain.MyVector2f;
@@ -27,26 +28,26 @@ public final class Path extends ArrayList<Vector2f> {
         {+1, -1},};
 
     private int posX, posY, destX, destY;
-    private final Terrain terrain;
-    private final UnitGrid units;
+    
+    private final BattleMap map;
+    
 
     private int pathDistanceGrid[];
     private List<MyVector2f> subsequentGrids;
 
     private static final ObjectPool<MyVector2f> pool = new ObjectPool<>(MyVector2f.class);
 
-    public Path(Vector2f from, Vector2f to, Terrain terrain, UnitGrid units) {
-        this((int) from.x, (int) from.y, (int) to.x, (int) to.y, terrain, units);
+    public Path(Vector2f from, Vector2f to, BattleMap map) {
+        this((int) from.x, (int) from.y, (int) to.x, (int) to.y, map);
     }
 
-    public Path(int posX, int posY, int destX, int destY, Terrain terrain, UnitGrid units) {
+    public Path(int posX, int posY, int destX, int destY, BattleMap map) {
         this.posX = posX;
         this.posY = posY;
         this.destX = destX;
         this.destY = destY;
-        this.terrain = terrain;
-        this.units = units;
-        pathDistanceGrid = new int[terrain.width() * terrain.height()];
+        this.map = map;
+        pathDistanceGrid = new int[map.mapWidth * map.mapHeight];
         subsequentGrids = new ArrayList<>();
         reCalculate(true);
     }
@@ -62,7 +63,7 @@ public final class Path extends ArrayList<Vector2f> {
             pool.destroy(subsequentGrid);
         }
         subsequentGrids.clear();
-        if (destX < 0 || destY < 0 || !terrain.isAccessible(destX, destY) || (posX == destX && posY == destY)) {
+        if (destX < 0 || destY < 0 || !map.isTerrainAccessible(destX, destY) || (posX == destX && posY == destY)) {
             this.add(new Vector2f(posX, posY));
             return;
         }
@@ -71,8 +72,8 @@ public final class Path extends ArrayList<Vector2f> {
         MyVector2f currentGrid = pool.create(posX, posY);
         Arrays.fill(pathDistanceGrid, Integer.MAX_VALUE);
         subsequentGrids.add(pool.create(posX, posY));
-        pathDistanceGrid[posX * terrain.height() + posY] = 0;
-        while (pathDistanceGrid[destX * terrain.height() + destY] == Integer.MAX_VALUE) {
+        pathDistanceGrid[posX * map.mapHeight + posY] = 0;
+        while (pathDistanceGrid[destX * map.mapHeight + destY] == Integer.MAX_VALUE) {
             if (subsequentGrids.isEmpty()) {
                 if (checkUnits) {
                     reCalculate(false);
@@ -89,14 +90,14 @@ public final class Path extends ArrayList<Vector2f> {
             for (int i = 0; i < 8; i++) {
                 neighbourX = neighbours[i][0];
                 neighbourY = neighbours[i][1];
-                if ((currentGrid.x + neighbourX) + 1 > terrain.width() || (currentGrid.y + neighbourY) + 1 > terrain.height()
+                if ((currentGrid.x + neighbourX) + 1 > map.mapWidth || (currentGrid.y + neighbourY) + 1 > map.mapHeight
                         || (currentGrid.x + neighbourX) < 0 || (currentGrid.y + neighbourY) < 0) {
                     continue;
                 }
 
-                int opt1 = ((int) currentGrid.x + neighbourX) * terrain.height() + ((int) currentGrid.y + neighbourY);
-                int opt2 = (int) currentGrid.x * terrain.height() + (int) currentGrid.y;
-                if (terrain.isAccessible(currentGrid.x + neighbourX, currentGrid.y + neighbourY)
+                int opt1 = ((int) currentGrid.x + neighbourX) * map.mapHeight + ((int) currentGrid.y + neighbourY);
+                int opt2 = (int) currentGrid.x * map.mapHeight + (int) currentGrid.y;
+                if (map.isTerrainAccessible(currentGrid.x + neighbourX, currentGrid.y + neighbourY)
                         && pathDistanceGrid[opt1] > pathDistanceGrid[opt2] + 1) {
 
                     pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
@@ -109,15 +110,15 @@ public final class Path extends ArrayList<Vector2f> {
         currentGrid.x = destX;
         currentGrid.y = destY;
         this.add(new Vector2f(currentGrid.x, currentGrid.y));
-        while (pathDistanceGrid[(int) currentGrid.x * terrain.height() + (int) currentGrid.y] != 1) {
+        while (pathDistanceGrid[(int) currentGrid.x * map.mapHeight + (int) currentGrid.y] != 1) {
             for (int j = 0; j < 8; j++) {
                 neighbourX = neighbours[j][0];
                 neighbourY = neighbours[j][1];
-                if ((currentGrid.x + neighbourX) + 1 > terrain.width() || (currentGrid.y + neighbourY) + 1 > terrain.height()
+                if ((currentGrid.x + neighbourX) + 1 > map.mapWidth || (currentGrid.y + neighbourY) + 1 > map.mapHeight
                         || (currentGrid.x + neighbourX) < 0 || (currentGrid.y + neighbourY) < 0) {
                     continue;
                 }
-                if (pathDistanceGrid[((int) currentGrid.x + neighbourX) * terrain.height() + ((int) currentGrid.y + neighbourY)] == pathDistanceGrid[(int) currentGrid.x * terrain.height() + (int) currentGrid.y] - 1) {
+                if (pathDistanceGrid[((int) currentGrid.x + neighbourX) * map.mapHeight + ((int) currentGrid.y + neighbourY)] == pathDistanceGrid[(int) currentGrid.x * map.mapHeight + (int) currentGrid.y] - 1) {
                     currentGrid.x += neighbourX;
                     currentGrid.y += neighbourY;
                     this.add(new Vector2f(currentGrid.x, currentGrid.y));
@@ -151,7 +152,7 @@ public final class Path extends ArrayList<Vector2f> {
     public void reValidate() {
         if(size()==0) return;
         Vector2f next = get(size() - 1);
-        List<Unit> list = units.getUnitsAt(next);
+        List<Unit> list =map.getUnitsAt(next);
 
         if (list.isEmpty()) {
             return;

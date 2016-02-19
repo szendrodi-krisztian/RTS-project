@@ -133,8 +133,8 @@ public class BattleState extends AbstractAppState {
                             }
                             Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
                             Unit unit=null;
-                            if(!map.units.isEmpty(hit_geom.x, hit_geom.z)) {
-                                unit = map.units.getUnitsAt(hit_geom.x, hit_geom.z).get(0);
+                            if(!map.getUnitsAt(hit_geom.x, hit_geom.z).isEmpty()) {
+                                unit = map.getUnitsAt(hit_geom.x, hit_geom.z).get(0);
                             }
                             System.out.println(unit);
                             if (unit != null) {
@@ -155,7 +155,7 @@ public class BattleState extends AbstractAppState {
                                 }
 
                                 select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z);
-                                List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map.terrain.raw(), map.units);
+                                List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map);
                                 FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
                                 for (Vector2f v : p) {
                                     vb.put(v.x).put(0.2f).put(v.y);

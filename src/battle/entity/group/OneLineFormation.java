@@ -1,8 +1,6 @@
 package battle.entity.group;
 
-import battle.entity.group.AbstractFormation;
 import battle.BattleMap;
-import com.bulletphysics.collision.broadphase.BroadphaseNativeType;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -51,14 +49,14 @@ public class OneLineFormation extends AbstractFormation {
             if (ret.x < 0 || ret.y < 0 || ret.x > map.mapWidth || ret.y > map.mapHeight) {
                 break;
             }
-            if (!map.terrain.raw().isAccessible(ret)) {
+            if (!map.isTerrainAccessible(ret)) {
                 if ((unit_in % 2 == 0)) {
                     position_offset++;
                 } else {
                     position_offset_neg++;
                 }
             }
-        } while (!map.terrain.raw().isAccessible(ret));
+        } while (!map.isTerrainAccessible(ret));
         return ret;
 
     }

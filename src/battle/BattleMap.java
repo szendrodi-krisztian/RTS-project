@@ -9,10 +9,10 @@ import battle.entity.group.Group;
 import battle.terrain.MeshedTerrain;
 import battle.terrain.Terrain;
 import com.jme3.asset.AssetManager;
+import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,17 +23,15 @@ import java.util.logging.Logger;
  */
 public class BattleMap {
 
-    public MeshedTerrain terrain;
+    public final int mapWidth, mapHeight;
 
-    public UnitGrid units;
+    public final AssetManager assets;
 
-    public List<Group> groups = new ArrayList<>();
+    public final Node rootNode;
 
-    public int mapWidth, mapHeight;
+    private final MeshedTerrain terrain;
 
-    public AssetManager assets;
-
-    public Node rootNode;
+    private final UnitGrid units;
 
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this.mapWidth = mapWidth;
@@ -46,8 +44,8 @@ public class BattleMap {
         Group g1 = null;
         Group g2 = null;
         try {
-            g1 = new Group(this, OneLineFormation.class);
-            g2 = new Group(this, TwoLineFormation.class);
+            g1 = new Group(this, new OneLineFormation(this));
+            g2 = new Group(this, new TwoLineFormation(this));
         } catch (Exception e) {
         }
         spawn(3, 2, g1, SimpleUnit.class);
@@ -99,6 +97,22 @@ public class BattleMap {
 
     public void tick(float tpf) {
         units.move(tpf);
+    }
+
+    public boolean isTerrainAccessible(Vector2f v) {
+        return isTerrainAccessible(v.x, v.y);
+    }
+
+    public boolean isTerrainAccessible(float x, float y) {
+        return terrain.raw().isAccessible((int) x, (int) y);
+    }
+
+    public List<Unit> getUnitsAt(float x, float y) {
+        return units.getUnitsAt(x, y);
+    }
+
+    public List<Unit> getUnitsAt(Vector2f position) {
+        return units.getUnitsAt(position);
     }
 
 }
