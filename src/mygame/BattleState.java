@@ -62,7 +62,7 @@ public class BattleState extends AbstractAppState {
             map.tick(tpf);
         }
     }
-    
+
     Group select = null;
 
     @Override
@@ -105,11 +105,7 @@ public class BattleState extends AbstractAppState {
                         case "zoom out":
                             camPos.addLocal(Vector3f.UNIT_Y.mult(value * mult));
                             break;
-                        case "shoot":
-                            if(select!=null){
-                                select.attack();
-                            }
-                            break;
+
                     }
                     app.getCamera().setLocation(camPos);
                 }
@@ -117,8 +113,7 @@ public class BattleState extends AbstractAppState {
 
             ActionListener actl;
             actl = new ActionListener() {
-                
-                
+
                 Mesh select_path;
 
                 @Override
@@ -139,8 +134,8 @@ public class BattleState extends AbstractAppState {
                                 return;
                             }
                             Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
-                            Unit unit=null;
-                            if(!map.getUnitsAt(hit_geom.x, hit_geom.z).isEmpty()) {
+                            Unit unit = null;
+                            if (!map.getUnitsAt(hit_geom.x, hit_geom.z).isEmpty()) {
                                 unit = map.getUnitsAt(hit_geom.x, hit_geom.z).get(0);
                             }
                             System.out.println(unit);
@@ -184,6 +179,11 @@ public class BattleState extends AbstractAppState {
                         case "to the menu":
                             setEnabled(false);
                             app.getStateManager().getState(MainMenuState.class).setEnabled(true);
+                            break;
+                        case "shoot":
+                            if (select != null) {
+                                select.attack();
+                            }
                             break;
                     }
                 }
