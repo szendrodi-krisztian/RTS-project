@@ -72,8 +72,8 @@ public class Projectile {
     
     public void move(float tpf)
     {
-        this.position.x+=this.speed.x*tpf*30;
-        this.position.z+=this.speed.z*tpf*30;
+        this.position.x+=this.speed.x*tpf*10;//30 ideal
+        this.position.z+=this.speed.z*tpf*10;//30 ideal
         updateGfx();
     }   
 }
