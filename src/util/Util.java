@@ -14,7 +14,12 @@ public class Util {
     public static float angleToPositiveToOctave(float angle) {
         float newangle;
         newangle = (angle < 0) ? 360 + angle : angle;
-        newangle -= (newangle % 45);
+        if (newangle % 45 < 22) {
+            newangle -= (newangle % 45);
+        } else {
+            newangle += (45 - newangle % 45);
+        }
+        if(newangle == 360) newangle = 0;
         return newangle;
     }
 

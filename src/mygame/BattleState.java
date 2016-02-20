@@ -24,6 +24,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -34,6 +35,7 @@ import com.jme3.scene.VertexBuffer;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.List;
+import util.Util;
 
 /**
  *
@@ -115,14 +117,16 @@ public class BattleState extends AbstractAppState {
             actl = new ActionListener() {
 
                 Mesh select_path;
+                Vector2f right_pos;
 
                 @Override
                 public void onAction(String name, boolean isPressed, float tpf) {
-                    if (!isPressed) {
-                        return;
-                    }
+
                     switch (name.toLowerCase()) {
                         case "left click":
+                            if (!isPressed) {
+                                return;
+                            }
                             CollisionResults results = new CollisionResults();
                             Vector2f cur = app.getInputManager().getCursorPosition();
                             Vector3f cur3d = app.getCamera().getWorldCoordinates(cur.clone(), 0f).clone();
@@ -145,42 +149,67 @@ public class BattleState extends AbstractAppState {
                             break;
                         case "right click":
                             if (select != null) {
-                                CollisionResults results2 = new CollisionResults();
-                                Vector2f cur2 = app.getInputManager().getCursorPosition();
-                                Vector3f cur3d2 = app.getCamera().getWorldCoordinates(cur2.clone(), 0f).clone();
-                                Vector3f dir2 = app.getCamera().getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
-                                Ray ray2 = new Ray(cur3d2, dir2);
-                                battleRoot.collideWith(ray2, results2);
-                                CollisionResult coll2 = results2.getClosestCollision();
-                                if (coll2 == null) {
-                                    return;
-                                }
+                                if (isPressed) {
+                                    CollisionResults results2 = new CollisionResults();
+                                    Vector2f cur2 = app.getInputManager().getCursorPosition();
+                                    Vector3f cur3d2 = app.getCamera().getWorldCoordinates(cur2.clone(), 0f).clone();
+                                    Vector3f dir2 = app.getCamera().getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
+                                    Ray ray2 = new Ray(cur3d2, dir2);
+                                    battleRoot.collideWith(ray2, results2);
+                                    CollisionResult coll2 = results2.getClosestCollision();
+                                    if (coll2 == null) {
+                                        return;
+                                    }
+                                    right_pos = new Vector2f(coll2.getContactPoint().x, coll2.getContactPoint().z);
 
-                                select.moveTo((int) coll2.getContactPoint().x, (int) coll2.getContactPoint().z);
-                                List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map);
-                                FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
-                                for (Vector2f v : p) {
-                                    vb.put(v.x).put(0.2f).put(v.y);
+                                    List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map);
+                                    FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
+                                    for (Vector2f v : p) {
+                                        vb.put(v.x).put(0.2f).put(v.y);
+                                    }
+                                    vb.put(select.getLeader().pos.x).put(0.2f).put(select.getLeader().pos.y);
+                                    battleRoot.detachChildNamed("path");
+                                    select_path = new Mesh();
+                                    select_path.setBuffer(VertexBuffer.Type.Position, 3, vb);
+                                    select_path.setMode(Mesh.Mode.LineStrip);
+                                    select_path.updateBound();
+                                    Geometry g = new Geometry("path", select_path);
+                                    Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+                                    m.setColor("Color", ColorRGBA.Pink);
+                                    g.setMaterial(m);
+                                    g.move(0.5f, 0, 0.5f);
+                                    battleRoot.attachChild(g);
+                                } else {
+                                    CollisionResults results2 = new CollisionResults();
+                                    Vector2f cur2 = app.getInputManager().getCursorPosition();
+                                    Vector3f cur3d2 = app.getCamera().getWorldCoordinates(cur2.clone(), 0f).clone();
+                                    Vector3f dir2 = app.getCamera().getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
+                                    Ray ray2 = new Ray(cur3d2, dir2);
+                                    battleRoot.collideWith(ray2, results2);
+                                    CollisionResult coll2 = results2.getClosestCollision();
+                                    if (coll2 == null) {
+                                        return;
+                                    }
+                                    Vector2f release = new Vector2f(coll2.getContactPoint().x, coll2.getContactPoint().z);
+                                    if (release.subtract(right_pos).lengthSquared() > 0.5f) {
+                                        select.moveTo((int) right_pos.x, (int) right_pos.y, Util.angleToPositiveToOctave(FastMath.RAD_TO_DEG * (release.subtractLocal(right_pos)).angleBetween(new Vector2f(0, 1))));
+                                    } else {
+                                        select.moveTo((int) right_pos.x, (int) right_pos.y, select.getLeader().finalRotationAngle);
+                                    }
                                 }
-                                vb.put(select.getLeader().pos.x).put(0.2f).put(select.getLeader().pos.y);
-                                battleRoot.detachChildNamed("path");
-                                select_path = new Mesh();
-                                select_path.setBuffer(VertexBuffer.Type.Position, 3, vb);
-                                select_path.setMode(Mesh.Mode.LineStrip);
-                                select_path.updateBound();
-                                Geometry g = new Geometry("path", select_path);
-                                Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-                                m.setColor("Color", ColorRGBA.Pink);
-                                g.setMaterial(m);
-                                g.move(0.5f, 0, 0.5f);
-                                battleRoot.attachChild(g);
                             }
                             break;
                         case "to the menu":
+                            if (!isPressed) {
+                                return;
+                            }
                             setEnabled(false);
                             app.getStateManager().getState(MainMenuState.class).setEnabled(true);
                             break;
                         case "shoot":
+                            if (!isPressed) {
+                                return;
+                            }
                             if (select != null) {
                                 select.attack();
                             }

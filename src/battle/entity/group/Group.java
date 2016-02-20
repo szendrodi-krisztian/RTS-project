@@ -50,7 +50,8 @@ public final class Group {
     }
 
     /**
-     * @return The leader of this group, who the reference for the movement and formation is.
+     * @return The leader of this group, who the reference for the movement and
+     * formation is.
      */
     public Unit getLeader() {
         return units.get(0);
@@ -58,18 +59,20 @@ public final class Group {
 
     /**
      * Moves the whole group to a new destination.
+     *
      * @param x X coordinate
      * @param y Y coordinate
+     * @param rot the new rotation
      */
-    public void moveTo(int x, int y) {
+    public void moveTo(int x, int y, float rot) {
         float rot_bef = getLeader().rotationAngle;
         Vector2f leader = new Vector2f(x, y);
-        float rotation = (FastMath.RAD_TO_DEG * (new Vector2f(x, y).subtractLocal(getLeader().position()).angleBetween(new Vector2f(0, 1))));
         // negative angles mess up Quaternion constructor...
-        rotation = Util.angleToPositiveToOctave(rotation);
+        float rotation = Util.angleToPositiveToOctave(rot);
+        System.out.println("rotate from " + rot_bef + " to " + rotation);
         formation.position_offset = 0;
         formation.position_offset_neg = 0;
-        if (FastMath.abs(rot_bef - rotation) >= 90) {
+        if (FastMath.abs(rot_bef - rotation) >= 90 && FastMath.abs(rot_bef-rotation)!=315) {
             formation.rev = !formation.rev;
         }
         for (int i = 0; i < units.size(); i++) {
@@ -78,9 +81,9 @@ public final class Group {
             units.get(i).finalRotationAngle = rotation;
         }
     }
-    
-    public void attack(){
-        for(Unit u : units){
+
+    public void attack() {
+        for (Unit u : units) {
             u.attack();
         }
     }

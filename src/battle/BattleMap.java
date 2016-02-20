@@ -50,13 +50,13 @@ public class BattleMap {
         for (int i = 0; i < 1; i++) {
             spawn(0, 0, g1, SimpleUnit.class);
         }
-        g1.moveTo(10, 10);
+        g1.moveTo(10, 10, 0);
 
         Group g2 = new Group(this, new TwoLineFormation(this));
         for (int i = 0; i < 12; i++) {
             spawn(0, 0, g2, SimpleUnit.class);
         }
-        g2.moveTo(5, 15);
+        g2.moveTo(5, 15, 0);
        
     }
     
