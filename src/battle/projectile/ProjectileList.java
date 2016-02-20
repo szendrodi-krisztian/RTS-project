@@ -18,10 +18,10 @@ public class ProjectileList extends ArrayList<Projectile>{
         this.map=map;
     }
     
-    public void moveAll()
+    public void moveAll(float tpf)
     {
         for (Projectile thi : this) {
-            thi.move();
+            thi.move(tpf);
             collision(thi);
         }
     }

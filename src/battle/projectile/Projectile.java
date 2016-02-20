@@ -70,10 +70,10 @@ public class Projectile {
         geometry.setLocalTranslation(position.x, 0.1f, position.z);
     }
     
-    public void move()
+    public void move(float tpf)
     {
-        this.position.x+=this.speed.x;
-        this.position.z+=this.speed.z;
+        this.position.x+=this.speed.x*tpf*30;
+        this.position.z+=this.speed.z*tpf*30;
         updateGfx();
     }   
 }

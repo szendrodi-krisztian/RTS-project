@@ -82,7 +82,7 @@ public class BattleMap {
 
     public void tick(float tpf) {
         units.move(tpf);
-        projectileList.moveAll();
+        projectileList.moveAll(tpf);
     }
 
     public boolean isTerrainAccessible(Vector2f v) {
