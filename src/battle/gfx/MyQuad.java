@@ -10,9 +10,9 @@ import java.nio.IntBuffer;
  *
  * @author szend
  */
-public class UnitMesh extends Mesh {
+public class MyQuad extends Mesh {
 
-    public UnitMesh() {
+    public MyQuad() {
         FloatBuffer vb = BufferUtils.createFloatBuffer(4 * 3);
         FloatBuffer tc = BufferUtils.createFloatBuffer(4 * 2);
         FloatBuffer nb = BufferUtils.createFloatBuffer(4 * 3);

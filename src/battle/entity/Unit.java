@@ -1,7 +1,7 @@
 package battle.entity;
 
 import battle.entity.group.Group;
-import battle.gfx.UnitMesh;
+import battle.gfx.MyQuad;
 import battle.path.Path;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
@@ -46,13 +46,12 @@ public abstract class Unit extends RawUnit {
         t2.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
         m.setTexture("DiffuseMap", t);
         m.setTexture("AlphaMap", t2);
-        Mesh mesh = new UnitMesh();
+        Mesh mesh = new MyQuad();
         geometry = new Geometry("unit", mesh);
         geometry.setMaterial(m);
         getGroup().getMap().rootNode.attachChild(geometry);
         getGroup().join(this);
         moved = false;
-        System.out.println(this);
     }
 
     private void updateGfx() {

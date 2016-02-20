@@ -126,9 +126,8 @@ public class TerrainElementManager {
         terrainMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
         terrainMaterial.setTexture("DiffuseMap", atlas.getTexture());
         terrainMaterial.setTexture("AlphaMap", atlas.getAlphaTexture());
-        terrainMaterial.getAdditionalRenderState().setDepthWrite(false);
-        terrainMaterial.getAdditionalRenderState().setDepthTest(false);
         terrainMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        terrainMaterial.getAdditionalRenderState().setDepthTest(false);
         decorMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
         decorMaterial.setTexture("DiffuseMap", bigAtlas.getTexture());
         decorMaterial.setTexture("AlphaMap", bigAtlas.getAlphaTexture());

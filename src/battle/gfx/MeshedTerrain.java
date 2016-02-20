@@ -5,6 +5,7 @@ import battle.gfx.TerrainGridMesh;
 import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -23,6 +24,7 @@ public class MeshedTerrain {
 
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
+        geom.setQueueBucket(RenderQueue.Bucket.Opaque);
         geom.move(0, 0, 0);
         rootNode.attachChild(geom);
 

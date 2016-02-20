@@ -7,9 +7,11 @@ import battle.entity.UnitGrid;
 import battle.entity.Unit;
 import battle.entity.SimpleUnit;
 import battle.gfx.MeshedTerrain;
+import battle.projectile.Projectile;
 import battle.terrain.Terrain;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -52,9 +54,9 @@ public class BattleMap {
             spawn(0, 0, g2, SimpleUnit.class);
         }
         g2.moveTo(5, 15);
-
+       
     }
-
+    
     /**
      * Spawns a unit.
      *
