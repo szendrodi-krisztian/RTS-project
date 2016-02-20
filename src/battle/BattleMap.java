@@ -47,7 +47,7 @@ public class BattleMap {
         units = new UnitGrid(mapWidth, mapHeight);
 
         Group g1 = new Group(this, new OneLineFormation(this));
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 1; i++) {
             spawn(0, 0, g1, SimpleUnit.class);
         }
         g1.moveTo(10, 10);

@@ -6,6 +6,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
+import util.Util;
 
 /**
  *
@@ -65,8 +66,7 @@ public final class Group {
         Vector2f leader = new Vector2f(x, y);
         float rotation = (FastMath.RAD_TO_DEG * (new Vector2f(x, y).subtractLocal(getLeader().position()).angleBetween(new Vector2f(0, 1))));
         // negative angles mess up Quaternion constructor...
-        rotation = (rotation < 0) ? 360 + rotation : rotation;
-        rotation -= (rotation % 45);
+        rotation = Util.angleToPositiveToOctave(rotation);
         formation.position_offset = 0;
         formation.position_offset_neg = 0;
         if (FastMath.abs(rot_bef - rotation) >= 90) {
@@ -75,7 +75,7 @@ public final class Group {
         for (int i = 0; i < units.size(); i++) {
             Vector2f v = formation.getRelativePosition(i, leader, rotation);
             units.get(i).moveTo(v);
-            units.get(i).rotationAngle = rotation;
+            units.get(i).finalRotationAngle = rotation;
         }
     }
     

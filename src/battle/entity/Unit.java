@@ -12,6 +12,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.texture.Texture;
 import java.text.MessageFormat;
+import util.Util;
 
 /**
  *
@@ -67,12 +68,14 @@ public abstract class Unit extends RawUnit {
         if (destination.equals(pos)) {
             dest.x = 0;
             dest.y = 0;
+            rotationAngle = finalRotationAngle;
             return;
         }
         path.setStart((int) pos.x, (int) pos.y);
         path.reValidate();
         if (!path.isEmpty()) {
             dest = path.first();
+            rotationAngle = Util.angleToPositiveToOctave(FastMath.RAD_TO_DEG *dest.angleBetween(new Vector2f(0,1)));
         } else {
 
         }
