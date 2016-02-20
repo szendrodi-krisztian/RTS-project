@@ -109,8 +109,8 @@ public class SimpleWeapon implements IWeapon {
     }
 
     @Override
-    public void attack(Unit.Pose pose, float acc, float dmg_mult, Vector2f source, int dx, int dy) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void attack(Unit.Pose pose, float acc, float dmg_mult, Vector2f source, float roatationAngle) {
+        
     }
 
 }

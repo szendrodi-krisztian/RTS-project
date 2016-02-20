@@ -68,8 +68,8 @@ public class Projectile {
     
     public void move()
     {
-        
+        this.position.x+=this.speed.x;
+        this.position.z+=this.speed.z;
+        updateGfx();
     }   
-    
-    
 }

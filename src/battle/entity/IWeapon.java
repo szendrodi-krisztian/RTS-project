@@ -51,7 +51,7 @@ public interface IWeapon {
 
     public void setReady(boolean r);
     
-    public void attack(Pose pose, float acc, float dmg_mult, Vector2f source, int dx, int dy);
+    public void attack(Pose pose, float acc, float dmg_mult, Vector2f source, float roatationAngle, int dx, int dy);
     
 
 }
