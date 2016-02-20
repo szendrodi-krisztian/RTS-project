@@ -1,6 +1,12 @@
 package battle.entity;
 
+import battle.BattleMap;
+import battle.projectile.Projectile;
+import com.jme3.math.FastMath;
+import static com.jme3.math.FastMath.cos;
+import static com.jme3.math.FastMath.sin;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 
 /**
  * Placeholder class for testing porpouses only.
@@ -17,6 +23,11 @@ public class SimpleWeapon implements IWeapon {
     float sw_in = 0.2f;
     float sw_out = 0.2f;
     boolean ready = true;
+    BattleMap map;
+
+    public SimpleWeapon(BattleMap map) {
+        this.map = map;
+    }
 
     @Override
     public String getTexture() {
@@ -109,8 +120,11 @@ public class SimpleWeapon implements IWeapon {
     }
 
     @Override
-    public void attack(Unit.Pose pose, float acc, float dmg_mult, Vector2f source, float roatationAngle) {
-        
+    public void attack(Unit.Pose pose, float acc, float dmg_mult, Vector2f pos, float roatationAngle) {
+        float rad=roatationAngle*FastMath.DEG_TO_RAD;
+        Vector3f pos3=new Vector3f(pos.x, 0, pos.y);
+        Vector3f speed=new Vector3f(cos(rad), 0, sin(rad));
+        map.projectileList.add(new Projectile(speed, pos3, getMinDamage(), getRange(), 1, false, false, map));
     }
 
 }

@@ -18,7 +18,7 @@ public class ProjectileList extends ArrayList<Projectile>{
         this.map=map;
     }
     
-    void moveAll()
+    public void moveAll()
     {
         for (Projectile thi : this) {
             thi.move();
@@ -26,7 +26,7 @@ public class ProjectileList extends ArrayList<Projectile>{
         }
     }
     
-    void collision(Projectile projectile)
+    private void collision(Projectile projectile)
     {
         
     }

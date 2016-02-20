@@ -8,6 +8,7 @@ import battle.entity.Unit;
 import battle.entity.SimpleUnit;
 import battle.gfx.MeshedTerrain;
 import battle.projectile.Projectile;
+import battle.projectile.ProjectileList;
 import battle.terrain.Terrain;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
@@ -34,6 +35,8 @@ public class BattleMap {
     private final MeshedTerrain terrain;
 
     private final UnitGrid units;
+    
+    public ProjectileList projectileList = new ProjectileList(this);
 
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this.mapWidth = mapWidth;
@@ -79,6 +82,7 @@ public class BattleMap {
 
     public void tick(float tpf) {
         units.move(tpf);
+        projectileList.moveAll();
     }
 
     public boolean isTerrainAccessible(Vector2f v) {
