@@ -189,8 +189,8 @@ public class BattleState extends AbstractAppState {
                 }
             };
 
-            app.getInputManager().addListener(al, new String[]{"left", "right", "up", "down", "zoom in", "zoom out", "shoot"});
-            app.getInputManager().addListener(actl, new String[]{"left click", "right click", "to the menu"});
+            app.getInputManager().addListener(al, new String[]{"left", "right", "up", "down", "zoom in", "zoom out"});
+            app.getInputManager().addListener(actl, new String[]{"left click", "right click", "to the menu", "shoot"});
             app.getInputManager().addMapping("left", new KeyTrigger(KeyInput.KEY_A));
             app.getInputManager().addMapping("right", new KeyTrigger(KeyInput.KEY_D));
             app.getInputManager().addMapping("up", new KeyTrigger(KeyInput.KEY_W));
