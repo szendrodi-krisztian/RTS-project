@@ -120,10 +120,12 @@ public class SimpleWeapon implements IWeapon {
     }
 
     @Override
-    public void attack(Unit.Pose pose, float acc, float dmg_mult, Vector2f pos, float roatationAngle) {
-        float rad=roatationAngle*FastMath.DEG_TO_RAD;
+    public void attack(Unit.Pose pose, float acc, float dmg_mult, Vector2f pos, float rotationAngle) {
+        float rad=rotationAngle*FastMath.DEG_TO_RAD;
+        Vector2f v = new Vector2f(0,1);
+        v.rotateAroundOrigin(rad, false);
         Vector3f pos3=new Vector3f(pos.x, 0, pos.y);
-        Vector3f speed=new Vector3f(cos(rad), 0, sin(rad));
+        Vector3f speed=new Vector3f(v.x/30, 0, v.y/30);
         map.projectileList.add(new Projectile(speed, pos3, getMinDamage(), getRange(), 1, false, false, map));
     }
 
