@@ -62,6 +62,10 @@ public class Projectile {
         this.canGravityAffect = canGravityAffect;
     }
     
+    public final void destroy(){
+        geometry.getParent().detachChild(geometry);
+    }
+    
     public final void updateGfx(){
         geometry.setLocalTranslation(position.x, 0.1f, position.z);
     }
