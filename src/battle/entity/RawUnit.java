@@ -51,7 +51,11 @@ public abstract class RawUnit {
     }
 
     public final void attack(int x, int y) {
-        weapon.attack(pose, accuracy, dmg_mult, pos, x, y);
+        //weapon.attack(pose, accuracy, dmg_mult, pos, x, y);
+    }
+
+    public final void attack() {
+        weapon.attack(pose, accuracy, dmg_mult, pos, rotationAngle);
     }
 
     public final Vector2f position() {

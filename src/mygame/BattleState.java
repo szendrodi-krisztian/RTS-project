@@ -62,6 +62,8 @@ public class BattleState extends AbstractAppState {
             map.tick(tpf);
         }
     }
+    
+    Group select = null;
 
     @Override
     public void setEnabled(boolean enabled) {
@@ -103,6 +105,11 @@ public class BattleState extends AbstractAppState {
                         case "zoom out":
                             camPos.addLocal(Vector3f.UNIT_Y.mult(value * mult));
                             break;
+                        case "shoot":
+                            if(select!=null){
+                                select.attack();
+                            }
+                            break;
                     }
                     app.getCamera().setLocation(camPos);
                 }
@@ -111,7 +118,7 @@ public class BattleState extends AbstractAppState {
             ActionListener actl;
             actl = new ActionListener() {
                 
-                Group select = null;
+                
                 Mesh select_path;
 
                 @Override
@@ -182,7 +189,7 @@ public class BattleState extends AbstractAppState {
                 }
             };
 
-            app.getInputManager().addListener(al, new String[]{"left", "right", "up", "down", "zoom in", "zoom out"});
+            app.getInputManager().addListener(al, new String[]{"left", "right", "up", "down", "zoom in", "zoom out", "shoot"});
             app.getInputManager().addListener(actl, new String[]{"left click", "right click", "to the menu"});
             app.getInputManager().addMapping("left", new KeyTrigger(KeyInput.KEY_A));
             app.getInputManager().addMapping("right", new KeyTrigger(KeyInput.KEY_D));
@@ -191,6 +198,7 @@ public class BattleState extends AbstractAppState {
             app.getInputManager().addMapping("zoom in", new KeyTrigger(KeyInput.KEY_Q));
             app.getInputManager().addMapping("zoom out", new KeyTrigger(KeyInput.KEY_E));
             app.getInputManager().addMapping("to the menu", new KeyTrigger(KeyInput.KEY_M));
+            app.getInputManager().addMapping("shoot", new KeyTrigger(KeyInput.KEY_SPACE));
             app.getInputManager().addMapping("left click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
             app.getInputManager().addMapping("right click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
         } else {

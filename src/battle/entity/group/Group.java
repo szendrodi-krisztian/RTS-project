@@ -78,5 +78,11 @@ public final class Group {
             units.get(i).rotationAngle = rotation;
         }
     }
+    
+    public void attack(){
+        for(Unit u : units){
+            u.attack();
+        }
+    }
 
 }
