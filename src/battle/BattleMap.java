@@ -35,7 +35,7 @@ public class BattleMap {
     private final MeshedTerrain terrain;
 
     private final UnitGrid units;
-    
+
     public ProjectileList projectileList = new ProjectileList(this);
 
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
@@ -57,9 +57,9 @@ public class BattleMap {
             spawn(0, 0, g2, SimpleUnit.class);
         }
         g2.moveTo(5, 15, 0);
-       
+
     }
-    
+
     /**
      * Spawns a unit.
      *
@@ -91,6 +91,7 @@ public class BattleMap {
 
     public boolean isTerrainAccessible(float x, float y) {
         return terrain.raw().isAccessible((int) x, (int) y);
+
     }
 
     public List<Unit> getUnitsAt(float x, float y) {

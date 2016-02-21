@@ -46,8 +46,8 @@ public class OneLineFormation extends AbstractFormation {
             ret = leaderPosition.clone().addLocal(rot.x, rot.z);
             ret.x = Math.round(ret.x);
             ret.y = Math.round(ret.y);
-            if (ret.x < 0 || ret.y < 0 || ret.x > map.mapWidth || ret.y > map.mapHeight) {
-                break;
+            if (ret.x < 0 || ret.y < 0 || ret.x > map.mapWidth - 1 || ret.y > map.mapHeight - 1) {
+                return super.getReservistPosition(unit_in, leaderPosition);
             }
             if (!map.isTerrainAccessible(ret)) {
                 if ((unit_in % 2 == 0)) {

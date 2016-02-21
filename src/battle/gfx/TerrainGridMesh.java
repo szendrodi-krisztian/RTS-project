@@ -49,6 +49,7 @@ public class TerrainGridMesh extends Mesh {
                     // TODO: specify whats underneath tree's and such.
                     base_tex = TerrainElementManager.getInstance(null).getTextureOffset("grass");
                 }
+                if(base_tex == null) base_tex = new Vector2f(0,0);
                 float bleed = 0.0001f;
                 texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 0 * 128) / 2048f + bleed);
                 texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 1 * 128) / 2048f - bleed);

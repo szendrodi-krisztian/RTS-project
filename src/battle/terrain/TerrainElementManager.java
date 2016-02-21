@@ -78,6 +78,7 @@ public class TerrainElementManager {
         bigAtlas = new CustomTextureAtlas();
         List<TerrainElement> elements = new ArrayList<>(10);
         // Add any special elements also to this list
+        elements.add(new InvisibleWallTerrain());
         try {
             BufferedReader r = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("terrain.txt"), "UTF-8"));
             String line = r.readLine();
@@ -101,24 +102,28 @@ public class TerrainElementManager {
         }
 
         for (TerrainElement e : elements) {
-            terrains.put(e.getName(), e);
-            Texture t = assets.loadTexture("Textures/terrain/" + e.getName() + ".png");
-            Texture am = null;
-            if (e.has_alpha) {
-                am = assets.loadTexture("Textures/terrain/" + e.getName() + "alpha.png");
-            } else {
-                am = assets.loadTexture("Textures/terrain/terrainalpha.png");
-            }
-            if (e.getTexture_heigth() == 128) {
-                atlas.addTexture(t, e.getName(), false);
-                atlas.addTexture(am, e.getName(), true);
-
-            }
-            if (e.getTexture_heigth() == 256) {
-                bigAtlas.addTexture(t, e.getName(), false);
+            try {
+                terrains.put(e.getName(), e);
+                Texture t = assets.loadTexture("Textures/terrain/" + e.getName() + ".png");
+                Texture am = null;
                 if (e.has_alpha) {
-                    bigAtlas.addTexture(am, e.getName(), true);
+                    am = assets.loadTexture("Textures/terrain/" + e.getName() + "alpha.png");
+                } else {
+                    am = assets.loadTexture("Textures/terrain/terrainalpha.png");
                 }
+                if (e.getTexture_heigth() == 128) {
+                    atlas.addTexture(t, e.getName(), false);
+                    atlas.addTexture(am, e.getName(), true);
+
+                }
+                if (e.getTexture_heigth() == 256) {
+                    bigAtlas.addTexture(t, e.getName(), false);
+                    if (e.has_alpha) {
+                        bigAtlas.addTexture(am, e.getName(), true);
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
         atlas.create();

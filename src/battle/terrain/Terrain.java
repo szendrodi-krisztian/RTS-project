@@ -37,9 +37,18 @@ public final class Terrain {
                 }
             }
         }
+
+        for (int i = 0; i < mapWidth; i++) {
+            grid[i * mapHeight + 0] = TerrainElementManager.getInstance(assets).getElementByName("wall");
+            grid[i * mapHeight + mapHeight - 1] = TerrainElementManager.getInstance(assets).getElementByName("wall");
+        }
+
+        for (int i = 0; i < mapHeight; i++) {
+            grid[0 * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
+            grid[(mapWidth-1) * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
+        }
+
     }
-
-
 
     public boolean isAccessible(int x, int y) {
         return grid[x * mapHeight + y].isAccesible();
