@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mygame;
 
 import battle.BattleMap;
@@ -10,7 +5,6 @@ import battle.entity.SimpleUnit;
 import battle.entity.Unit;
 import battle.entity.group.Group;
 import battle.entity.group.OneLineFormation;
-import battle.entity.group.TwoLineFormation;
 import battle.gfx.ClickMesh;
 import battle.path.Path;
 import com.jme3.app.Application;
@@ -49,11 +43,11 @@ import util.Util;
  *
  * @author szend
  */
-public class BattleState extends AbstractAppState {
+public class MapEditorState extends AbstractAppState {
 
     private SimpleApplication app;
 
-    private BattleMap map;
+    private BattleMap map = null;
 
     private AmbientLight light;
 
@@ -70,12 +64,12 @@ public class BattleState extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
-        if (isEnabled()) {
+        if (isEnabled() && map != null) {
             map.tick(tpf);
             if (to_menu) {
                 setEnabled(false);
-                app.getStateManager().detach(this);
                 app.getStateManager().getState(MainMenuState.class).setEnabled(true);
+                app.getStateManager().detach(this);
             }
         }
     }
@@ -91,7 +85,14 @@ public class BattleState extends AbstractAppState {
         super.setEnabled(enabled);
         if (enabled) {
             app.getRootNode().attachChild(battleRoot);
-
+            if (map == null) {
+                map = new BattleMap(15, 15, battleRoot, app.getAssetManager());
+                Group g1 = new Group(map, new OneLineFormation(map));
+                for (int i = 0; i < 1; i++) {
+                    //map.spawn(0, 0, g1, SimpleUnit.class);
+                }
+                //g1.moveTo(0, 0, 0);
+            }
             app.getCamera().setLocation(camPos);
             Vector3f look = camPos.clone();
             look.y = 0;
@@ -306,25 +307,11 @@ public class BattleState extends AbstractAppState {
     public void initialize(AppStateManager stateManager, Application appl) {
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) appl;
-        battleRoot = new Node("Battle Root");
+        battleRoot = new Node("MapEdit Root");
         light = new AmbientLight();
         light.setColor(ColorRGBA.White);
         camPos = new Vector3f(0, 20, 0);
-        if (map == null) {
-            map = new BattleMap(100, 100, battleRoot, app.getAssetManager());
 
-            Group g1 = new Group(map, new OneLineFormation(map));
-            for (int i = 0; i < 1; i++) {
-                map.spawn(0, 0, g1, SimpleUnit.class);
-            }
-            g1.moveTo(10, 10, 0);
-
-            Group g2 = new Group(map, new TwoLineFormation(map));
-            for (int i = 0; i < 12; i++) {
-                map.spawn(0, 0, g2, SimpleUnit.class);
-            }
-            g2.moveTo(5, 15, 0);
-        }
         battleRoot.addLight(light);
         setEnabled(true);
         to_menu = false;

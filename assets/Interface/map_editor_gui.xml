@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nifty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://nifty-gui.lessvoid.com/nifty-gui" xsi:schemaLocation="https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd https://raw.githubusercontent.com/void256/nifty-gui/1.4/nifty-core/src/main/resources/nifty.xsd">
+    <screen id="map_edit_screen" controller="mygame.Main">
+        <layer id="GLayer0" childLayout="absolute"/>
+        <layer id="GLayer1" childLayout="absolute">
+            <panel id="GPanel0" childLayout="absolute" width="791px" x="6px" y="3px" style="nifty-panel-simple" height="126px">
+                <control name="textfield" id="GTextfield0" width="84px" x="13" y="11" height="23px"/>
+                <control name="button" id="GButton0" childLayout="center" width="79px" x="18" y="82" label="GButton0" height="23px"/>
+                <control name="button" id="GButton1" childLayout="center" width="79px" x="109" y="68" label="GButton0" height="23px"/>
+            </panel>
+        </layer>
+    </screen>
+</nifty>

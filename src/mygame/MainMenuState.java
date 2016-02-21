@@ -4,9 +4,6 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.Node;
 import de.lessvoid.nifty.Nifty;
@@ -28,9 +25,26 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
         super.cleanup();
     }
 
+    boolean to_bf;
+    boolean to_me;
+
     @Override
     public void update(float tpf) {
         super.update(tpf);
+        if (to_bf) {
+            setEnabled(false);
+            BattleState bs = new BattleState();
+            app.getStateManager().attach(bs);
+            niftyDisplay.getNifty().gotoScreen("ingame");
+            return;
+        }
+        if (to_me) {
+            setEnabled(false);
+            MapEditorState ms = new MapEditorState();
+            app.getStateManager().attach(ms);
+            niftyDisplay.getNifty().gotoScreen("map_edit_screen");
+            
+        }
 
     }
 
@@ -43,24 +57,11 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
             app.getGuiNode().attachChild(menuNode);
             niftyDisplay.getNifty().gotoScreen("start");
             app.getFlyByCamera().setEnabled(false);
-            ActionListener al = new ActionListener() {
-
-                @Override
-                public void onAction(String name, boolean isPressed, float tpf) {
-                    switch (name) {
-                        case "to the battle":
-                            setEnabled(false);
-                            app.getStateManager().getState(BattleState.class).setEnabled(true);
-                            break;
-                    }
-                }
-            };
-            app.getInputManager().addMapping("to the battle", new KeyTrigger(KeyInput.KEY_N));
-            app.getInputManager().addListener(al, new String[]{"to the battle"});
+            to_bf = false;
+            to_me = false;
         } else {
-            niftyDisplay.getNifty().gotoScreen("ingame");
-            app.getInputManager().clearMappings();
             app.getGuiNode().detachChild(menuNode);
+
         }
     }
 
@@ -72,19 +73,24 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
         niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(app.getAssetManager(), app.getInputManager(), app.getAudioRenderer(), app.getGuiViewPort());
         Nifty nifty = niftyDisplay.getNifty();
         nifty.fromXml("Interface/menuGui.xml", "start", this);
+        nifty.addXml("Interface/map_editor_gui.xml");
         app.getGuiViewPort().addProcessor(niftyDisplay);
+        to_bf = false;
+        to_me = false;
         setEnabled(true);
     }
 
     public void toTheBattleField() {
+        to_bf = true;
+    }
 
-        setEnabled(false);
-        app.getStateManager().getState(BattleState.class).setEnabled(true);
+    public void toTheMapEditor() {
+        to_me = true;
     }
 
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        nifty.gotoScreen("start");
+        // nifty.gotoScreen("start");
     }
 
     @Override

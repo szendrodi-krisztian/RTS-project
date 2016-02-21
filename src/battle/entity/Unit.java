@@ -7,11 +7,10 @@ import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import java.text.MessageFormat;
 import util.Util;
@@ -22,7 +21,7 @@ import util.Util;
  */
 public abstract class Unit extends RawUnit {
 
-    private static final float Y_LEVEL = 0.02f;
+    private static final float Y_LEVEL = 0.1f;
 
     public static final float N_STEP = 10;
 

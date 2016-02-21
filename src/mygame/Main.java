@@ -2,9 +2,9 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Spatial;
 
 public class Main extends SimpleApplication {
-
 
     public static void main(String[] args) {
         Main app = new Main();
@@ -13,11 +13,9 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        final BattleState bs = new BattleState();
+        rootNode.setCullHint(Spatial.CullHint.Never);
         final MainMenuState ms = new MainMenuState();
-        stateManager.attach(bs);
         stateManager.attach(ms);
-
     }
 
     @Override

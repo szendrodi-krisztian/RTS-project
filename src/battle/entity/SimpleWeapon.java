@@ -3,8 +3,6 @@ package battle.entity;
 import battle.BattleMap;
 import battle.projectile.Projectile;
 import com.jme3.math.FastMath;
-import static com.jme3.math.FastMath.cos;
-import static com.jme3.math.FastMath.sin;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 
