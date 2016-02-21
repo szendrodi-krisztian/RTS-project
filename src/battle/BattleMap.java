@@ -78,7 +78,11 @@ public class BattleMap {
 
     public boolean isTerrainAccessible(float x, float y) {
         return terrain.raw().isAccessible((int) x, (int) y);
-
+    }
+    
+    public float getTerrainResistance(float x, float y)
+    {
+        return terrain.raw().getResistance((int)x, (int)y);
     }
 
     public List<Unit> getUnitsAt(float x, float y) {
