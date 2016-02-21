@@ -22,25 +22,27 @@ public class ProjectileList extends ArrayList<Projectile>{
     
     public void moveAll(float tpf)
     {
-        for (Projectile thi : this) {
-            thi.move(tpf);
-            if(thi.movedToAnotherGrid() && thi.canCollide() && thi.outOfTheGun) {
-                collision(thi);
+        for(int i=0; i<this.size(); i++) { 
+            this.get(i).move(tpf);
+            if(this.get(i).movedToAnotherGrid() && this.get(i).canCollide() && this.get(i).outOfTheGun) {
+                collision(this.get(i));
             }
         }
     }
     
     private void collision(Projectile projectile)
     {
-        if(map.getUnitsAt(projectile.getPosXi(), projectile.getPosZi())!=null){
+        if(!map.getUnitsAt(projectile.getPosXi(), projectile.getPosZi()).isEmpty()){
             for (Iterator<Unit> it = map.getUnitsAt(projectile.getPos()).iterator(); it.hasNext();) {
                 Unit thi = it.next();
                 thi.getHit(projectile.getDamage());
             }
             projectile.destroy();
+            this.remove(projectile);
         }
-        else if(true){
-            
+        else if(map.getTerrainResistance(projectile.getPosXi(), projectile.getPosZi())!=0){
+            projectile.destroy();
+            this.remove(projectile);
         }
     }
 }

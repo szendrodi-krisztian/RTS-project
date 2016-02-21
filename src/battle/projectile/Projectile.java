@@ -29,6 +29,7 @@ public class Projectile {
     public boolean outOfTheGun=false;
     private final Geometry geometry;
     private final BattleMap map;
+    private Vector2f prevPos=new Vector2f();
 
     public Projectile(Vector3f speed, Vector3f position, int damage, int range, int aoeRange, boolean canCollide, boolean canGravityAffect, BattleMap map) {
         this.speed = speed;
@@ -70,6 +71,7 @@ public class Projectile {
     
     public final void destroy(){
         map.rootNode.detachChild(geometry);
+        this.speed=Vector3f.ZERO;
     }
     
     public final void updateGfx(){
@@ -78,20 +80,23 @@ public class Projectile {
     
     public void move(float tpf)
     {
-        this.position.x+=this.speed.x*tpf*10;//30 ideal
-        this.position.z+=this.speed.z*tpf*10;//30 ideal
+        prevPos.x=position.x;
+        prevPos.y=position.z;
+        position.x+=speed.x*tpf*10;//30 ideal
+        position.z+=speed.z*tpf*10;//30 ideal
         updateGfx();
     }   
     
     public boolean movedToAnotherGrid()
     {
-        int prevX=(int)(position.x-speed.x);
-        int prevZ=(int)(position.z-speed.z);
-        int currX=(int)(position.x);
-        int currZ=(int)(position.z);
-        if(currX!=prevX || currZ!=prevZ){
-            outOfTheGun=true;
+        if((int)prevPos.x!=(int)position.x || (int)prevPos.y!=(int)position.z){
+            if(outOfTheGun)
             return true;
+            else
+            {
+                outOfTheGun=true;
+                return false;
+            }
         }
         else{
             return false;

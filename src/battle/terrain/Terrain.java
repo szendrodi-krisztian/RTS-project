@@ -47,7 +47,11 @@ public final class Terrain {
             grid[0 * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
             grid[(mapWidth-1) * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
         }
-
+    }
+    
+    public float getResistance(int x, int y)
+    {
+        return grid[x*mapHeight+y].proj_resis;
     }
 
     public boolean isAccessible(int x, int y) {
