@@ -38,13 +38,14 @@ public abstract class RawUnit {
     //
     protected float dmg_mult;
 
-    public RawUnit(IVehicle vehicle, IWeapon weapon, Group group, Pose pose) {
+    public RawUnit(IVehicle vehicle, IWeapon weapon, Group group, Pose pose, int health) {
         this.dest = new Vector2f(0, 0);
         this.pos = new Vector2f();
         this.group = group;
         this.vehicle = vehicle;
         this.weapon = weapon;
         this.pose = pose;
+        this.health = health;
     }
 
     public final Group getGroup() {
@@ -69,6 +70,19 @@ public abstract class RawUnit {
 
     public final Pose pose() {
         return pose;
+    }
+    
+    public void getHit(int damage){
+        health-=damage;
+        checkIfDead();
+    }
+    
+    public void checkIfDead(){
+        if(health<=0)
+        {
+            System.out.println("I'm such dead, much wow at: "+pos.toString());
+            health=5;
+        }
     }
 
     @Override

@@ -126,7 +126,7 @@ public class SimpleWeapon implements IWeapon {
         v.rotateAroundOrigin(rad, true);
         Vector3f pos3=new Vector3f(pos.x, 0, pos.y);
         Vector3f speed=new Vector3f(v.x, 0, v.y);
-        map.projectileList.add(new Projectile(speed, pos3, getMinDamage(), getRange(), 1, false, false, map));
+        map.projectileList.add(new Projectile(speed, pos3, getMinDamage(), getRange(), 1, true, false, map));
     }
 
 }

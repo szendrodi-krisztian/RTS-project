@@ -6,7 +6,9 @@
 package battle.projectile;
 
 import battle.BattleMap;
+import battle.entity.Unit;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -22,12 +24,23 @@ public class ProjectileList extends ArrayList<Projectile>{
     {
         for (Projectile thi : this) {
             thi.move(tpf);
-            collision(thi);
+            if(thi.movedToAnotherGrid() && thi.canCollide() && thi.outOfTheGun) {
+                collision(thi);
+            }
         }
     }
     
     private void collision(Projectile projectile)
     {
-        
+        if(map.getUnitsAt(projectile.getPosXi(), projectile.getPosZi())!=null){
+            for (Iterator<Unit> it = map.getUnitsAt(projectile.getPos()).iterator(); it.hasNext();) {
+                Unit thi = it.next();
+                thi.getHit(projectile.getDamage());
+            }
+            projectile.destroy();
+        }
+        else if(true){
+            
+        }
     }
 }
