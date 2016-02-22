@@ -109,5 +109,10 @@ public abstract class Unit extends RawUnit {
         sb.append(MessageFormat.format("Unit\n{0}\n\tfractal is {1}\n\tfinal destination is {2}", super.toString(), fractal, destination));
         return sb.toString();
     }
-
+    
+    @Override
+    public void destroy()
+    {
+        geometry.getParent().detachChild(geometry);        
+    }
 }

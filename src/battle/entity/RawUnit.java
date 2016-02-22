@@ -83,9 +83,11 @@ public abstract class RawUnit {
         if(health<=0)
         {
             System.out.println("I'm such dead, much wow at: "+pos.toString());
-            health=5;
+            health=MAX_HEALTH;
         }
     }
+    
+    public void destroy(){}
 
     @Override
     public String toString() {
