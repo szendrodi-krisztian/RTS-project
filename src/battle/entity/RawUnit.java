@@ -26,6 +26,7 @@ public abstract class RawUnit {
     protected final IWeapon weapon;
 
     // Health points
+    protected final int MAX_HEALTH;
     protected int health;
     // Angle in rads
     protected float accuracy;
@@ -45,6 +46,7 @@ public abstract class RawUnit {
         this.vehicle = vehicle;
         this.weapon = weapon;
         this.pose = pose;
+        this.MAX_HEALTH = health;
         this.health = health;
     }
 

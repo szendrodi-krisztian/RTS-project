@@ -26,7 +26,6 @@ public class Projectile {
     private boolean canCollide;
     private boolean isVisible;
     private boolean canGravityAffect;
-    public boolean outOfTheGun=false;
     private final Geometry geometry;
     private final BattleMap map;
     private Vector2f prevPos=new Vector2f();
@@ -56,7 +55,6 @@ public class Projectile {
         map.rootNode.attachChild(geometry);
         updateGfx();
         this.map=map;
-        this.outOfTheGun=false;
     }
     
     public void reInitialise(Vector3f speed, Vector3f position, int damage, int range, int aoeRange, boolean canCollide, boolean canGravityAffect) {
@@ -89,18 +87,7 @@ public class Projectile {
     
     public boolean movedToAnotherGrid()
     {
-        if((int)prevPos.x!=(int)position.x || (int)prevPos.y!=(int)position.z){
-            if(outOfTheGun)
-            return true;
-            else
-            {
-                outOfTheGun=true;
-                return false;
-            }
-        }
-        else{
-            return false;
-        }
+        return (int)prevPos.x!=(int)position.x || (int)prevPos.y!=(int)position.z;
     }
     
     public Vector2f getPos(){
