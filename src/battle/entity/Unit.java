@@ -37,7 +37,7 @@ public abstract class Unit extends RawUnit {
     public Path path;
 
     public Unit(IVehicle vehicle, IWeapon weapon, Group group) {
-        super(vehicle, weapon, group, Pose.STANDING, 1);
+        super(vehicle, weapon, group, Pose.STANDING, 3);
         this.fractal = new Vector2f();
         Material m = new Material(getGroup().getMap().assets, "Common/MatDefs/Light/Lighting.j3md");
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);

@@ -24,7 +24,7 @@ public class ProjectileList extends ArrayList<Projectile>{
     {
         for(int i=0; i<this.size(); i++) { 
             this.get(i).move(tpf);
-            if(this.get(i).movedToAnotherGrid() && this.get(i).canCollide() && this.get(i).outOfTheGun) {
+            if(this.get(i).movedToAnotherGrid() && this.get(i).canCollide()) {
                 collision(this.get(i));
             }
         }
