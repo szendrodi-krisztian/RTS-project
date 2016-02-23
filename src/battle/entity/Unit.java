@@ -21,7 +21,7 @@ import util.Util;
  */
 public abstract class Unit extends RawUnit {
 
-    private static final float Y_LEVEL = 0.1f;
+    private static final float Y_LEVEL = 0.00002f;
 
     public static final float N_STEP = 10;
 

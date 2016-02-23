@@ -14,7 +14,6 @@ import battle.entity.group.TwoLineFormation;
 import battle.gfx.ClickMesh;
 import battle.path.Path;
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.collision.CollisionResult;
@@ -38,7 +37,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Node;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
@@ -49,23 +47,19 @@ import util.Util;
  *
  * @author szend
  */
-public class BattleState extends AbstractAppState {
-
-    private SimpleApplication app;
+public class BattleState extends AbstractAppStateWithRoot {
 
     private BattleMap map;
 
     private AmbientLight light;
 
-    private Node battleRoot;
-
-    private Vector3f camPos;
-
     boolean to_menu;
 
-    @Override
-    public void cleanup() {
-        super.cleanup();
+    public BattleState(AppStateManager sm) {
+        childStateList.add(new CameraMovementState());
+        for (AbstractAppState state : childStateList) {
+            sm.attach(state);
+        }
     }
 
     @Override
@@ -74,8 +68,8 @@ public class BattleState extends AbstractAppState {
             map.tick(tpf);
             if (to_menu) {
                 setEnabled(false);
-                app.getStateManager().detach(this);
-                app.getStateManager().getState(MainMenuState.class).setEnabled(true);
+                stateManager.getState(MainMenuState.class).setEnabled(true);
+                to_menu = false;
             }
         }
     }
@@ -89,43 +83,17 @@ public class BattleState extends AbstractAppState {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (enabled) {
-            app.getRootNode().attachChild(battleRoot);
 
-            app.getCamera().setLocation(camPos);
-            Vector3f look = camPos.clone();
-            look.y = 0;
-            app.getCamera().lookAt(look, Vector3f.UNIT_Y);
-            app.getFlyByCamera().setMoveSpeed(50);
-            app.getFlyByCamera().setEnabled(false);
+        if (enabled) {
 
             AnalogListener al = new AnalogListener() {
-
-                final int mult = 25;
 
                 @Override
                 public void onAnalog(String name, float value, float tpf) {
                     switch (name.toLowerCase()) {
-                        case "left":
-                            camPos.addLocal(Vector3f.UNIT_X.mult(value * mult));
-                            break;
-                        case "right":
-                            camPos.subtractLocal(Vector3f.UNIT_X.mult(value * mult));
-                            break;
-                        case "up":
-                            camPos.addLocal(Vector3f.UNIT_Z.mult(value * mult));
-                            break;
-                        case "down":
-                            camPos.subtractLocal(Vector3f.UNIT_Z.mult(value * mult));
-                            break;
-                        case "zoom in":
-                            camPos.subtractLocal(Vector3f.UNIT_Y.mult(value * mult));
-                            break;
-                        case "zoom out":
-                            camPos.addLocal(Vector3f.UNIT_Y.mult(value * mult));
-                            break;
+
                         case "mouse_move":
-                            Vector2f cur2 = app.getInputManager().getCursorPosition();
+                            Vector2f cur2 = inputManager.getCursorPosition();
 
                             Quaternion q = new Quaternion();
                             if (click_gui == null) {
@@ -142,7 +110,6 @@ public class BattleState extends AbstractAppState {
                             break;
 
                     }
-                    app.getCamera().setLocation(camPos);
                 }
             };
 
@@ -156,29 +123,27 @@ public class BattleState extends AbstractAppState {
                 public void onAction(String name, boolean isPressed, float tpf) {
                     if (click_gui == null) {
                         click_gui = new Geometry("click", new ClickMesh());
-                        Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-                        m.setTexture("ColorMap", app.getAssetManager().loadTexture("Interface/move.png"));
+                        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+                        m.setTexture("ColorMap", assets.loadTexture("Interface/move.png"));
                         m.getAdditionalRenderState().setDepthTest(false);
                         m.getAdditionalRenderState().setDepthWrite(false);
                         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-                        m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
                         click_gui.setMaterial(m);
                         click_gui.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
                         click_gui.setQueueBucket(RenderQueue.Bucket.Transparent);
-
-                        battleRoot.attachChild(click_gui);
+                        getRootNode().attachChild(click_gui);
+                        
                         click_filler = new Geometry("click", new ClickMesh());
-                        Material m2 = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-                        m2.setTexture("ColorMap", app.getAssetManager().loadTexture("Interface/move_fill.png"));
+                        Material m2 = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+                        m2.setTexture("ColorMap", assets.loadTexture("Interface/move_fill.png"));
                         m2.getAdditionalRenderState().setDepthTest(false);
                         m2.getAdditionalRenderState().setDepthWrite(false);
                         m2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-                        m2.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
                         click_filler.setMaterial(m2);
                         click_filler.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
                         click_filler.setQueueBucket(RenderQueue.Bucket.Transparent);
 
-                        battleRoot.attachChild(click_filler);
+                        getRootNode().attachChild(click_filler);
                     }
                     switch (name.toLowerCase()) {
                         case "left click":
@@ -186,11 +151,11 @@ public class BattleState extends AbstractAppState {
                                 return;
                             }
                             CollisionResults results = new CollisionResults();
-                            Vector2f cur = app.getInputManager().getCursorPosition();
-                            Vector3f cur3d = app.getCamera().getWorldCoordinates(cur.clone(), 0f).clone();
-                            Vector3f dir = app.getCamera().getWorldCoordinates(cur.clone(), 1f).subtract(cur3d).normalizeLocal();
+                            Vector2f cur = inputManager.getCursorPosition();
+                            Vector3f cur3d = camera.getWorldCoordinates(cur.clone(), 0f).clone();
+                            Vector3f dir = camera.getWorldCoordinates(cur.clone(), 1f).subtract(cur3d).normalizeLocal();
                             Ray ray = new Ray(cur3d, dir);
-                            battleRoot.collideWith(ray, results);
+                            getRootNode().collideWith(ray, results);
                             CollisionResult coll = results.getClosestCollision();
                             if (coll == null) {
                                 return;
@@ -209,43 +174,43 @@ public class BattleState extends AbstractAppState {
                             if (select != null) {
                                 if (isPressed) {
                                     CollisionResults results2 = new CollisionResults();
-                                    Vector2f cur2 = app.getInputManager().getCursorPosition();
+                                    Vector2f cur2 = inputManager.getCursorPosition();
                                     screen_mouse_right_pos = cur2.clone();
-                                    Vector3f cur3d2 = app.getCamera().getWorldCoordinates(cur2.clone(), 0f).clone();
-                                    Vector3f dir2 = app.getCamera().getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
+                                    Vector3f cur3d2 = camera.getWorldCoordinates(cur2.clone(), 0f).clone();
+                                    Vector3f dir2 = camera.getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
                                     Ray ray2 = new Ray(cur3d2, dir2);
-                                    battleRoot.collideWith(ray2, results2);
+                                    getRootNode().collideWith(ray2, results2);
                                     CollisionResult coll2 = results2.getClosestCollision();
                                     if (coll2 == null) {
                                         return;
                                     }
                                     right_pos = new Vector2f(coll2.getContactPoint().x, coll2.getContactPoint().z);
                                     click_gui.setLocalTranslation(right_pos.x, 1.1f, right_pos.y);
-                                    click_filler.setLocalTranslation(right_pos.x, 1.2f, right_pos.y);
+                                    click_filler.setLocalTranslation(right_pos.x, 1.10001f, right_pos.y);
                                     List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map);
                                     FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
                                     for (Vector2f v : p) {
                                         vb.put(v.x).put(0.2f).put(v.y);
                                     }
                                     vb.put(select.getLeader().pos.x).put(0.2f).put(select.getLeader().pos.y);
-                                    battleRoot.detachChildNamed("path");
+                                    getRootNode().detachChildNamed("path");
                                     select_path = new Mesh();
                                     select_path.setBuffer(VertexBuffer.Type.Position, 3, vb);
                                     select_path.setMode(Mesh.Mode.LineStrip);
                                     select_path.updateBound();
                                     Geometry g = new Geometry("path", select_path);
-                                    Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+                                    Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
                                     m.setColor("Color", ColorRGBA.Pink);
                                     g.setMaterial(m);
                                     g.move(0.5f, 0, 0.5f);
-                                    battleRoot.attachChild(g);
+                                    getRootNode().attachChild(g);
                                 } else {
                                     CollisionResults results2 = new CollisionResults();
-                                    Vector2f cur2 = app.getInputManager().getCursorPosition();
-                                    Vector3f cur3d2 = app.getCamera().getWorldCoordinates(cur2.clone(), 0f).clone();
-                                    Vector3f dir2 = app.getCamera().getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
+                                    Vector2f cur2 = inputManager.getCursorPosition();
+                                    Vector3f cur3d2 = camera.getWorldCoordinates(cur2.clone(), 0f).clone();
+                                    Vector3f dir2 = camera.getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
                                     Ray ray2 = new Ray(cur3d2, dir2);
-                                    battleRoot.collideWith(ray2, results2);
+                                    getRootNode().collideWith(ray2, results2);
                                     CollisionResult coll2 = results2.getClosestCollision();
                                     if (coll2 == null) {
                                         return;
@@ -257,7 +222,7 @@ public class BattleState extends AbstractAppState {
                                         select.moveTo((int) right_pos.x, (int) right_pos.y, select.getLeader().finalRotationAngle);
                                     }
                                     click_gui.setLocalTranslation(0, 1.1f, 0);
-                                    click_filler.setLocalTranslation(0, 1.2f, 0);
+                                    click_filler.setLocalTranslation(0, 1.10001f, 0);
                                 }
                             }
                             break;
@@ -280,38 +245,28 @@ public class BattleState extends AbstractAppState {
                 }
             };
 
-            app.getInputManager().addListener(al, new String[]{"left", "right", "up", "down", "zoom in", "zoom out", "mouse_move"});
-            app.getInputManager().addListener(actl, new String[]{"left click", "right click", "to the menu", "shoot"});
-            app.getInputManager().addMapping("left", new KeyTrigger(KeyInput.KEY_A));
-            app.getInputManager().addMapping("right", new KeyTrigger(KeyInput.KEY_D));
-            app.getInputManager().addMapping("up", new KeyTrigger(KeyInput.KEY_W));
-            app.getInputManager().addMapping("down", new KeyTrigger(KeyInput.KEY_S));
-            app.getInputManager().addMapping("zoom in", new KeyTrigger(KeyInput.KEY_Q));
-            app.getInputManager().addMapping("zoom out", new KeyTrigger(KeyInput.KEY_E));
-            app.getInputManager().addMapping("to the menu", new KeyTrigger(KeyInput.KEY_M));
-            app.getInputManager().addMapping("shoot", new KeyTrigger(KeyInput.KEY_SPACE));
-            app.getInputManager().addMapping("left click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-            app.getInputManager().addMapping("right click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-            app.getInputManager().addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_X, false));
-            app.getInputManager().addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
-            app.getInputManager().addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_X, true));
-            app.getInputManager().addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
+            inputManager.addListener(al, new String[]{"mouse_move"});
+            inputManager.addListener(actl, new String[]{"left click", "right click", "to the menu", "shoot"});
+            inputManager.addMapping("to the menu", new KeyTrigger(KeyInput.KEY_M));
+            inputManager.addMapping("shoot", new KeyTrigger(KeyInput.KEY_SPACE));
+            inputManager.addMapping("left click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+            inputManager.addMapping("right click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+            inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_X, false));
+            inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
+            inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_X, true));
+            inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
         } else {
-            app.getInputManager().clearMappings();
-            app.getRootNode().detachChild(battleRoot);
+            inputManager.clearMappings();
         }
     }
 
     @Override
     public void initialize(AppStateManager stateManager, Application appl) {
-        super.initialize(stateManager, app);
-        this.app = (SimpleApplication) appl;
-        battleRoot = new Node("Battle Root");
+        super.initialize(stateManager, appl);
         light = new AmbientLight();
         light.setColor(ColorRGBA.White);
-        camPos = new Vector3f(0, 20, 0);
         if (map == null) {
-            map = new BattleMap(100, 100, battleRoot, app.getAssetManager());
+            map = new BattleMap(100, 100, getRootNode(), assets);
 
             Group g1 = new Group(map, new OneLineFormation(map));
             for (int i = 0; i < 1; i++) {
@@ -325,8 +280,8 @@ public class BattleState extends AbstractAppState {
             }
             g2.moveTo(5, 15, 0);
         }
-        battleRoot.addLight(light);
-        setEnabled(true);
+        getRootNode().addLight(light);
         to_menu = false;
+        setEnabled(false);
     }
 }

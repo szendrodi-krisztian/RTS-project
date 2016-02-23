@@ -137,7 +137,6 @@ public class TerrainElementManager {
         decorMaterial.setTexture("DiffuseMap", bigAtlas.getTexture());
         decorMaterial.setTexture("AlphaMap", bigAtlas.getAlphaTexture());
         decorMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        decorMaterial.getAdditionalRenderState().setDepthWrite(false);
     }
 
     public final Map<String, TerrainElement> getAllTerrains() {
