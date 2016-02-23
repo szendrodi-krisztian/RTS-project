@@ -126,6 +126,7 @@ public class BattleState extends AbstractAppStateWithRoot {
                         Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
                         m.setTexture("ColorMap", assets.loadTexture("Interface/move.png"));
                         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+                        m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
                         click_gui.setMaterial(m);
                         click_gui.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
                         
@@ -135,11 +136,9 @@ public class BattleState extends AbstractAppStateWithRoot {
                         Material m2 = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
                         m2.setTexture("ColorMap", assets.loadTexture("Interface/move_fill.png"));
                         m2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+                        m2.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
                         click_filler.setMaterial(m2);
                         click_filler.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
-                        
-                        click_gui.move(0, 0, 0);
-
                         getRootNode().attachChild(click_filler);
                     }
                     switch (name.toLowerCase()) {
