@@ -2,6 +2,7 @@ package battle.entity;
 
 import battle.entity.group.Group;
 import battle.gfx.MyQuad;
+import battle.gfx.UnitMesh;
 import battle.path.Path;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
@@ -10,7 +11,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import java.text.MessageFormat;
 import util.Util;
@@ -26,6 +26,8 @@ public abstract class Unit extends RawUnit {
     public static final float N_STEP = 10;
 
     private final Geometry geometry;
+    
+    private final UnitMesh mesh;
 
     public boolean moved;
 
@@ -40,15 +42,15 @@ public abstract class Unit extends RawUnit {
         this.fractal = new Vector2f();
         Material m = new Material(getGroup().getMap().assets, "Common/MatDefs/Light/Lighting.j3md");
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/le.png", false));
-        Texture t2 = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/le_alpha.png", false));
+        Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unit_atlas.png", false));
+        Texture t2 = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unit_atlas_alpha.png", false));
         t.setMagFilter(Texture.MagFilter.Nearest);
         t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
         t2.setMagFilter(Texture.MagFilter.Nearest);
         t2.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
         m.setTexture("DiffuseMap", t);
         m.setTexture("AlphaMap", t2);
-        Mesh mesh = new MyQuad();
+        mesh = new UnitMesh();
         geometry = new Geometry("unit", mesh);
         geometry.setMaterial(m);
         getGroup().getMap().rootNode.attachChild(geometry);
@@ -57,6 +59,7 @@ public abstract class Unit extends RawUnit {
     }
 
     private void updateGfx() {
+        mesh.rotate(rotationAngle);
         geometry.setLocalTranslation(pos.x + fractal.x, Y_LEVEL, pos.y + fractal.y);
     }
 

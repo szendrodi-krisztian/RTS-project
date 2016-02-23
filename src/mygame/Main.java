@@ -24,7 +24,7 @@ public class Main extends SimpleApplication {
 
             if (handlers[i] instanceof ConsoleHandler) {
 
-                ((ConsoleHandler) handlers[i]).setLevel(Level.WARNING);
+                ((ConsoleHandler) handlers[i]).setLevel(Level.SEVERE);
 
             }
 

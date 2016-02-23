@@ -125,23 +125,20 @@ public class BattleState extends AbstractAppStateWithRoot {
                         click_gui = new Geometry("click", new ClickMesh());
                         Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
                         m.setTexture("ColorMap", assets.loadTexture("Interface/move.png"));
-                        m.getAdditionalRenderState().setDepthTest(false);
-                        m.getAdditionalRenderState().setDepthWrite(false);
                         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
                         click_gui.setMaterial(m);
                         click_gui.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
-                        click_gui.setQueueBucket(RenderQueue.Bucket.Transparent);
+                        
                         getRootNode().attachChild(click_gui);
                         
                         click_filler = new Geometry("click", new ClickMesh());
                         Material m2 = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
                         m2.setTexture("ColorMap", assets.loadTexture("Interface/move_fill.png"));
-                        m2.getAdditionalRenderState().setDepthTest(false);
-                        m2.getAdditionalRenderState().setDepthWrite(false);
                         m2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
                         click_filler.setMaterial(m2);
                         click_filler.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
-                        click_filler.setQueueBucket(RenderQueue.Bucket.Transparent);
+                        
+                        click_gui.move(0, 0, 0);
 
                         getRootNode().attachChild(click_filler);
                     }
@@ -186,7 +183,7 @@ public class BattleState extends AbstractAppStateWithRoot {
                                     }
                                     right_pos = new Vector2f(coll2.getContactPoint().x, coll2.getContactPoint().z);
                                     click_gui.setLocalTranslation(right_pos.x, 1.1f, right_pos.y);
-                                    click_filler.setLocalTranslation(right_pos.x, 1.10001f, right_pos.y);
+                                    click_filler.setLocalTranslation(right_pos.x, 1.1001f, right_pos.y);
                                     List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map);
                                     FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
                                     for (Vector2f v : p) {
