@@ -1,18 +1,13 @@
 package battle;
 
-import battle.entity.group.Group;
-import battle.entity.group.OneLineFormation;
-import battle.entity.group.TwoLineFormation;
-import battle.entity.UnitGrid;
 import battle.entity.Unit;
-import battle.entity.SimpleUnit;
+import battle.entity.UnitGrid;
+import battle.entity.group.Group;
 import battle.gfx.MeshedTerrain;
-import battle.projectile.Projectile;
 import battle.projectile.ProjectileList;
 import battle.terrain.Terrain;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -39,12 +34,20 @@ public class BattleMap {
     public ProjectileList projectileList = new ProjectileList(this);
 
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
+        this(mapWidth, mapHeight, rootNode, assets, 0xCAFFEE);
+    }
+
+    public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets, int seed) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.assets = assets;
         this.rootNode = rootNode;
-        terrain = new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets), rootNode);
+        terrain = new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets, seed), rootNode);
         units = new UnitGrid(mapWidth, mapHeight);
+    }
+
+    public MeshedTerrain getTerrain() {
+        return terrain;
     }
 
     /**
@@ -79,10 +82,9 @@ public class BattleMap {
     public boolean isTerrainAccessible(float x, float y) {
         return terrain.raw().isAccessible((int) x, (int) y);
     }
-    
-    public float getTerrainResistance(float x, float y)
-    {
-        return terrain.raw().getResistance((int)x, (int)y);
+
+    public float getTerrainResistance(float x, float y) {
+        return terrain.raw().getResistance((int) x, (int) y);
     }
 
     public List<Unit> getUnitsAt(float x, float y) {

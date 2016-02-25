@@ -1,7 +1,8 @@
 package battle.terrain;
 
-import util.SimplexNoise;
 import com.jme3.asset.AssetManager;
+import com.jme3.math.Vector2f;
+import util.SimplexNoise;
 
 /**
  *
@@ -13,11 +14,15 @@ public final class Terrain {
     public final int mapWidth, mapHeight;
 
     public Terrain(int mapWidth, int mapHeight, AssetManager assets) {
+        this(mapWidth, mapHeight, assets, 0xCAFFEE);
+    }
+
+    public Terrain(int mapWidth, int mapHeight, AssetManager assets, int seed) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         grid = new TerrainElement[mapWidth * mapHeight];
-        SimplexNoise noise = new SimplexNoise(128, 0.3f, 0xCAFFEE);
-        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, 0xCAFFEE);
+        SimplexNoise noise = new SimplexNoise(128, 0.3f, seed);
+        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, seed);
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
@@ -45,13 +50,20 @@ public final class Terrain {
 
         for (int i = 0; i < mapHeight; i++) {
             grid[0 * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-            grid[(mapWidth-1) * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
+            grid[(mapWidth - 1) * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
         }
     }
-    
-    public float getResistance(int x, int y)
-    {
-        return grid[x*mapHeight+y].proj_resis;
+
+    public void setTypeAt(TerrainElement type, Vector2f at) {
+        setTypeAt(type, (int) at.x, (int) at.y);
+    }
+
+    public void setTypeAt(TerrainElement type, int x, int y) {
+        grid[x * mapHeight + y] = type;
+    }
+
+    public float getResistance(int x, int y) {
+        return grid[x * mapHeight + y].proj_resis;
     }
 
     public boolean isAccessible(int x, int y) {

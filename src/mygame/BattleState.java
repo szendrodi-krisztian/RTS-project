@@ -284,7 +284,7 @@ public class BattleState extends AbstractAppStateWithRoot {
 
     @Override
     protected String getNiftyXMLName() {
-        return "Interface/map_editor_gui.xml";
+        return "Interface/battle_gui.xml";
     }
 
     @Override

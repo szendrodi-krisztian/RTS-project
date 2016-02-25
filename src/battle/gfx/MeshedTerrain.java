@@ -14,14 +14,16 @@ import com.jme3.scene.Node;
 public class MeshedTerrain {
 
     private final Terrain terrain;
+    private final Node root;
 
     public MeshedTerrain(Terrain terrain, Node rootNode) {
         this.terrain = terrain;
+        this.root = rootNode;
         Mesh mesh = new TerrainGridMesh(terrain.width(), terrain.height(), terrain.grid);
 
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
-        
+
         geom.move(0, 0, 0);
         rootNode.attachChild(geom);
 
@@ -31,13 +33,31 @@ public class MeshedTerrain {
         g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
         rootNode.attachChild(g);
     }
-    
-    public TerrainElement[] getGrid(){
+
+    public TerrainElement[] getGrid() {
         return terrain.grid;
     }
-    
-    public Terrain raw(){
+
+    public Terrain raw() {
         return terrain;
+    }
+
+    public void reBuild() {
+        root.detachChildNamed("BattleTerrain");
+        root.detachChildNamed("BattleDecor");
+        Mesh mesh = new TerrainGridMesh(terrain.width(), terrain.height(), terrain.grid);
+
+        Geometry geom = new Geometry("BattleTerrain", mesh);
+        geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
+
+        geom.move(0, 0, 0);
+        root.attachChild(geom);
+
+        Mesh me = new TerrainDecorationMesh(terrain.mapWidth, terrain.height(), terrain.grid);
+        Geometry g = new Geometry("BattleDecor", me);
+        g.move(0, 0.00001f, 0);
+        g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
+        root.attachChild(g);
     }
 
 }

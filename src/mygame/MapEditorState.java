@@ -1,9 +1,13 @@
 package mygame;
 
 import battle.BattleMap;
+import battle.terrain.TerrainElement;
+import battle.terrain.TerrainElementManager;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.collision.CollisionResult;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -11,7 +15,14 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.Controller;
+import de.lessvoid.nifty.controls.DropDown;
+import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.screen.Screen;
 
 /**
@@ -58,7 +69,11 @@ public class MapEditorState extends AbstractAppStateWithRoot {
                 public void onAction(String name, boolean isPressed, float tpf) {
                     switch (name.toLowerCase()) {
                         case "left click":
-
+                            if (!isPressed) {
+                                Vector2f clicked = getMouseRayCastIntCoords();
+                                map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked);
+                                map.getTerrain().reBuild();
+                            }
                             break;
                         case "right click":
 
@@ -82,6 +97,20 @@ public class MapEditorState extends AbstractAppStateWithRoot {
         }
     }
 
+    private Vector2f getMouseRayCastIntCoords() {
+        CollisionResults results = new CollisionResults();
+        Vector2f cur = inputManager.getCursorPosition();
+        Vector3f cur3d = camera.getWorldCoordinates(cur.clone(), 0f).clone();
+        Vector3f dir = camera.getWorldCoordinates(cur.clone(), 1f).subtract(cur3d).normalizeLocal();
+        Ray ray = new Ray(cur3d, dir);
+        getRootNode().collideWith(ray, results);
+        CollisionResult coll = results.getClosestCollision();
+        if (coll == null) {
+            return Vector2f.ZERO;
+        }
+        return new Vector2f(coll.getContactPoint().x, coll.getContactPoint().z);
+    }
+
     @Override
     public void initialize(AppStateManager stateManager, Application appl) {
         super.initialize(stateManager, appl);
@@ -92,6 +121,26 @@ public class MapEditorState extends AbstractAppStateWithRoot {
         setEnabled(false);
     }
 
+    private TerrainElement getSelectedTerrainType() {
+        DropDown<String> dd = niftyDisplay.getNifty().getCurrentScreen().findNiftyControl("SelectDrop", DropDown.class);
+        String select = dd.getSelection();
+        return TerrainElementManager.getInstance(assets).getElementByName(select);
+    }
+
+    public void resizeMap() {
+        TextField tf = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield0", Controller.class);
+        TextField tf2 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield1", Controller.class);
+        int w = Integer.parseInt(tf.getDisplayedText());
+        int h = Integer.parseInt(tf2.getDisplayedText());
+        myRoot.detachAllChildren();
+        map = new BattleMap(w, h, myRoot, assets);
+    }
+
+    public void regenerate() {
+        myRoot.detachAllChildren();
+        map = new BattleMap(map.mapWidth, map.mapHeight, myRoot, assets, FastMath.nextRandomInt());
+    }
+
     @Override
     protected String getNiftyXMLName() {
         return "Interface/map_editor_gui.xml";
@@ -99,7 +148,12 @@ public class MapEditorState extends AbstractAppStateWithRoot {
 
     @Override
     public void bind(Nifty nifty, Screen screen) {
-
+        // Set up dropdown for selecting terrain to place
+        DropDown<String> drop;
+        drop = nifty.getCurrentScreen().findNiftyControl("SelectDrop", DropDown.class);
+        for (String s : TerrainElementManager.getInstance(assets).getAllTerrains().keySet()) {
+            drop.addItem(s);
+        }
     }
 
     @Override
