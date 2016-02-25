@@ -32,6 +32,7 @@ public class TerrainElementManager {
     private static TerrainElementManager instance;
     //
     private final Map<String, TerrainElement> terrains = new LinkedHashMap<>();
+    private final Map<Character, TerrainElement> terrainsByAscii = new LinkedHashMap<>();
     //
     private final Material terrainMaterial;
     //
@@ -83,7 +84,7 @@ public class TerrainElementManager {
             BufferedReader r = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("terrain.txt"), "UTF-8"));
             String line = r.readLine();
             while (null != (line = r.readLine())) {
-                //System.out.println(line);                
+                //System.out.println(line);
                 SimpleTerrain e = new SimpleTerrain();
                 String arg[] = line.split(" ");
                 e.name = arg[0];
@@ -93,6 +94,7 @@ public class TerrainElementManager {
                 e.texture_width = Integer.parseInt(arg[4]);
                 e.texture_heigth = Integer.parseInt(arg[5]);
                 e.has_alpha = Boolean.parseBoolean(arg[6]);
+                e.ascii = arg[7].charAt(0);
                 elements.add(e);
             }
         } catch (UnsupportedEncodingException ex) {
@@ -104,6 +106,7 @@ public class TerrainElementManager {
         for (TerrainElement e : elements) {
             try {
                 terrains.put(e.getName(), e);
+                terrainsByAscii.put(e.ascii, e);
                 Texture t = assets.loadTexture("Textures/terrain/" + e.getName() + ".png");
                 Texture am = null;
                 if (e.has_alpha) {
@@ -150,6 +153,10 @@ public class TerrainElementManager {
         }
 
         return element;
+    }
+
+    public final TerrainElement getElementByChar(char c) {
+        return terrainsByAscii.get(c);
     }
 
 }

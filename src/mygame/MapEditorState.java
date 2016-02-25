@@ -24,12 +24,16 @@ import de.lessvoid.nifty.controls.Controller;
 import de.lessvoid.nifty.controls.DropDown;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.screen.Screen;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.MapFile;
 
 /**
  *
  * @author szend
  */
-public class MapEditorState extends AbstractAppStateWithRoot {
+public final class MapEditorState extends AbstractAppStateWithRoot {
 
     private BattleMap map = null;
 
@@ -59,7 +63,13 @@ public class MapEditorState extends AbstractAppStateWithRoot {
         super.setEnabled(enabled);
         if (enabled) {
             if (map == null) {
-                map = new BattleMap(15, 15, getRootNode(), assets);
+                try {
+                    MapFile mapFile = new MapFile("plswork", assets);
+                    mapFile.read();
+                    map = new BattleMap(mapFile, myRoot);
+                } catch (IOException ex) {
+                    Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             ActionListener actl;

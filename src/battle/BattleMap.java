@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.MapFile;
 
 /**
  *
@@ -35,6 +36,15 @@ public class BattleMap {
 
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
         this(mapWidth, mapHeight, rootNode, assets, 0xCAFFEE);
+    }
+
+    public BattleMap(MapFile map, Node rootNode) {
+        this.mapWidth = map.width();
+        this.mapHeight = map.heigth();
+        this.assets = map.assets();
+        this.rootNode = rootNode;
+        terrain = new MeshedTerrain(map.getTerrain(), rootNode);
+        units = new UnitGrid(mapWidth, mapHeight);
     }
 
     public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets, int seed) {

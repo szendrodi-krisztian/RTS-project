@@ -13,6 +13,7 @@ public abstract class TerrainElement {
     protected int texture_width;
     protected int texture_heigth;
     protected boolean has_alpha;
+    protected char ascii;
 
     /**
      * @return true when Alpha map exists.

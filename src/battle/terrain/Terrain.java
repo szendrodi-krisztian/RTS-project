@@ -17,6 +17,12 @@ public final class Terrain {
         this(mapWidth, mapHeight, assets, 0xCAFFEE);
     }
 
+    public Terrain(int mapWidth, int mapHeight) {
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+        grid = new TerrainElement[mapWidth * mapHeight];
+    }
+
     public Terrain(int mapWidth, int mapHeight, AssetManager assets, int seed) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
