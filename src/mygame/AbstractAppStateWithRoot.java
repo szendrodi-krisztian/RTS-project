@@ -7,8 +7,11 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
+import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.screen.ScreenController;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +19,7 @@ import java.util.List;
  *
  * @author szend
  */
-public abstract class AbstractAppStateWithRoot extends AbstractAppState {
+public abstract class AbstractAppStateWithRoot extends AbstractAppState implements ScreenController {
 
     protected AppStateManager stateManager;
     protected Camera camera;
@@ -24,14 +27,15 @@ public abstract class AbstractAppStateWithRoot extends AbstractAppState {
     protected InputManager inputManager;
     protected AssetManager assets;
     protected Node realRoot, myRoot;
-    
+    protected NiftyJmeDisplay niftyDisplay;
+
     protected List<AbstractAppState> childStateList = new ArrayList<>();
-    
+
     @Override
     public void cleanup() {
         super.cleanup();
         realRoot.detachChild(myRoot);
-        for(AbstractAppState state : childStateList){
+        for (AbstractAppState state : childStateList) {
             stateManager.detach(state);
         }
     }
@@ -39,13 +43,17 @@ public abstract class AbstractAppStateWithRoot extends AbstractAppState {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        for(AbstractAppState state : childStateList){
+        for (AbstractAppState state : childStateList) {
             state.setEnabled(enabled);
         }
         if (enabled) {
             realRoot.attachChild(myRoot);
+            niftyDisplay.getNifty().gotoScreen("start");
+
         } else {
             realRoot.detachChild(myRoot);
+            niftyDisplay.getNifty().gotoScreen("nope");
+
         }
     }
 
@@ -59,7 +67,13 @@ public abstract class AbstractAppStateWithRoot extends AbstractAppState {
         inputManager = ((SimpleApplication) app).getInputManager();
         assets = ((SimpleApplication) app).getAssetManager();
         this.stateManager = ((SimpleApplication) app).getStateManager();
+        niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(assets, inputManager, ((SimpleApplication) app).getAudioRenderer(), ((SimpleApplication) app).getGuiViewPort());
+        Nifty nifty = niftyDisplay.getNifty();
+        nifty.fromXml(getNiftyXMLName(), "start", this);
+        app.getGuiViewPort().addProcessor(niftyDisplay);
     }
+
+    protected abstract String getNiftyXMLName();
 
     protected final Node getRootNode() {
         return myRoot;

@@ -11,6 +11,8 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.screen.Screen;
 
 /**
  *
@@ -88,5 +90,25 @@ public class MapEditorState extends AbstractAppStateWithRoot {
         getRootNode().addLight(light);
         to_menu = false;
         setEnabled(false);
+    }
+
+    @Override
+    protected String getNiftyXMLName() {
+        return "Interface/map_editor_gui.xml";
+    }
+
+    @Override
+    public void bind(Nifty nifty, Screen screen) {
+
+    }
+
+    @Override
+    public void onStartScreen() {
+
+    }
+
+    @Override
+    public void onEndScreen() {
+
     }
 }

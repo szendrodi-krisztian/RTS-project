@@ -34,11 +34,12 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.BufferUtils;
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.screen.Screen;
 import java.nio.FloatBuffer;
 import java.util.List;
 import util.Util;
@@ -129,9 +130,9 @@ public class BattleState extends AbstractAppStateWithRoot {
                         m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
                         click_gui.setMaterial(m);
                         click_gui.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
-                        
+
                         getRootNode().attachChild(click_gui);
-                        
+
                         click_filler = new Geometry("click", new ClickMesh());
                         Material m2 = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
                         m2.setTexture("ColorMap", assets.loadTexture("Interface/move_fill.png"));
@@ -279,5 +280,25 @@ public class BattleState extends AbstractAppStateWithRoot {
         getRootNode().addLight(light);
         to_menu = false;
         setEnabled(false);
+    }
+
+    @Override
+    protected String getNiftyXMLName() {
+        return "Interface/map_editor_gui.xml";
+    }
+
+    @Override
+    public void bind(Nifty nifty, Screen screen) {
+
+    }
+
+    @Override
+    public void onStartScreen() {
+
+    }
+
+    @Override
+    public void onEndScreen() {
+
     }
 }

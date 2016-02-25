@@ -9,39 +9,37 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import util.Util;
 
 /**
  *
  * @author szend
  */
 public class MainMenuState extends AbstractAppState implements ScreenController {
-    
+
     private SimpleApplication app;
-    
+
     boolean to_bf;
     boolean to_me;
-    
+
     @Override
     public void update(float tpf) {
         super.update(tpf);
         if (to_bf) {
             setEnabled(false);
             app.getStateManager().getState(BattleState.class).setEnabled(true);
-            niftyDisplay.getNifty().gotoScreen("ingame");
+            to_bf = false;
             return;
         }
         if (to_me) {
             setEnabled(false);
             app.getStateManager().getState(MapEditorState.class).setEnabled(true);
-            niftyDisplay.getNifty().gotoScreen("map_edit_screen");
-            
+            to_me = false;
         }
-        
+
     }
-    
+
     private NiftyJmeDisplay niftyDisplay;
-    
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -51,11 +49,12 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
             to_me = false;
         } else {
             app.getRootNode().detachAllChildren();
+            niftyDisplay.getNifty().gotoScreen("nope");
         }
     }
-    
+
     BattleMap map;
-    
+
     @Override
     public void initialize(final AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
@@ -63,34 +62,33 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
         niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(app.getAssetManager(), app.getInputManager(), app.getAudioRenderer(), app.getGuiViewPort());
         Nifty nifty = niftyDisplay.getNifty();
         nifty.fromXml("Interface/menuGui.xml", "start", this);
-        nifty.addXml("Interface/map_editor_gui.xml");
         app.getGuiViewPort().addProcessor(niftyDisplay);
         to_bf = false;
         to_me = false;
         setEnabled(true);
     }
-    
+
     public void toTheBattleField() {
         to_bf = true;
     }
-    
+
     public void toTheMapEditor() {
         to_me = true;
     }
-    
+
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        
+
     }
-    
+
     @Override
     public void onStartScreen() {
-        
+
     }
-    
+
     @Override
     public void onEndScreen() {
-        
+
     }
-    
+
 }
