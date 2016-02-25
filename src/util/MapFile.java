@@ -21,13 +21,33 @@ public class MapFile {
     private final AssetManager assets;
     private int width;
     private int heigth;
+    private boolean load = false;
+    private boolean save = false;
 
     public MapFile(String name, AssetManager as) {
         this.name = name;
         this.assets = as;
+        load = true;
+    }
+
+    public MapFile(String name, Terrain terrain) {
+        this.name = name;
+        this.terrain = terrain;
+        assets = null;
+        save = true;
+    }
+
+    public void write() {
+        if (load) {
+            throw new RuntimeException("You tried to save an empty file!");
+        }
+
     }
 
     public void read() throws FileNotFoundException, IOException {
+        if (save) {
+            System.out.println("WARNING: You will overwrite the actual terrain with the loaded one.");
+        }
         File f = new File(name);
         System.out.println(f.getAbsolutePath());
         BufferedReader reader = new BufferedReader(new FileReader(f));
