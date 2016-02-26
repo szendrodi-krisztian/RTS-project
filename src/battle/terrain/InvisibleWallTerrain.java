@@ -19,6 +19,7 @@ public class InvisibleWallTerrain extends TerrainElement {
         texture_width = 128;
         texture_heigth = 128;
         has_alpha = false;
+        ascii = 'X';
     }
 
 }

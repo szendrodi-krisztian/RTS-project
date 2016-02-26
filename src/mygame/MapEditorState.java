@@ -104,6 +104,16 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
             inputManager.addMapping("right click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
         } else {
             inputManager.clearMappings();
+            if (map != null) {
+                MapFile f = new MapFile("plssave", map.getTerrain().raw());
+                try {
+                    f.write();
+                } catch (IOException ex) {
+                    Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                myRoot.detachAllChildren();
+                map = null;
+            }
         }
     }
 

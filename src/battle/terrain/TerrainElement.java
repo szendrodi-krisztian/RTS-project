@@ -15,6 +15,10 @@ public abstract class TerrainElement {
     protected boolean has_alpha;
     protected char ascii;
 
+    public char getAscii() {
+        return ascii;
+    }
+
     /**
      * @return true when Alpha map exists.
      */

@@ -5,9 +5,11 @@ import battle.terrain.TerrainElementManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -37,11 +39,24 @@ public class MapFile {
         save = true;
     }
 
-    public void write() {
+    public void write() throws IOException {
         if (load) {
             throw new RuntimeException("You tried to save an empty file!");
         }
-
+        File f = new File(name);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
+            writer.write(String.valueOf(terrain.width()));
+            writer.newLine();
+            writer.write(String.valueOf(terrain.height()));
+            writer.newLine();
+            for (int i = 0; i < terrain.width(); i++) {
+                for (int j = 0; j < terrain.height(); j++) {
+                    writer.write(terrain.grid[terrain.width() * j + i].getAscii());
+                }
+                writer.newLine();
+            }
+            writer.flush();
+        }
     }
 
     public void read() throws FileNotFoundException, IOException {
@@ -50,19 +65,20 @@ public class MapFile {
         }
         File f = new File(name);
         System.out.println(f.getAbsolutePath());
-        BufferedReader reader = new BufferedReader(new FileReader(f));
-        width = Integer.parseInt(reader.readLine());
-        heigth = Integer.parseInt(reader.readLine());
-        terrain = new Terrain(width, heigth);
-        String line;
-        Vector2f pos = new Vector2f(0, 0);
-        while ((line = reader.readLine()) != null) {
-            pos.x = 0;
-            for (char c : line.toCharArray()) {
-                terrain.setTypeAt(TerrainElementManager.getInstance(assets).getElementByChar(c), pos);
-                pos.x++;
+        try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+            width = Integer.parseInt(reader.readLine());
+            heigth = Integer.parseInt(reader.readLine());
+            terrain = new Terrain(width, heigth);
+            String line;
+            Vector2f pos = new Vector2f(0, 0);
+            while ((line = reader.readLine()) != null) {
+                pos.x = 0;
+                for (char c : line.toCharArray()) {
+                    terrain.setTypeAt(TerrainElementManager.getInstance(assets).getElementByChar(c), pos);
+                    pos.x++;
+                }
+                pos.y++;
             }
-            pos.y++;
         }
     }
 
