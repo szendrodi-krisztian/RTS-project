@@ -64,11 +64,10 @@ public class MapFile {
             System.out.println("WARNING: You will overwrite the actual terrain with the loaded one.");
         }
         File f = new File(name);
-        System.out.println(f.getAbsolutePath());
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             width = Integer.parseInt(reader.readLine());
             heigth = Integer.parseInt(reader.readLine());
-            terrain = new Terrain(width, heigth);
+            terrain = new Terrain(width, heigth, assets);
             String line;
             Vector2f pos = new Vector2f(0, 0);
             while ((line = reader.readLine()) != null) {

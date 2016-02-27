@@ -12,21 +12,20 @@ public final class Terrain {
 
     public final TerrainElement grid[];
     public final int mapWidth, mapHeight;
+    public AssetManager assets;
 
     public Terrain(int mapWidth, int mapHeight, AssetManager assets) {
-        this(mapWidth, mapHeight, assets, 0xCAFFEE);
+        this(mapWidth, mapHeight, assets, 0xCAFFEE, true);
     }
 
-    public Terrain(int mapWidth, int mapHeight) {
+    public Terrain(int mapWidth, int mapHeight, AssetManager assets, int seed, boolean empty) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
+        this.assets = assets;
         grid = new TerrainElement[mapWidth * mapHeight];
-    }
-
-    public Terrain(int mapWidth, int mapHeight, AssetManager assets, int seed) {
-        this.mapWidth = mapWidth;
-        this.mapHeight = mapHeight;
-        grid = new TerrainElement[mapWidth * mapHeight];
+        if (empty) {
+            return;
+        }
         SimplexNoise noise = new SimplexNoise(128, 0.3f, seed);
         SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, seed);
 
@@ -60,11 +59,11 @@ public final class Terrain {
         }
     }
 
-    public void setTypeAt(TerrainElement type, Vector2f at) {
+    public void setTypeAt(TerrainElement type, Vector2f at) throws ArrayIndexOutOfBoundsException {
         setTypeAt(type, (int) at.x, (int) at.y);
     }
 
-    public void setTypeAt(TerrainElement type, int x, int y) {
+    public void setTypeAt(TerrainElement type, int x, int y) throws ArrayIndexOutOfBoundsException {
         grid[x * mapHeight + y] = type;
     }
 

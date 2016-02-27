@@ -15,7 +15,13 @@
                 </control>
                 <control name="dropDown" id="SelectDrop" x="122px" y="0" width="60px" heigth="23px">
                 </control>
-                
+                <control name="textfield" id="GTextfield2" width="60px" x="183px" y="0" height="23px"/>
+                <control name="button" id="GButton3" childLayout="center" width="60px" x="183px" y="24px" label="Save" height="23px">
+                    <interact onClick="saveMap()"/>
+                </control>
+                <control name="button" id="GButton4" childLayout="center" width="60px" x="183px" y="48" label="Load" height="23px">
+                    <interact onClick="loadMap()"/>
+                </control>
             </panel>
         </layer>
     </screen>

@@ -1,6 +1,8 @@
 package mygame;
 
 import battle.BattleMap;
+import battle.gfx.MeshedTerrain;
+import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
 import com.jme3.app.Application;
@@ -62,15 +64,6 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (enabled) {
-            if (map == null) {
-                try {
-                    MapFile mapFile = new MapFile("plswork", assets);
-                    mapFile.read();
-                    map = new BattleMap(mapFile, myRoot);
-                } catch (IOException ex) {
-                    Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
 
             ActionListener actl;
             actl = new ActionListener() {
@@ -81,8 +74,11 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
                         case "left click":
                             if (!isPressed) {
                                 Vector2f clicked = getMouseRayCastIntCoords();
-                                map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked);
-                                map.getTerrain().reBuild();
+                                try {
+                                    map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked);
+                                    map.getTerrain().reBuild();
+                                } catch (Exception e) {
+                                }
                             }
                             break;
                         case "right click":
@@ -104,17 +100,32 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
             inputManager.addMapping("right click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
         } else {
             inputManager.clearMappings();
-            if (map != null) {
-                MapFile f = new MapFile("plssave", map.getTerrain().raw());
-                try {
-                    f.write();
-                } catch (IOException ex) {
-                    Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                myRoot.detachAllChildren();
-                map = null;
-            }
         }
+    }
+
+    public void saveMap() {
+        try {
+            MapFile f = new MapFile(getMapName(), map.getTerrain().raw());
+            f.write();
+        } catch (IOException ex) {
+            Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void loadMap() {
+        try {
+            myRoot.detachAllChildren();
+            MapFile f = new MapFile(getMapName(), assets);
+            f.read();
+            map = new BattleMap(f, myRoot);
+        } catch (IOException ex) {
+            Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public String getMapName() {
+        TextField tf = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield2", Controller.class);
+        return tf.getDisplayedText();
     }
 
     private Vector2f getMouseRayCastIntCoords() {
@@ -153,7 +164,8 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         int w = Integer.parseInt(tf.getDisplayedText());
         int h = Integer.parseInt(tf2.getDisplayedText());
         myRoot.detachAllChildren();
-        map = new BattleMap(w, h, myRoot, assets);
+        MeshedTerrain terrain = new MeshedTerrain(new Terrain(w, h, assets, 0xCAFFEE, false), myRoot);
+        map = new BattleMap(terrain);
     }
 
     public void regenerate() {
@@ -174,6 +186,11 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         for (String s : TerrainElementManager.getInstance(assets).getAllTerrains().keySet()) {
             drop.addItem(s);
         }
+        drop.selectItemByIndex(0);
+        TextField tf = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield0", Controller.class);
+        TextField tf2 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield1", Controller.class);
+        tf.setText("10");
+        tf2.setText("10");
     }
 
     @Override

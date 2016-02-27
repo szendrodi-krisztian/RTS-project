@@ -14,7 +14,7 @@ import com.jme3.scene.Node;
 public class MeshedTerrain {
 
     private final Terrain terrain;
-    private final Node root;
+    public final Node root;
 
     public MeshedTerrain(Terrain terrain, Node rootNode) {
         this.terrain = terrain;

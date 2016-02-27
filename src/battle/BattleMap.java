@@ -38,22 +38,25 @@ public class BattleMap {
         this(mapWidth, mapHeight, rootNode, assets, 0xCAFFEE);
     }
 
-    public BattleMap(MapFile map, Node rootNode) {
-        this.mapWidth = map.width();
-        this.mapHeight = map.heigth();
-        this.assets = map.assets();
-        this.rootNode = rootNode;
-        terrain = new MeshedTerrain(map.getTerrain(), rootNode);
-        units = new UnitGrid(mapWidth, mapHeight);
+    public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets, int seed) {
+        this(new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets, seed, false), rootNode), new UnitGrid(mapWidth, mapHeight));
     }
 
-    public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets, int seed) {
-        this.mapWidth = mapWidth;
-        this.mapHeight = mapHeight;
-        this.assets = assets;
-        this.rootNode = rootNode;
-        terrain = new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets, seed), rootNode);
-        units = new UnitGrid(mapWidth, mapHeight);
+    public BattleMap(MapFile map, Node rootNode) {
+        this(new MeshedTerrain(map.getTerrain(), rootNode), new UnitGrid(map.width(), map.heigth()));
+    }
+
+    public BattleMap(MeshedTerrain terrain) {
+        this(terrain, new UnitGrid(terrain.raw().width(), terrain.raw().height()));
+    }
+
+    public BattleMap(MeshedTerrain terrain, UnitGrid units) {
+        this.mapWidth = terrain.raw().mapWidth;
+        this.mapHeight = terrain.raw().mapHeight;
+        this.assets = terrain.raw().assets;
+        this.rootNode = terrain.root;
+        this.terrain = terrain;
+        this.units = units;
     }
 
     public MeshedTerrain getTerrain() {
