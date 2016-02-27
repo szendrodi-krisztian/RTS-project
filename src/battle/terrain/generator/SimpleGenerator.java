@@ -45,6 +45,11 @@ public class SimpleGenerator implements IGenerator {
             }
         }
 
+        makeEdgeWall(elements);
+    }
+
+    protected final void makeEdgeWall(TerrainElement elements[]) {
+
         for (int i = 0; i < mapWidth; i++) {
             elements[i * mapHeight + 0] = TerrainElementManager.getInstance(assets).getElementByName("wall");
             elements[i * mapHeight + mapHeight - 1] = TerrainElementManager.getInstance(assets).getElementByName("wall");

@@ -9,7 +9,7 @@ import util.SimplexNoise;
  *
  * @author Krisz
  */
-public class ForestGenerator extends SimpleGenerator {
+public final class ForestGenerator extends SimpleGenerator {
 
     public ForestGenerator(int w, int h, AssetManager assets, int seed) {
         super(w, h, assets, seed);
@@ -30,16 +30,7 @@ public class ForestGenerator extends SimpleGenerator {
                 }
             }
         }
-
-        for (int i = 0; i < mapWidth; i++) {
-            elements[i * mapHeight + 0] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-            elements[i * mapHeight + mapHeight - 1] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-        }
-
-        for (int i = 0; i < mapHeight; i++) {
-            elements[0 * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-            elements[(mapWidth - 1) * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-        }
+        makeEdgeWall(elements);
     }
 
 }
