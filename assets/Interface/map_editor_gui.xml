@@ -13,6 +13,7 @@
                 <control name="button" id="GButton2" childLayout="center" width="60px" x="61" y="0" label="Generate" height="23px">
                     <interact onClick="regenerate()"/>
                 </control>
+                <control name="textfield" id="GTextfield3" width="60px" x="61" y="24" height="23px"/>
                 <control name="dropDown" id="SelectDrop" x="122px" y="0" width="60px" heigth="23px">
                 </control>
                 <control name="textfield" id="GTextfield2" width="60px" x="183px" y="0" height="23px"/>

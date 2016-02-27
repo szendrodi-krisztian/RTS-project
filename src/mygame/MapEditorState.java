@@ -5,6 +5,8 @@ import battle.gfx.MeshedTerrain;
 import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
+import battle.terrain.generator.IGenerator;
+import battle.terrain.generator.SimpleGenerator;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -27,6 +29,7 @@ import de.lessvoid.nifty.controls.DropDown;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.screen.Screen;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.MapFile;
@@ -170,7 +173,20 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
 
     public void regenerate() {
         myRoot.detachAllChildren();
-        map = new BattleMap(map.mapWidth, map.mapHeight, myRoot, assets, FastMath.nextRandomInt());
+        String classname = ((TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield3", Controller.class)).getDisplayedText();
+        IGenerator g;
+        try {
+            // ALL generators must be in that package
+            Class c = Class.forName("battle.terrain.generator." + classname);
+            g = (IGenerator) c.getConstructors()[0].newInstance(map.mapWidth, map.mapHeight, assets, FastMath.nextRandomInt());
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException ex) {
+            Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
+            g = new SimpleGenerator(map.mapWidth, map.mapHeight, assets, FastMath.nextRandomInt());
+        }
+
+        Terrain terrain = new Terrain(map.mapWidth, map.mapHeight, assets, false, g);
+
+        map = new BattleMap(new MeshedTerrain(terrain, myRoot));
     }
 
     @Override
@@ -189,8 +205,10 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         drop.selectItemByIndex(0);
         TextField tf = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield0", Controller.class);
         TextField tf2 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield1", Controller.class);
+        TextField tf3 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield3", Controller.class);
         tf.setText("10");
         tf2.setText("10");
+        tf3.setText("SimpleGenerator");
     }
 
     @Override

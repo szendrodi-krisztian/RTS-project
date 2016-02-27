@@ -1,8 +1,9 @@
 package battle.terrain;
 
+import battle.terrain.generator.IGenerator;
+import battle.terrain.generator.SimpleGenerator;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
-import util.SimplexNoise;
 
 /**
  *
@@ -13,50 +14,35 @@ public final class Terrain {
     public final TerrainElement grid[];
     public final int mapWidth, mapHeight;
     public AssetManager assets;
+    private final IGenerator generator;
+
+    public Terrain(int mapWidth, int mapHeight, AssetManager assets, IGenerator generator) {
+        this(mapWidth, mapHeight, assets, false, generator);
+    }
 
     public Terrain(int mapWidth, int mapHeight, AssetManager assets) {
-        this(mapWidth, mapHeight, assets, 0xCAFFEE, true);
+        this(mapWidth, mapHeight, assets, true, new SimpleGenerator(mapWidth, mapHeight, assets, 0xCAFFEE));
+    }
+
+    public Terrain(int mapWidth, int mapHeight, AssetManager assets, int seed) {
+        this(mapWidth, mapHeight, assets, true, new SimpleGenerator(mapWidth, mapHeight, assets, seed));
     }
 
     public Terrain(int mapWidth, int mapHeight, AssetManager assets, int seed, boolean empty) {
+        this(mapWidth, mapHeight, assets, empty, new SimpleGenerator(mapWidth, mapHeight, assets, seed));
+    }
+
+    public Terrain(int mapWidth, int mapHeight, AssetManager assets, boolean empty, IGenerator generator) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.assets = assets;
+        this.generator = generator;
         grid = new TerrainElement[mapWidth * mapHeight];
-        if (empty) {
-            return;
-        }
-        SimplexNoise noise = new SimplexNoise(128, 0.3f, seed);
-        SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, seed);
 
-        for (int i = 0; i < mapWidth; i++) {
-            for (int j = 0; j < mapHeight; j++) {
-                float n = noise.getNoise(2f * i, 2f * j);
-                if (n < -0.16) {
-                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("water");
-                    continue;
-                }
-                if (n < 0.015f) {
-                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
-                    continue;
-                }
-                if (treenoise.getNoise(20 * i, 20 * j) > 10f) {
-                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
-                } else {
-                    grid[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
-                }
-            }
+        if (!empty) {
+            generator.generate(grid);
         }
 
-        for (int i = 0; i < mapWidth; i++) {
-            grid[i * mapHeight + 0] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-            grid[i * mapHeight + mapHeight - 1] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-        }
-
-        for (int i = 0; i < mapHeight; i++) {
-            grid[0 * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-            grid[(mapWidth - 1) * mapHeight + i] = TerrainElementManager.getInstance(assets).getElementByName("wall");
-        }
     }
 
     public void setTypeAt(TerrainElement type, Vector2f at) throws ArrayIndexOutOfBoundsException {
