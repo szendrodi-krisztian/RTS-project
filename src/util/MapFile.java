@@ -43,7 +43,8 @@ public class MapFile {
         if (load) {
             throw new RuntimeException("You tried to save an empty file!");
         }
-        File f = new File(name);
+        File f = new File("maps" + File.separator + name);
+        f.getParentFile().mkdirs();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
             writer.write(String.valueOf(terrain.width()));
             writer.newLine();
@@ -63,7 +64,7 @@ public class MapFile {
         if (save) {
             System.out.println("WARNING: You will overwrite the actual terrain with the loaded one.");
         }
-        File f = new File(name);
+        File f = new File("maps" + File.separator + name);
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             width = Integer.parseInt(reader.readLine());
             heigth = Integer.parseInt(reader.readLine());
