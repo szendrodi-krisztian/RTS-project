@@ -38,6 +38,10 @@ public final class Group {
         return map;
     }
 
+    public void leave(Unit u) {
+        units.remove(u);
+    }
+
     /**
      * Joins the given unit to this group. Note: with this in place one unit
      * could belong to more than one group in this case the behavior is
@@ -72,7 +76,7 @@ public final class Group {
         System.out.println("rotate from " + rot_bef + " to " + rotation);
         formation.position_offset = 0;
         formation.position_offset_neg = 0;
-        if (FastMath.abs(rot_bef - rotation) >= 90 && FastMath.abs(rot_bef-rotation)!=315) {
+        if (FastMath.abs(rot_bef - rotation) >= 90 && FastMath.abs(rot_bef - rotation) != 315) {
             formation.rev = !formation.rev;
         }
         for (int i = 0; i < units.size(); i++) {

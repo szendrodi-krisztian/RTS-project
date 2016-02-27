@@ -40,6 +40,10 @@ public class ProjectileList extends ArrayList<Projectile> {
             for (Iterator<Unit> it = map.getUnitsAt(projectile.getPos()).iterator(); it.hasNext();) {
                 Unit thi = it.next();
                 thi.getHit(projectile.getDamage());
+                if (thi.getHealth() <= 0) {
+                    thi.destroy();
+                    it.remove();
+                }
             }
             projectile.destroy();
             this.remove(projectile);

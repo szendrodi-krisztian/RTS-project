@@ -1,7 +1,6 @@
 package battle.entity;
 
 import battle.entity.group.Group;
-import battle.gfx.MyQuad;
 import battle.gfx.UnitMesh;
 import battle.path.Path;
 import com.jme3.asset.TextureKey;
@@ -10,7 +9,6 @@ import com.jme3.material.RenderState;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.texture.Texture;
 import java.text.MessageFormat;
 import util.Util;
@@ -26,7 +24,7 @@ public abstract class Unit extends RawUnit {
     public static final float N_STEP = 10;
 
     private final Geometry geometry;
-    
+
     private final UnitMesh mesh;
 
     public boolean moved;
@@ -79,7 +77,7 @@ public abstract class Unit extends RawUnit {
         path.reValidate();
         if (!path.isEmpty()) {
             dest = path.first();
-            rotationAngle = Util.angleToPositiveToOctave(FastMath.RAD_TO_DEG *dest.angleBetween(new Vector2f(0,1)));
+            rotationAngle = Util.angleToPositiveToOctave(FastMath.RAD_TO_DEG * dest.angleBetween(new Vector2f(0, 1)));
         } else {
 
         }
@@ -112,10 +110,9 @@ public abstract class Unit extends RawUnit {
         sb.append(MessageFormat.format("Unit\n{0}\n\tfractal is {1}\n\tfinal destination is {2}", super.toString(), fractal, destination));
         return sb.toString();
     }
-    
-    @Override
-    public void destroy()
-    {
-        geometry.getParent().detachChild(geometry);        
+
+    public void destroy() {
+        geometry.getParent().detachChild(geometry);
+        getGroup().leave(this);
     }
 }

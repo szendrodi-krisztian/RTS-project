@@ -73,27 +73,20 @@ public abstract class RawUnit {
     public final Pose pose() {
         return pose;
     }
-    
-    public void getHit(int damage){
-        health-=damage;
-        checkIfDead();
+
+    public void getHit(int damage) {
+        health -= damage;
     }
-    
-    public void checkIfDead(){
-        if(health<=0)
-        {
-            System.out.println("I'm such dead, much wow at: "+pos.toString());
-            health=MAX_HEALTH;
-        }
-    }
-    
-    public void destroy(){}
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(MessageFormat.format("RawUnit\n\tcurrently at {0}\n\tmoving to {1}\n\tfacing {2}\n\triding {3}\n\tequipped {4}\n\tin group{5}", pos, dest, rotationAngle, vehicle, weapon, group));
         return sb.toString();
+    }
+
+    public int getHealth() {
+        return health;
     }
 
 }
