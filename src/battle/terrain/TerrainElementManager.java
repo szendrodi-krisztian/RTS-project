@@ -95,6 +95,7 @@ public class TerrainElementManager {
                 e.texture_heigth = Integer.parseInt(arg[5]);
                 e.has_alpha = Boolean.parseBoolean(arg[6]);
                 e.ascii = arg[7].charAt(0);
+                e.under = arg[8];
                 elements.add(e);
             }
         } catch (UnsupportedEncodingException ex) {

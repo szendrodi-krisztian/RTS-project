@@ -1,5 +1,5 @@
-NAME    ACCESIBLE   MOVEMENT_SPEED  PROJECTILE_RESISTANCE   TEXTURE_WIDTH   TEXTURE_HEIGTH HAS_ALPHA    ASCII
-grass true 1.0 0.0 128 128 false g
-stone true 1.0 0.0 128 128 false s
-water false 0.0 0.0 128 128 false w
-tree false 0.0 1.0 128 256 true t
+NAME    ACCESIBLE   MOVEMENT_SPEED  PROJECTILE_RESISTANCE   TEXTURE_WIDTH   TEXTURE_HEIGTH HAS_ALPHA    ASCII   UNDER
+grass true 1.0 0.0 128 128 false g null
+stone true 1.0 0.0 128 128 false s null
+water false 0.0 0.0 128 128 false w null
+tree false 0.0 1.0 128 256 true t grass

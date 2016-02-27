@@ -14,9 +14,14 @@ public abstract class TerrainElement {
     protected int texture_heigth;
     protected boolean has_alpha;
     protected char ascii;
+    protected String under;
 
     public char getAscii() {
         return ascii;
+    }
+
+    public String getUnder() {
+        return under;
     }
 
     /**
