@@ -6,8 +6,10 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 
@@ -20,7 +22,6 @@ public class CameraMovementState extends AbstractAppState implements AnalogListe
     private Camera camera;
     private InputManager inputManager;
     private Vector3f camPos;
-
 
     private boolean left = false;
     private boolean right = false;
@@ -59,11 +60,11 @@ public class CameraMovementState extends AbstractAppState implements AnalogListe
         }
 
         if (zoom_in) {
-            camPos.subtractLocal(UNIT_Y);
+            camPos.subtractLocal(UNIT_Y.mult(10));
         }
 
         if (zoom_out) {
-            camPos.addLocal(UNIT_Y);
+            camPos.addLocal(UNIT_Y.mult(10));
         }
         left = down = right = up = zoom_in = zoom_out = false;
         camera.setLocation(camPos);
@@ -82,8 +83,8 @@ public class CameraMovementState extends AbstractAppState implements AnalogListe
             inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
             inputManager.addMapping("up", new KeyTrigger(KeyInput.KEY_W));
             inputManager.addMapping("down", new KeyTrigger(KeyInput.KEY_S));
-            inputManager.addMapping("zoom in", new KeyTrigger(KeyInput.KEY_Q));
-            inputManager.addMapping("zoom out", new KeyTrigger(KeyInput.KEY_E));
+            inputManager.addMapping("zoom in", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
+            inputManager.addMapping("zoom out", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
         } else {
             inputManager.clearMappings();
         }
