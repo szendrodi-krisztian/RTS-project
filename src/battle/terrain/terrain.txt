@@ -3,3 +3,4 @@ grass true 1.0 0.0 128 128 false g null
 stone true 1.0 0.0 128 128 false s null
 water false 0.0 0.0 128 128 false w null
 tree false 0.0 1.0 128 256 true t grass
+sand true 1.0 0.0 128 128 false S null

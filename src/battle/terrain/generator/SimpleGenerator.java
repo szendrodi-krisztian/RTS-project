@@ -34,7 +34,7 @@ public class SimpleGenerator implements IGenerator {
                     continue;
                 }
                 if (n < 0.015f) {
-                    elements[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("stone");
+                    elements[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("sand");
                     continue;
                 }
                 if (treenoise.getNoise(20 * i, 20 * j) > 10f) {
