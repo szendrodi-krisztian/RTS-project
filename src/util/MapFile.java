@@ -52,7 +52,13 @@ public class MapFile {
             writer.newLine();
             for (int i = 0; i < terrain.width(); i++) {
                 for (int j = 0; j < terrain.height(); j++) {
-                    writer.write(terrain.grid[terrain.width() * j + i].getAscii());
+                    writer.write(terrain.grid[terrain.width() * j + i].get(Terrain.TERRAIN_LAYER).getAscii());
+                }
+                writer.newLine();
+            }
+            for (int i = 0; i < terrain.width(); i++) {
+                for (int j = 0; j < terrain.height(); j++) {
+                    writer.write(terrain.grid[terrain.width() * j + i].get(Terrain.DECORATION_LAYER).getAscii());
                 }
                 writer.newLine();
             }
@@ -71,10 +77,22 @@ public class MapFile {
             terrain = new Terrain(width, heigth, assets);
             String line;
             Vector2f pos = new Vector2f(0, 0);
-            while ((line = reader.readLine()) != null) {
+            for (int i = 0; i < heigth; i++) {
+                line = reader.readLine();
                 pos.x = 0;
                 for (char c : line.toCharArray()) {
-                    terrain.setTypeAt(TerrainElementManager.getInstance(assets).getElementByChar(c), pos);
+                    terrain.setTypeAt(TerrainElementManager.getInstance(assets).getElementByChar(c), pos, Terrain.TERRAIN_LAYER);
+                    pos.x++;
+                }
+                pos.y++;
+            }
+            pos.x = 0;
+            pos.y = 0;
+            for (int i = 0; i < heigth; i++) {
+                line = reader.readLine();
+                pos.x = 0;
+                for (char c : line.toCharArray()) {
+                    terrain.setTypeAt(TerrainElementManager.getInstance(assets).getElementByChar(c), pos, Terrain.DECORATION_LAYER);
                     pos.x++;
                 }
                 pos.y++;

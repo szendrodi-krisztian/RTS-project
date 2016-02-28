@@ -1,14 +1,14 @@
 package battle.gfx;
 
+import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
-import com.jme3.bounding.BoundingBox;
-import com.jme3.bounding.BoundingVolume;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import org.lwjgl.BufferUtils;
 
 /**
@@ -18,7 +18,7 @@ import org.lwjgl.BufferUtils;
 public class TerrainDecorationMesh extends Mesh {
 
     // TODO: implement batching in the sense of neighbours or even all grass etc..
-    public TerrainDecorationMesh(int n, int m, TerrainElement grid[]) {
+    public TerrainDecorationMesh(int n, int m, ArrayList<TerrainElement> grid[]) {
         super();
         FloatBuffer vertexbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
         FloatBuffer normalbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
@@ -28,8 +28,11 @@ public class TerrainDecorationMesh extends Mesh {
         int index = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                if (grid[i * m + j].getTexture_heigth() == 256) {
-
+                if (grid[i * m + j].get(Terrain.DECORATION_LAYER) != null) {
+                    Vector2f base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * m + j].get(Terrain.DECORATION_LAYER).getName());
+                    if (base_tex == null) {
+                        continue;
+                    }
                     vertexbuffer.put(i).put(0).put(j);
                     vertexbuffer.put(i + 1).put(0).put(j);
                     vertexbuffer.put(i + 1).put(0).put(j + 2);
@@ -44,7 +47,6 @@ public class TerrainDecorationMesh extends Mesh {
                     indecies.put(index + 2).put(index).put(index + 3);
                     index += 4;
 
-                    Vector2f base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * m + j].getName());
                     float bleed = 0.01f;
                     texCoords.put((base_tex.x + 1 * 128) / 2048f - bleed).put((base_tex.y + 0 * 256) / 2048f + bleed);
                     texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 0 * 256) / 2048f + bleed);

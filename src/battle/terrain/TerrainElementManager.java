@@ -79,7 +79,6 @@ public class TerrainElementManager {
         bigAtlas = new CustomTextureAtlas();
         List<TerrainElement> elements = new ArrayList<>(10);
         // Add any special elements also to this list
-        elements.add(new InvisibleWallTerrain());
         try {
             BufferedReader r = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("terrain.txt"), "UTF-8"));
             String line = r.readLine();
@@ -95,7 +94,6 @@ public class TerrainElementManager {
                 e.texture_heigth = Integer.parseInt(arg[5]);
                 e.has_alpha = Boolean.parseBoolean(arg[6]);
                 e.ascii = arg[7].charAt(0);
-                e.under = arg[8];
                 elements.add(e);
             }
         } catch (UnsupportedEncodingException ex) {
@@ -108,8 +106,11 @@ public class TerrainElementManager {
             try {
                 terrains.put(e.getName(), e);
                 terrainsByAscii.put(e.ascii, e);
+                if (e.getTexture_width() == 0) {
+                    continue;
+                }
                 Texture t = assets.loadTexture("Textures/terrain/" + e.getName() + ".png");
-                Texture am = null;
+                Texture am;
                 if (e.has_alpha) {
                     am = assets.loadTexture("Textures/terrain/" + e.getName() + "alpha.png");
                 } else {
@@ -148,12 +149,7 @@ public class TerrainElementManager {
     }
 
     public final TerrainElement getElementByName(String name) {
-        TerrainElement element = terrains.get(name);
-        if (element == null) {
-            throw new RuntimeException("Terrain does not exist");
-        }
-
-        return element;
+        return terrains.get(name);
     }
 
     public final TerrainElement getElementByChar(char c) {

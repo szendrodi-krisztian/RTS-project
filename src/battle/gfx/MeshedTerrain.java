@@ -6,6 +6,7 @@ import battle.terrain.TerrainElementManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import java.util.ArrayList;
 
 /**
  *
@@ -34,7 +35,7 @@ public class MeshedTerrain {
         rootNode.attachChild(g);
     }
 
-    public TerrainElement[] getGrid() {
+    public ArrayList<TerrainElement>[] getGrid() {
         return terrain.grid;
     }
 

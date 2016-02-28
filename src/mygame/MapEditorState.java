@@ -78,7 +78,7 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
                             if (!isPressed) {
                                 Vector2f clicked = getMouseRayCastIntCoords();
                                 try {
-                                    map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked);
+                                    map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked, Terrain.TERRAIN_LAYER);
                                     map.getTerrain().reBuild();
                                 } catch (Exception e) {
                                 }

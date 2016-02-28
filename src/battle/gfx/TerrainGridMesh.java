@@ -1,5 +1,6 @@
 package battle.gfx;
 
+import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
 import com.jme3.math.Vector2f;
@@ -7,6 +8,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import org.lwjgl.BufferUtils;
 
 /**
@@ -16,7 +18,7 @@ import org.lwjgl.BufferUtils;
 public class TerrainGridMesh extends Mesh {
 
     // TODO: implement batching in the sense of neighbours or even all grass etc..
-    public TerrainGridMesh(int n, int m, TerrainElement grid[]) {
+    public TerrainGridMesh(int n, int m, ArrayList<TerrainElement> grid[]) {
         super();
         FloatBuffer vertexbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
         FloatBuffer normalbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
@@ -27,6 +29,13 @@ public class TerrainGridMesh extends Mesh {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 float off = 0.2f;
+                Vector2f base_tex;
+                base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * m + j].get(Terrain.TERRAIN_LAYER).getName());
+
+                if (base_tex == null) {
+                    continue;
+                }
+
                 vertexbuffer.put(i - off).put(0).put(j - off);
                 vertexbuffer.put(i + 1 + off).put(0).put(j - off);
                 vertexbuffer.put(i + 1 + off).put(0).put(j + 1 + off);
@@ -41,15 +50,6 @@ public class TerrainGridMesh extends Mesh {
                 indecies.put(index + 2).put(index).put(index + 3);
                 index += 4;
 
-                Vector2f base_tex;
-                if (grid[i * m + j].getTexture_heigth() == 128) {
-                    base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * m + j].getName());
-                } else {
-                    base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * m + j].getUnder());
-                }
-                if (base_tex == null) {
-                    base_tex = new Vector2f(0, 0);
-                }
                 float bleed = 0.0001f;
                 texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 0 * 128) / 2048f + bleed);
                 texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 1 * 128) / 2048f - bleed);
