@@ -2,14 +2,12 @@ package battle.path;
 
 import battle.BattleMap;
 import battle.entity.Unit;
-import battle.entity.UnitGrid;
-import util.MyVector2f;
-import util.ObjectPool;
-import battle.terrain.Terrain;
 import com.jme3.math.Vector2f;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import util.MyVector2f;
+import util.ObjectPool;
 
 /**
  *
@@ -28,9 +26,8 @@ public final class Path extends ArrayList<Vector2f> {
         {+1, -1},};
 
     private int posX, posY, destX, destY;
-    
+
     private final BattleMap map;
-    
 
     private int pathDistanceGrid[];
     private List<MyVector2f> subsequentGrids;
@@ -102,7 +99,7 @@ public final class Path extends ArrayList<Vector2f> {
 
                     pathDistanceGrid[opt1] = pathDistanceGrid[opt2] + 1;
                     subsequentGrids.add(pool.create(currentGrid.x + neighbourX, currentGrid.y + neighbourY));
-                        //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
+                    //changedArrayElements.add(new Vector2f(currentGrid.x+neighbourX, currentGrid.y+neighbourY));
 
                 }
             }
@@ -150,9 +147,11 @@ public final class Path extends ArrayList<Vector2f> {
     }
 
     public void reValidate() {
-        if(size()==0) return;
+        if (size() == 0) {
+            return;
+        }
         Vector2f next = get(size() - 1);
-        List<Unit> list =map.getUnitsAt(next);
+        List<Unit> list = map.getUnitsAt(next);
 
         if (list.isEmpty()) {
             return;
@@ -166,7 +165,7 @@ public final class Path extends ArrayList<Vector2f> {
         }
         if (will_move) {
             add(new Vector2f(posX, posY));
-        }else{
+        } else {
             reCalculate(true);
         }
     }

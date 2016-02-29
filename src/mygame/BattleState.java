@@ -5,7 +5,7 @@ import battle.entity.SimpleUnit;
 import battle.entity.Unit;
 import battle.entity.group.Group;
 import battle.entity.group.OneLineFormation;
-import battle.entity.group.TwoLineFormation;
+import battle.entity.group.TriangleFormation;
 import battle.gfx.ClickMesh;
 import battle.gfx.PathMesh;
 import battle.path.Path;
@@ -211,8 +211,8 @@ public class BattleState extends AbstractAppStateWithRoot {
             }
             g1.moveTo(10, 10, 0);
 
-            Group g2 = new Group(map, new TwoLineFormation(map));
-            for (int i = 0; i < 12; i++) {
+            Group g2 = new Group(map, new TriangleFormation(map));
+            for (int i = 0; i < 30; i++) {
                 map.spawn(0, 0, g2, SimpleUnit.class);
             }
             g2.moveTo(5, 15, 0);
