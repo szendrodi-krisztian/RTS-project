@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mygame;
 
 import battle.BattleMap;
@@ -12,6 +7,7 @@ import battle.entity.group.Group;
 import battle.entity.group.OneLineFormation;
 import battle.entity.group.TwoLineFormation;
 import battle.gfx.ClickMesh;
+import battle.gfx.PathMesh;
 import battle.path.Path;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -36,12 +32,8 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.VertexBuffer;
-import com.jme3.util.BufferUtils;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
-import java.nio.FloatBuffer;
-import java.util.List;
 import util.Util;
 
 /**
@@ -67,6 +59,9 @@ public class BattleState extends AbstractAppStateWithRoot {
     public void update(float tpf) {
         if (isEnabled()) {
             map.tick(tpf);
+            if (select != null) {
+                displayPath(select.getLeader().path, select.getLeader().position());
+            }
             if (to_menu) {
                 setEnabled(false);
                 stateManager.getState(MainMenuState.class).setEnabled(true);
@@ -122,45 +117,15 @@ public class BattleState extends AbstractAppStateWithRoot {
 
                 @Override
                 public void onAction(String name, boolean isPressed, float tpf) {
-                    if (click_gui == null) {
-                        click_gui = new Geometry("click", new ClickMesh());
-                        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
-                        m.setTexture("ColorMap", assets.loadTexture("Interface/move.png"));
-                        m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-                        m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
-                        click_gui.setMaterial(m);
-                        click_gui.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
-
-                        getRootNode().attachChild(click_gui);
-
-                        click_filler = new Geometry("click", new ClickMesh());
-                        Material m2 = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
-                        m2.setTexture("ColorMap", assets.loadTexture("Interface/move_fill.png"));
-                        m2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-                        m2.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
-                        click_filler.setMaterial(m2);
-                        click_filler.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
-                        getRootNode().attachChild(click_filler);
-                    }
                     switch (name.toLowerCase()) {
                         case "left click":
                             if (!isPressed) {
                                 return;
                             }
-                            CollisionResults results = new CollisionResults();
-                            Vector2f cur = inputManager.getCursorPosition();
-                            Vector3f cur3d = camera.getWorldCoordinates(cur.clone(), 0f).clone();
-                            Vector3f dir = camera.getWorldCoordinates(cur.clone(), 1f).subtract(cur3d).normalizeLocal();
-                            Ray ray = new Ray(cur3d, dir);
-                            getRootNode().collideWith(ray, results);
-                            CollisionResult coll = results.getClosestCollision();
-                            if (coll == null) {
-                                return;
-                            }
-                            Vector3f hit_geom = coll.getGeometry().getWorldTranslation();
+                            Vector2f hit_geom = getMouseRayCastIntCoords();
                             Unit unit = null;
-                            if (!map.getUnitsAt(hit_geom.x, hit_geom.z).isEmpty()) {
-                                unit = map.getUnitsAt(hit_geom.x, hit_geom.z).get(0);
+                            if (!map.getUnitsAt(hit_geom.x, hit_geom.y).isEmpty()) {
+                                unit = map.getUnitsAt(hit_geom.x, hit_geom.y).get(0);
                             }
                             System.out.println(unit);
                             if (unit != null) {
@@ -170,49 +135,12 @@ public class BattleState extends AbstractAppStateWithRoot {
                         case "right click":
                             if (select != null) {
                                 if (isPressed) {
-                                    CollisionResults results2 = new CollisionResults();
-                                    Vector2f cur2 = inputManager.getCursorPosition();
-                                    screen_mouse_right_pos = cur2.clone();
-                                    Vector3f cur3d2 = camera.getWorldCoordinates(cur2.clone(), 0f).clone();
-                                    Vector3f dir2 = camera.getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
-                                    Ray ray2 = new Ray(cur3d2, dir2);
-                                    getRootNode().collideWith(ray2, results2);
-                                    CollisionResult coll2 = results2.getClosestCollision();
-                                    if (coll2 == null) {
-                                        return;
-                                    }
-                                    right_pos = new Vector2f(coll2.getContactPoint().x, coll2.getContactPoint().z);
+                                    right_pos = getMouseRayCastIntCoords();
                                     click_gui.setLocalTranslation(right_pos.x, 1.1f, right_pos.y);
                                     click_filler.setLocalTranslation(right_pos.x, 1.1001f, right_pos.y);
-                                    List<Vector2f> p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map);
-                                    FloatBuffer vb = BufferUtils.createFloatBuffer(p.size() * 3 + 3);
-                                    for (Vector2f v : p) {
-                                        vb.put(v.x).put(0.2f).put(v.y);
-                                    }
-                                    vb.put(select.getLeader().pos.x).put(0.2f).put(select.getLeader().pos.y);
-                                    getRootNode().detachChildNamed("path");
-                                    select_path = new Mesh();
-                                    select_path.setBuffer(VertexBuffer.Type.Position, 3, vb);
-                                    select_path.setMode(Mesh.Mode.LineStrip);
-                                    select_path.updateBound();
-                                    Geometry g = new Geometry("path", select_path);
-                                    Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
-                                    m.setColor("Color", ColorRGBA.Pink);
-                                    g.setMaterial(m);
-                                    g.move(0.5f, 0, 0.5f);
-                                    getRootNode().attachChild(g);
+
                                 } else {
-                                    CollisionResults results2 = new CollisionResults();
-                                    Vector2f cur2 = inputManager.getCursorPosition();
-                                    Vector3f cur3d2 = camera.getWorldCoordinates(cur2.clone(), 0f).clone();
-                                    Vector3f dir2 = camera.getWorldCoordinates(cur2.clone(), 1f).subtract(cur3d2).normalizeLocal();
-                                    Ray ray2 = new Ray(cur3d2, dir2);
-                                    getRootNode().collideWith(ray2, results2);
-                                    CollisionResult coll2 = results2.getClosestCollision();
-                                    if (coll2 == null) {
-                                        return;
-                                    }
-                                    Vector2f release = new Vector2f(coll2.getContactPoint().x, coll2.getContactPoint().z);
+                                    Vector2f release = getMouseRayCastIntCoords();
                                     if (release.subtract(right_pos).lengthSquared() > 0.5f) {
                                         select.moveTo((int) right_pos.x, (int) right_pos.y, Util.angleToPositiveToOctave(FastMath.RAD_TO_DEG * (release.subtractLocal(right_pos)).angleBetween(new Vector2f(0, 1))));
                                     } else {
@@ -220,6 +148,8 @@ public class BattleState extends AbstractAppStateWithRoot {
                                     }
                                     click_gui.setLocalTranslation(0, 1.1f, 0);
                                     click_filler.setLocalTranslation(0, 1.10001f, 0);
+                                    Path p = new Path((int) select.getLeader().pos.x, (int) select.getLeader().pos.y, (int) select.getLeader().destination.x, (int) select.getLeader().destination.y, map);
+                                    displayPath(p, select.getLeader().position());
                                 }
                             }
                             break;
@@ -257,6 +187,16 @@ public class BattleState extends AbstractAppStateWithRoot {
         }
     }
 
+    private void displayPath(Path p, Vector2f start) {
+        getRootNode().detachChildNamed("path");
+        PathMesh mesh = new PathMesh(p, start);
+        Geometry g = new Geometry("path", mesh);
+        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setColor("Color", ColorRGBA.White);
+        g.setMaterial(m);
+        getRootNode().attachChild(g);
+    }
+
     @Override
     public void initialize(AppStateManager stateManager, Application appl) {
         super.initialize(stateManager, appl);
@@ -279,7 +219,39 @@ public class BattleState extends AbstractAppStateWithRoot {
         }
         getRootNode().addLight(light);
         to_menu = false;
+        click_gui = new Geometry("click", new ClickMesh());
+        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setTexture("ColorMap", assets.loadTexture("Interface/move.png"));
+        m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+        click_gui.setMaterial(m);
+        click_gui.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
+
+        getRootNode().attachChild(click_gui);
+
+        click_filler = new Geometry("click", new ClickMesh());
+        Material m2 = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        m2.setTexture("ColorMap", assets.loadTexture("Interface/move_fill.png"));
+        m2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        m2.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+        click_filler.setMaterial(m2);
+        click_filler.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
+        getRootNode().attachChild(click_filler);
         setEnabled(false);
+    }
+
+    private Vector2f getMouseRayCastIntCoords() {
+        CollisionResults results = new CollisionResults();
+        Vector2f cur = inputManager.getCursorPosition();
+        Vector3f cur3d = camera.getWorldCoordinates(cur.clone(), 0f).clone();
+        Vector3f dir = camera.getWorldCoordinates(cur.clone(), 1f).subtract(cur3d).normalizeLocal();
+        Ray ray = new Ray(cur3d, dir);
+        getRootNode().collideWith(ray, results);
+        CollisionResult coll = results.getClosestCollision();
+        if (coll == null) {
+            return Vector2f.ZERO;
+        }
+        return new Vector2f(coll.getContactPoint().x, coll.getContactPoint().z);
     }
 
     @Override

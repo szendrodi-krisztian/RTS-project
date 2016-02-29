@@ -4,13 +4,13 @@ package battle.entity;
  *
  * @author Krisz
  */
-public class Foot implements IVehicle{
-    
+public class Foot implements IVehicle {
+
     private float speed;
     private String textureName;
 
     public Foot() {
-        speed = 2.0f;
+        speed = 8.0f;
         textureName = "foot";
     }
 
@@ -34,8 +34,4 @@ public class Foot implements IVehicle{
         textureName = tex;
     }
 
-  
-
-
-    
 }
