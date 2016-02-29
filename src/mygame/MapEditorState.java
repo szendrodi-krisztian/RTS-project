@@ -15,7 +15,9 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
@@ -63,11 +65,55 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         }
     }
 
+    boolean down = false;
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (enabled) {
+            AnalogListener analog;
+            analog = new AnalogListener() {
 
+                @Override
+                public void onAnalog(String name, float value, float tpf) {
+                    if (name.equals("mouse_move")) {
+                        if (down) {
+                            Vector2f clicked = getMouseRayCastIntCoords();
+                            try {
+                                String l = getSelectedTerrainType().getLayer();
+                                int radius = getRadius();
+                                switch (l) {
+                                    case "TERRAIN":
+                                        for (int i = -radius; i < radius; i++) {
+                                            for (int j = -radius; j < radius; j++) {
+                                                if (FastMath.sqrt(i * i + j * j) > radius) {
+                                                    continue;
+                                                }
+                                                map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked.clone().addLocal(i, j), Terrain.TERRAIN_LAYER);
+                                                map.getTerrain().reBuildTerrain((int) clicked.x + i, (int) clicked.y + j);
+                                            }
+                                        }
+                                        break;
+                                    case "DECORATION":
+                                        for (int i = -radius; i < radius; i++) {
+                                            for (int j = -radius; j < radius; j++) {
+                                                if (FastMath.sqrt(i * i + j * j) > radius) {
+                                                    continue;
+                                                }
+                                                map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked.clone().addLocal(i, j), Terrain.DECORATION_LAYER);
+
+                                            }
+                                        }
+                                        map.getTerrain().reBuildDecor();
+                                        break;
+                                }
+
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+                }
+            };
             ActionListener actl;
             actl = new ActionListener() {
 
@@ -75,22 +121,7 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
                 public void onAction(String name, boolean isPressed, float tpf) {
                     switch (name.toLowerCase()) {
                         case "left click":
-                            if (!isPressed) {
-                                Vector2f clicked = getMouseRayCastIntCoords();
-                                try {
-                                    String l = getSelectedTerrainType().getLayer();
-                                    switch (l) {
-                                        case "TERRAIN":
-                                            map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked, Terrain.TERRAIN_LAYER);
-                                            break;
-                                        case "DECORATION":
-                                            map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked, Terrain.DECORATION_LAYER);
-                                            break;
-                                    }
-                                    map.getTerrain().reBuild();
-                                } catch (Exception e) {
-                                }
-                            }
+                            down = isPressed;
                             break;
                         case "right click":
 
@@ -106,9 +137,14 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
             };
 
             inputManager.addListener(actl, new String[]{"left click", "right click", "to the menu"});
+            inputManager.addListener(analog, "mouse_move");
             inputManager.addMapping("to the menu", new KeyTrigger(KeyInput.KEY_M));
             inputManager.addMapping("left click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
             inputManager.addMapping("right click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+            inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_X, false));
+            inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
+            inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_X, true));
+            inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
         } else {
             inputManager.clearMappings();
         }
@@ -132,6 +168,11 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         } catch (IOException ex) {
             Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private int getRadius() {
+        TextField tf = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield4", Controller.class);
+        return Integer.parseInt(tf.getDisplayedText());
     }
 
     public String getMapName() {
@@ -214,9 +255,11 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         TextField tf = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield0", Controller.class);
         TextField tf2 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield1", Controller.class);
         TextField tf3 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield3", Controller.class);
+        TextField tf4 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield4", Controller.class);
         tf.setText("40");
         tf2.setText("40");
         tf3.setText("SimpleGenerator");
+        tf4.setText("2");
     }
 
     @Override

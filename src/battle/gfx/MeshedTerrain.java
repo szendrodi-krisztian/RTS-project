@@ -43,22 +43,16 @@ public class MeshedTerrain {
         return terrain;
     }
 
-    public void reBuild() {
-        root.detachChildNamed("BattleTerrain");
-        root.detachChildNamed("BattleDecor");
-        Mesh mesh = new TerrainGridMesh(terrain.width(), terrain.height(), terrain.grid);
+    public void reBuildDecor() {
+        Geometry bd = (Geometry) root.getChild("BattleDecor");
+        TerrainDecorationMesh me = (TerrainDecorationMesh) bd.getMesh();
+        me.update(raw().grid);
+    }
 
-        Geometry geom = new Geometry("BattleTerrain", mesh);
-        geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
-
-        geom.move(0, 0, 0);
-        root.attachChild(geom);
-
-        Mesh me = new TerrainDecorationMesh(terrain.mapWidth, terrain.height(), terrain.grid);
-        Geometry g = new Geometry("BattleDecor", me);
-        g.move(0, 0.00001f, 0);
-        g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
-        root.attachChild(g);
+    public void reBuildTerrain(int x, int y) {
+        Geometry bt = (Geometry) root.getChild("BattleTerrain");
+        TerrainGridMesh mesh = (TerrainGridMesh) bt.getMesh();
+        mesh.update(raw().grid, x, y);
     }
 
 }

@@ -7,7 +7,7 @@
             <panel id="GPanel0" childLayout="absolute" width="100%" x="0px" y="0px" style="nifty-panel-simple" height="81px">
                 <control name="textfield" id="GTextfield0" width="60px" x="0" y="0" height="23px"/>
                 <control name="textfield" id="GTextfield1" width="60px" x="0" y="24" height="23px"/>
-                <control name="button" id="GButton1" childLayout="center" width="60px" x="0" y="48" label="Resize" height="23px">
+                <control name="button" id="GButton1" childLayout="center" width="60px" x="0" y="48" label="Create" height="23px">
                     <interact onClick="resizeMap()"/>
                 </control>
                 <control name="button" id="GButton2" childLayout="center" width="60px" x="61" y="0" label="Generate" height="23px">
@@ -16,6 +16,7 @@
                 <control name="textfield" id="GTextfield3" width="60px" x="61" y="24" height="23px"/>
                 <control name="dropDown" id="SelectDrop" x="122px" y="0" width="60px" heigth="23px">
                 </control>
+                <control name="textfield" id="GTextfield4" width="60px" x="122px" y="24" height="23px"/>
                 <control name="textfield" id="GTextfield2" width="60px" x="183px" y="0" height="23px"/>
                 <control name="button" id="GButton3" childLayout="center" width="60px" x="183px" y="24px" label="Save" height="23px">
                     <interact onClick="saveMap()"/>
