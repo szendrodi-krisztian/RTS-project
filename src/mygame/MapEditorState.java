@@ -78,7 +78,15 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
                             if (!isPressed) {
                                 Vector2f clicked = getMouseRayCastIntCoords();
                                 try {
-                                    map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked, Terrain.TERRAIN_LAYER);
+                                    String l = getSelectedTerrainType().getLayer();
+                                    switch (l) {
+                                        case "TERRAIN":
+                                            map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked, Terrain.TERRAIN_LAYER);
+                                            break;
+                                        case "DECORATION":
+                                            map.getTerrain().raw().setTypeAt(getSelectedTerrainType(), clicked, Terrain.DECORATION_LAYER);
+                                            break;
+                                    }
                                     map.getTerrain().reBuild();
                                 } catch (Exception e) {
                                 }
@@ -206,8 +214,8 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         TextField tf = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield0", Controller.class);
         TextField tf2 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield1", Controller.class);
         TextField tf3 = (TextField) niftyDisplay.getNifty().getCurrentScreen().findControl("GTextfield3", Controller.class);
-        tf.setText("10");
-        tf2.setText("10");
+        tf.setText("40");
+        tf2.setText("40");
         tf3.setText("SimpleGenerator");
     }
 

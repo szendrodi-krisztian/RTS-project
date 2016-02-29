@@ -242,9 +242,9 @@ public class BattleState extends AbstractAppStateWithRoot {
 
     private Vector2f getMouseRayCastIntCoords() {
         CollisionResults results = new CollisionResults();
-        Vector2f cur = inputManager.getCursorPosition();
-        Vector3f cur3d = camera.getWorldCoordinates(cur.clone(), 0f).clone();
-        Vector3f dir = camera.getWorldCoordinates(cur.clone(), 1f).subtract(cur3d).normalizeLocal();
+        screen_mouse_right_pos = inputManager.getCursorPosition().clone();
+        Vector3f cur3d = camera.getWorldCoordinates(screen_mouse_right_pos.clone(), 0f).clone();
+        Vector3f dir = camera.getWorldCoordinates(screen_mouse_right_pos.clone(), 1f).subtract(cur3d).normalizeLocal();
         Ray ray = new Ray(cur3d, dir);
         getRootNode().collideWith(ray, results);
         CollisionResult coll = results.getClosestCollision();

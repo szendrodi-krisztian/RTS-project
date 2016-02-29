@@ -10,18 +10,12 @@ public abstract class TerrainElement {
     protected float movement;
     protected float proj_resis;
     protected String name;
-    protected int texture_width;
-    protected int texture_heigth;
     protected boolean has_alpha;
     protected char ascii;
-    protected String under;
+    protected String layer;
 
     public char getAscii() {
         return ascii;
-    }
-
-    public String getUnder() {
-        return under;
     }
 
     /**
@@ -29,38 +23,6 @@ public abstract class TerrainElement {
      */
     public boolean isAlpha() {
         return has_alpha;
-    }
-
-    public void set_alpha(boolean has_alpha) {
-        this.has_alpha = has_alpha;
-    }
-
-    /**
-     * @return The width of the texture.
-     */
-    public int getTexture_width() {
-        return texture_width;
-    }
-
-    /**
-     * @param texture_width The new texture size.
-     */
-    public void setTexture_width(int texture_width) {
-        this.texture_width = texture_width;
-    }
-
-    /**
-     * @return The heigth of the texture.
-     */
-    public int getTexture_heigth() {
-        return texture_heigth;
-    }
-
-    /**
-     * @param texture_heigth The new texture size.
-     */
-    public void setTexture_heigth(int texture_heigth) {
-        this.texture_heigth = texture_heigth;
     }
 
     /**
@@ -99,6 +61,10 @@ public abstract class TerrainElement {
      */
     public float getProjectileResistance() {
         return proj_resis;
+    }
+
+    public String getLayer() {
+        return layer;
     }
 
 }

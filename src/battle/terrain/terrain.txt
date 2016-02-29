@@ -1,8 +1,8 @@
-NAME ACCESIBLE MOVEMENT_SPEED PROJECTILE_RESISTANCE TEXTURE_WIDTH TEXTURE_HEIGTH HAS_ALPHA ASCII
-grass true 1.0 0.0 128 128 false g
-stone true 1.0 0.0 128 128 false s
-water false 0.0 0.0 128 128 false w
-tree false 0.0 1.0 128 256 true t
-sand true 1.0 0.0 128 128 false S
-air true 1.0 0.0 0 0 false a
-wall false 0.0 1.0 128 128 false X
+NAME ACCESIBLE MOVEMENT_SPEED PROJECTILE_RESISTANCE HAS_ALPHA ASCII LAYER
+grass true 1.0 0.0 false g TERRAIN
+stone true 1.0 0.0 false s TERRAIN
+water false 0.0 0.0 false w TERRAIN
+tree false 0.0 1.0 true t DECORATION
+sand true 1.0 0.0 false S TERRAIN
+air true 1.0 0.0 false a DECORATION
+wall false 0.0 1.0 false X TERRAIN

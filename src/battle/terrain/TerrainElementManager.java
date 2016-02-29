@@ -64,14 +64,14 @@ public class TerrainElementManager {
     }
 
     public final Vector2f getTextureOffset(String name) {
-        TerrainElement e = getElementByName(name);
-        if (e.getTexture_heigth() == 128) {
-            return atlas.getOffset(name);
+        switch (getElementByName(name).getLayer()) {
+            case "TERRAIN":
+                return atlas.getOffset(name);
+            case "DECORATION":
+                return bigAtlas.getOffset(name);
+            default:
+                return null;
         }
-        if (e.getTexture_heigth() == 256) {
-            return bigAtlas.getOffset(name);
-        }
-        return null;
     }
 
     private TerrainElementManager(AssetManager assets) {
@@ -90,10 +90,9 @@ public class TerrainElementManager {
                 e.accessible = Boolean.parseBoolean(arg[1]);
                 e.movement = Float.parseFloat(arg[2]);
                 e.proj_resis = Float.parseFloat(arg[3]);
-                e.texture_width = Integer.parseInt(arg[4]);
-                e.texture_heigth = Integer.parseInt(arg[5]);
-                e.has_alpha = Boolean.parseBoolean(arg[6]);
-                e.ascii = arg[7].charAt(0);
+                e.has_alpha = Boolean.parseBoolean(arg[4]);
+                e.ascii = arg[5].charAt(0);
+                e.layer = arg[6];
                 elements.add(e);
             }
         } catch (UnsupportedEncodingException ex) {
@@ -106,7 +105,7 @@ public class TerrainElementManager {
             try {
                 terrains.put(e.getName(), e);
                 terrainsByAscii.put(e.ascii, e);
-                if (e.getTexture_width() == 0) {
+                if (e.getName().equals("air")) {
                     continue;
                 }
                 Texture t = assets.loadTexture("Textures/terrain/" + e.getName() + ".png");
@@ -116,12 +115,11 @@ public class TerrainElementManager {
                 } else {
                     am = assets.loadTexture("Textures/terrain/terrainalpha.png");
                 }
-                if (e.getTexture_heigth() == 128) {
+                if (e.getLayer().equals("TERRAIN")) {
                     atlas.addTexture(t, e.getName(), false);
                     atlas.addTexture(am, e.getName(), true);
-
                 }
-                if (e.getTexture_heigth() == 256) {
+                if (e.getLayer().equals("DECORATION")) {
                     bigAtlas.addTexture(t, e.getName(), false);
                     if (e.has_alpha) {
                         bigAtlas.addTexture(am, e.getName(), true);
