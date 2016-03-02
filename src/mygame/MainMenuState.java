@@ -20,6 +20,7 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
 
     boolean to_bf;
     boolean to_me;
+    boolean to_ci;
 
     @Override
     public void update(float tpf) {
@@ -35,6 +36,11 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
             app.getStateManager().getState(MapEditorState.class).setEnabled(true);
             to_me = false;
         }
+        if (to_ci) {
+            setEnabled(false);
+            app.getStateManager().getState(CityState.class).setEnabled(true);
+            to_ci = false;
+        }
 
     }
 
@@ -47,6 +53,7 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
             niftyDisplay.getNifty().gotoScreen("start");
             to_bf = false;
             to_me = false;
+            to_ci = false;
         } else {
             app.getRootNode().detachAllChildren();
             niftyDisplay.getNifty().gotoScreen("nope");
@@ -74,6 +81,10 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
 
     public void toTheMapEditor() {
         to_me = true;
+    }
+
+    public void toTheCity() {
+        to_ci = true;
     }
 
     @Override

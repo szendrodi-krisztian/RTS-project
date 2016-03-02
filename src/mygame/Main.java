@@ -37,9 +37,11 @@ public class Main extends SimpleApplication {
         final MainMenuState ms = new MainMenuState();
         final MapEditorState mes = new MapEditorState(stateManager);
         final BattleState bs = new BattleState(stateManager);
+        final CityState cs = new CityState(stateManager);
         stateManager.attach(ms);
         stateManager.attach(mes);
         stateManager.attach(bs);
+        stateManager.attach(cs);
         RenderQueue rq = viewPort.getQueue();
         rq.setGeometryComparator(RenderQueue.Bucket.Opaque, new GeometryComparator() {
 

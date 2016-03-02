@@ -5,12 +5,16 @@
     <screen id="start" controller="mygame.MainMenuState">
         <layer id="GLayer1" childLayout="absolute">
             <panel id="GPanel0" childLayout="absolute" width="50%" x="27%" y="32%" style="nifty-panel-simple" height="30%">
-                <control name="button" id="GButton0" childLayout="center" width="38%" x="33%" y="23%" label="To the battlefield!" height="25%">
+                <control name="button" id="GButton0" childLayout="center" width="38%" x="33%" y="20%" label="To the battlefield!" height="30px">
                     <interact onClick="toTheBattleField()"/>
 
                 </control>
-                <control name="button" id="GButton1" childLayout="center" width="38%" x="33%" y="63%" label="Create maps!" height="25%">
+                <control name="button" id="GButton1" childLayout="center" width="38%" x="33%" y="40%" label="Create maps!" height="30px">
                     <interact onClick="toTheMapEditor()"/>
+
+                </control>
+                <control name="button" id="GButton1" childLayout="center" width="38%" x="33%" y="60%" label="To the city!" height="30px">
+                    <interact onClick="toTheCity()"/>
 
                 </control>
             </panel>
