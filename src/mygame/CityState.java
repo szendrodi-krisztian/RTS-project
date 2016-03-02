@@ -42,8 +42,8 @@ public class CityState extends AbstractAppStateWithRoot {
         super.setEnabled(enabled);
         if (enabled) {
             flyCam.setEnabled(false);
-            camera.setLocation(new Vector3f(5, 10, 5));
-            camera.lookAt(new Vector3f(5, 0, 5), Vector3f.UNIT_Y);
+            camera.setLocation(new Vector3f(8, 15, 7));
+            camera.lookAt(new Vector3f(8, 0, 7), Vector3f.UNIT_Y);
             ActionListener actl;
             actl = new ActionListener() {
 
