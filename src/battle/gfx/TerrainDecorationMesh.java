@@ -52,10 +52,10 @@ public class TerrainDecorationMesh extends Mesh {
                     index += 4;
 
                     float bleed = 0.01f;
-                    texCoords.put((base_tex.x + 1 * 128) / 2048f - bleed).put((base_tex.y + 0 * 256) / 2048f + bleed);
-                    texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 0 * 256) / 2048f + bleed);
-                    texCoords.put((base_tex.x + 0 * 128) / 2048f + bleed).put((base_tex.y + 1 * 256) / 2048f - bleed);
-                    texCoords.put((base_tex.x + 1 * 128) / 2048f - bleed).put((base_tex.y + 1 * 256) / 2048f - bleed);
+                    texCoords.put((base_tex.x + 1 * 256) / 2048f - bleed).put((base_tex.y + 0 * 512) / 2048f + bleed);
+                    texCoords.put((base_tex.x + 0 * 256) / 2048f + bleed).put((base_tex.y + 0 * 512) / 2048f + bleed);
+                    texCoords.put((base_tex.x + 0 * 256) / 2048f + bleed).put((base_tex.y + 1 * 512) / 2048f - bleed);
+                    texCoords.put((base_tex.x + 1 * 256) / 2048f - bleed).put((base_tex.y + 1 * 512) / 2048f - bleed);
                 }
             }
         }
