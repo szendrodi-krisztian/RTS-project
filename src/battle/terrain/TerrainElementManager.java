@@ -26,17 +26,16 @@ public class TerrainElementManager {
 
     // Texture atlas for 1*1 textures.
     private final CustomTextureAtlas atlas;
-    // Texture atlas for 1*2 textures.
-    private final CustomTextureAtlas bigAtlas;
     //
     private static TerrainElementManager instance;
     //
     private final Map<String, TerrainElement> terrains = new LinkedHashMap<>();
     private final Map<Character, TerrainElement> terrainsByAscii = new LinkedHashMap<>();
+
     //
     private final Material terrainMaterial;
     //
-    private final Material decorMaterial;
+    private final Map<TerrainElement, Material> decorMaterMap = new LinkedHashMap<>();
 
     /**
      * Get the singleton.
@@ -59,16 +58,14 @@ public class TerrainElementManager {
         return terrainMaterial;
     }
 
-    public final Material getDecorMaterial() {
-        return decorMaterial;
+    public final Material getDecorMaterial(TerrainElement type) {
+        return decorMaterMap.get(type);
     }
 
     public final Vector2f getTextureOffset(String name) {
         switch (getElementByName(name).getLayer()) {
             case "TERRAIN":
                 return atlas.getOffset(name);
-            case "DECORATION":
-                return bigAtlas.getOffset(name);
             default:
                 return null;
         }
@@ -76,14 +73,13 @@ public class TerrainElementManager {
 
     private TerrainElementManager(AssetManager assets) {
         atlas = new CustomTextureAtlas();
-        bigAtlas = new CustomTextureAtlas();
+
         List<TerrainElement> elements = new ArrayList<>(10);
         // Add any special elements also to this list
         try {
             BufferedReader r = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("terrain.txt"), "UTF-8"));
             String line = r.readLine();
             while (null != (line = r.readLine())) {
-                //System.out.println(line);
                 SimpleTerrain e = new SimpleTerrain();
                 String arg[] = line.split(" ");
                 e.name = arg[0];
@@ -120,26 +116,21 @@ public class TerrainElementManager {
                     atlas.addTexture(am, e.getName(), true);
                 }
                 if (e.getLayer().equals("DECORATION")) {
-                    bigAtlas.addTexture(t, e.getName(), false);
-                    if (e.has_alpha) {
-                        bigAtlas.addTexture(am, e.getName(), true);
-                    }
+                    Material mat = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
+                    mat.setTexture("DiffuseMap", t);
+                    mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+                    decorMaterMap.put(e, mat);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
         atlas.create();
-        bigAtlas.create();
         terrainMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
         terrainMaterial.setTexture("DiffuseMap", atlas.getTexture());
         terrainMaterial.setTexture("AlphaMap", atlas.getAlphaTexture());
         terrainMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         terrainMaterial.getAdditionalRenderState().setDepthTest(false);
-        decorMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
-        decorMaterial.setTexture("DiffuseMap", bigAtlas.getTexture());
-        decorMaterial.setTexture("AlphaMap", bigAtlas.getAlphaTexture());
-        decorMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
     }
 
     public final Map<String, TerrainElement> getAllTerrains() {

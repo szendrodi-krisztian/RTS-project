@@ -28,11 +28,20 @@ public class MeshedTerrain {
         geom.move(0, 0, 0);
         rootNode.attachChild(geom);
 
-        Mesh me = new TerrainDecorationMesh(terrain.mapWidth, terrain.height(), terrain.grid);
-        Geometry g = new Geometry("BattleDecor", me);
-        g.move(0, 0.00001f, 0);
-        g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial());
-        rootNode.attachChild(g);
+        for (TerrainElement type : TerrainElementManager.getInstance(null).getAllTerrains().values()) {
+            if (!type.getLayer().equals("DECORATION")) {
+                continue;
+            }
+            if (type.getName().equals("air")) {
+                continue;
+            }
+            Mesh me = new TerrainDecorationMesh(terrain.width(), terrain.height(), terrain.grid, type);
+            Geometry g = new Geometry("BattleDecor" + type.getName(), me);
+            g.move(0, 0.00001f, 0);
+            g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial(type));
+            rootNode.attachChild(g);
+        }
+
     }
 
     public ArrayList<TerrainElement>[] getGrid() {
@@ -44,9 +53,17 @@ public class MeshedTerrain {
     }
 
     public void reBuildDecor() {
-        Geometry bd = (Geometry) root.getChild("BattleDecor");
-        TerrainDecorationMesh me = (TerrainDecorationMesh) bd.getMesh();
-        me.update(raw().grid);
+        for (TerrainElement type : TerrainElementManager.getInstance(null).getAllTerrains().values()) {
+            if (!type.getLayer().equals("DECORATION")) {
+                continue;
+            }
+            if (type.getName().equals("air")) {
+                continue;
+            }
+            Geometry bd = (Geometry) root.getChild("BattleDecor" + type.getName());
+            TerrainDecorationMesh me = (TerrainDecorationMesh) bd.getMesh();
+            me.update(raw().grid);
+        }
     }
 
     public void reBuildTerrain(int x, int y) {
