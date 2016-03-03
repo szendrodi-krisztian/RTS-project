@@ -1,14 +1,22 @@
 package mygame;
 
 import city.City;
+import city.building.Building;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.collision.CollisionResult;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 
@@ -56,15 +64,41 @@ public class CityState extends AbstractAppStateWithRoot {
                             }
                             to_menu = true;
                             break;
+                        case "click":
+                            Geometry g = getMouseRayCastGeometry();
+                            for (Building b : city.getBuildings()) {
+                                if (b.getName().equals(g.getName())) {
+                                    b.openWindow(stateManager);
+                                    inputManager.deleteMapping("click");
+                                    break;
+                                }
+                            }
+                            break;
                     }
                 }
             };
 
-            inputManager.addListener(actl, new String[]{"to the menu"});
+            inputManager.addListener(actl, new String[]{"to the menu", "click"});
             inputManager.addMapping("to the menu", new KeyTrigger(KeyInput.KEY_M));
+            inputManager.addMapping("click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+
         } else {
-            inputManager.clearMappings();
+            //inputManager.clearMappings();
         }
+    }
+
+    private Geometry getMouseRayCastGeometry() {
+        CollisionResults results = new CollisionResults();
+        Vector2f pos = inputManager.getCursorPosition().clone();
+        Vector3f cur3d = camera.getWorldCoordinates(pos.clone(), 0f).clone();
+        Vector3f dir = camera.getWorldCoordinates(pos.clone(), 1f).subtract(cur3d).normalizeLocal();
+        Ray ray = new Ray(cur3d, dir);
+        getRootNode().collideWith(ray, results);
+        CollisionResult coll = results.getClosestCollision();
+        if (coll == null) {
+            return null;
+        }
+        return coll.getGeometry();
     }
 
     @Override

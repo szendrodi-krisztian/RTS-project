@@ -86,7 +86,7 @@ public class CameraMovementState extends AbstractAppState implements AnalogListe
             inputManager.addMapping("zoom in", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
             inputManager.addMapping("zoom out", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
         } else {
-            inputManager.clearMappings();
+            //inputManager.clearMappings();
         }
 
     }

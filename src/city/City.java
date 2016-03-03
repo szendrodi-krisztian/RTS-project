@@ -1,6 +1,7 @@
 package city;
 
 import city.building.Building;
+import city.building.BuildingWindowState;
 import city.gfx.CityMesh;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
@@ -8,6 +9,7 @@ import com.jme3.material.Material;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,8 +33,12 @@ public class City {
         cg.setMaterial(m);
         root.attachChild(cg);
 
-        builds.add(new Building("building", null, null, root, assets));
+        builds.add(new Building("building", null, new BuildingWindowState(), root, assets));
 
+    }
+
+    public List<Building> getBuildings() {
+        return Collections.unmodifiableList(builds);
     }
 
 }

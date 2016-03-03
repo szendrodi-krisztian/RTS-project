@@ -183,7 +183,7 @@ public class BattleState extends AbstractAppStateWithRoot {
             inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_X, true));
             inputManager.addMapping("mouse_move", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
         } else {
-            inputManager.clearMappings();
+            //inputManager.clearMappings();
         }
     }
 

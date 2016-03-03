@@ -1,6 +1,7 @@
 package city.building;
 
 import city.gfx.BuildingMesh;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
@@ -39,6 +40,18 @@ public class Building {
         g.move(6, 0.0001f, 8);
         g.setLocalScale(2);
         root.attachChild(g);
+
+    }
+
+    public final void openWindow(AppStateManager stateManager) {
+        if (!windowState.isInitialized()) {
+            stateManager.attach(windowState);
+        }
+        windowState.openWindow(stateManager);
+    }
+
+    public String getName() {
+        return name;
     }
 
 }
