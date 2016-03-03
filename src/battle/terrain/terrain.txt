@@ -2,7 +2,7 @@ NAME ACCESIBLE MOVEMENT_SPEED PROJECTILE_RESISTANCE HAS_ALPHA ASCII LAYER
 grass true 1.0 0.0 false g TERRAIN
 stone true 1.0 0.0 false s TERRAIN
 water false 0.0 0.0 false w TERRAIN
-tree false 0.0 1.0 true t DECORATION
+tree false 0.0 1.0 false t DECORATION
 sand true 1.0 0.0 false S TERRAIN
 air true 1.0 0.0 false a DECORATION
 wall false 0.0 1.0 false X TERRAIN

@@ -83,7 +83,7 @@ public class CityState extends AbstractAppStateWithRoot {
             inputManager.addMapping("click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 
         } else {
-            //inputManager.clearMappings();
+            inputManager.clearMappings();
         }
     }
 
