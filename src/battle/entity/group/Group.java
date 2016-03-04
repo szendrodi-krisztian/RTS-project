@@ -100,4 +100,8 @@ public final class Group {
         return team;
     }
 
+    public int size() {
+        return units.size();
+    }
+
 }

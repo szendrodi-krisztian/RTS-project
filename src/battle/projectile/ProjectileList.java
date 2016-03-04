@@ -36,6 +36,12 @@ public class ProjectileList extends ArrayList<Projectile> {
     }
 
     private void collision(Projectile projectile) {
+        // Temporary code to fix exceptions
+        if (projectile.getPosXi() < 0 || projectile.getPosZi() < 0 || projectile.getPosXi() >= map.mapWidth || projectile.getPosZi() >= map.mapHeight) {
+            projectile.destroy();
+            return;
+        }
+        // End of temp code
         if (!map.getUnitsAt(projectile.getPosXi(), projectile.getPosZi()).isEmpty()) {
             for (Iterator<Unit> it = map.getUnitsAt(projectile.getPos()).iterator(); it.hasNext();) {
                 Unit thi = it.next();
