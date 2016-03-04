@@ -119,6 +119,7 @@ public class TerrainElementManager {
                     Material mat = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
                     mat.setTexture("DiffuseMap", t);
                     mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+                    mat.getAdditionalRenderState().setAlphaFallOff(0.9f);
                     decorMaterMap.put(e, mat);
                 }
             } catch (Exception ex) {

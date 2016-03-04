@@ -41,13 +41,9 @@ public abstract class Unit extends RawUnit {
         Material m = new Material(getGroup().getMap().assets, "Common/MatDefs/Light/Lighting.j3md");
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unit_atlas.png", false));
-        Texture t2 = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unit_atlas_alpha.png", false));
         t.setMagFilter(Texture.MagFilter.Nearest);
         t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
-        t2.setMagFilter(Texture.MagFilter.Nearest);
-        t2.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
         m.setTexture("DiffuseMap", t);
-        m.setTexture("AlphaMap", t2);
         mesh = new UnitMesh();
         geometry = new Geometry("unit", mesh);
         geometry.setMaterial(m);

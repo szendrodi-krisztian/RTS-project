@@ -3,6 +3,7 @@ package battle.gfx;
 import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -36,8 +37,9 @@ public class MeshedTerrain {
             }
             Mesh me = new TerrainDecorationMesh(terrain.width(), terrain.height(), terrain.decoration, type);
             Geometry g = new Geometry("BattleDecor" + type.getName(), me);
-            g.move(0, 0.00001f, 0);
+            g.move(0, 0.0003f, 0);
             g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial(type));
+            g.setQueueBucket(RenderQueue.Bucket.Transparent);
             rootNode.attachChild(g);
         }
 
