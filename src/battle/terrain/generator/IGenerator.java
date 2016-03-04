@@ -1,7 +1,6 @@
 package battle.terrain.generator;
 
 import battle.terrain.TerrainElement;
-import java.util.ArrayList;
 
 /**
  *
@@ -9,5 +8,5 @@ import java.util.ArrayList;
  */
 public interface IGenerator {
 
-    public abstract void generate(ArrayList<TerrainElement> elements[]);
+    public abstract void generate(TerrainElement terrain[], TerrainElement decoration[]);
 }

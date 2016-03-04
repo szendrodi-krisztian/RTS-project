@@ -1,10 +1,8 @@
 package battle.terrain.generator;
 
-import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
 import com.jme3.asset.AssetManager;
-import java.util.ArrayList;
 import util.SimplexNoise;
 
 /**
@@ -18,7 +16,7 @@ public final class ForestGenerator extends SimpleGenerator {
     }
 
     @Override
-    public void generate(ArrayList<TerrainElement>[] elements) {
+    public void generate(TerrainElement terrain[], TerrainElement decoration[]) {
         SimplexNoise noise = new SimplexNoise(128, 0.3f, seed);
         SimplexNoise treenoise = new SimplexNoise(1000, 1.2f, seed);
 
@@ -26,13 +24,13 @@ public final class ForestGenerator extends SimpleGenerator {
             for (int j = 0; j < mapHeight; j++) {
                 float n = noise.getNoise(2f * i, 2f * j);
                 if (treenoise.getNoise(20 * i, 20 * j) > 7f) {
-                    elements[i * mapHeight + j].set(Terrain.DECORATION_LAYER, TerrainElementManager.getInstance(assets).getElementByName("tree"));
+                    decoration[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
                 }
-                elements[i * mapHeight + j].set(Terrain.TERRAIN_LAYER, TerrainElementManager.getInstance(assets).getElementByName("grass"));
+                terrain[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
 
             }
         }
-        makeEdgeWall(elements);
+        makeEdgeWall(terrain, decoration);
     }
 
 }

@@ -6,7 +6,6 @@ import battle.terrain.TerrainElementManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
-import java.util.ArrayList;
 
 /**
  *
@@ -20,7 +19,7 @@ public class MeshedTerrain {
     public MeshedTerrain(Terrain terrain, Node rootNode) {
         this.terrain = terrain;
         this.root = rootNode;
-        Mesh mesh = new TerrainGridMesh(terrain.width(), terrain.height(), terrain.grid);
+        Mesh mesh = new TerrainGridMesh(terrain.width(), terrain.height(), terrain.terrain);
 
         Geometry geom = new Geometry("BattleTerrain", mesh);
         geom.setMaterial(TerrainElementManager.getInstance(null).getTerrainMaterial());
@@ -35,17 +34,13 @@ public class MeshedTerrain {
             if (type.getName().equals("air")) {
                 continue;
             }
-            Mesh me = new TerrainDecorationMesh(terrain.width(), terrain.height(), terrain.grid, type);
+            Mesh me = new TerrainDecorationMesh(terrain.width(), terrain.height(), terrain.decoration, type);
             Geometry g = new Geometry("BattleDecor" + type.getName(), me);
             g.move(0, 0.00001f, 0);
             g.setMaterial(TerrainElementManager.getInstance(null).getDecorMaterial(type));
             rootNode.attachChild(g);
         }
 
-    }
-
-    public ArrayList<TerrainElement>[] getGrid() {
-        return terrain.grid;
     }
 
     public Terrain raw() {
@@ -62,14 +57,14 @@ public class MeshedTerrain {
             }
             Geometry bd = (Geometry) root.getChild("BattleDecor" + type.getName());
             TerrainDecorationMesh me = (TerrainDecorationMesh) bd.getMesh();
-            me.update(raw().grid);
+            me.update(raw().decoration);
         }
     }
 
     public void reBuildTerrain(int x, int y) {
         Geometry bt = (Geometry) root.getChild("BattleTerrain");
         TerrainGridMesh mesh = (TerrainGridMesh) bt.getMesh();
-        mesh.update(raw().grid, x, y);
+        mesh.update(raw().terrain, x, y);
     }
 
 }

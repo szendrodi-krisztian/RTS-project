@@ -4,7 +4,6 @@ import battle.terrain.generator.IGenerator;
 import battle.terrain.generator.SimpleGenerator;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
-import java.util.ArrayList;
 
 /**
  *
@@ -12,7 +11,9 @@ import java.util.ArrayList;
  */
 public final class Terrain {
 
-    public final ArrayList<TerrainElement>[] grid;
+    // public final ArrayList<TerrainElement>[] grid;
+    public final TerrainElement terrain[];
+    public final TerrainElement decoration[];
 
     public final int mapWidth, mapHeight;
     public AssetManager assets;
@@ -40,16 +41,17 @@ public final class Terrain {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.assets = assets;
-        grid = new ArrayList[mapWidth * mapHeight];
+        terrain = new TerrainElement[mapHeight * mapWidth];
+        decoration = new TerrainElement[mapHeight * mapWidth];
+
         TerrainElement air = TerrainElementManager.getInstance(assets).getElementByName("air");
         for (int i = 0; i < mapWidth * mapHeight; i++) {
-            grid[i] = new ArrayList<>(2);
-            grid[i].add(air);
-            grid[i].add(air);
+            terrain[i] = air;
+            decoration[i] = air;
         }
 
         if (!empty) {
-            generator.generate(grid);
+            generator.generate(terrain, decoration);
         }
 
     }
@@ -59,19 +61,19 @@ public final class Terrain {
     }
 
     public void setTypeAt(TerrainElement type, int x, int y, int index) throws ArrayIndexOutOfBoundsException {
-        grid[x * mapHeight + y].set(index, type);
+        if (index == 0) {
+            terrain[x * mapHeight + y] = type;
+        } else if (index == 1) {
+            decoration[x * mapHeight + y] = type;
+        }
     }
 
     public float getResistance(int x, int y) {
-        return grid[x * mapHeight + y].get(DECORATION_LAYER).proj_resis;
+        return decoration[x * mapHeight + y].proj_resis;
     }
 
     public boolean isAccessible(int x, int y) {
-        boolean good = true;
-        for (TerrainElement e : grid[x * mapHeight + y]) {
-            good &= e.isAccesible();
-        }
-        return good;
+        return terrain[x * mapHeight + y].isAccesible() && decoration[x * mapHeight + y].isAccesible();
     }
 
     public int width() {

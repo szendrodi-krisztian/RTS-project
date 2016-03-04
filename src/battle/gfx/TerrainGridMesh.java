@@ -1,6 +1,5 @@
 package battle.gfx;
 
-import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
 import com.jme3.math.Vector2f;
@@ -8,7 +7,6 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import org.lwjgl.BufferUtils;
 
 /**
@@ -20,7 +18,7 @@ public class TerrainGridMesh extends Mesh {
     private final int n, m;
 
     // TODO: implement batching in the sense of neighbours or even all grass etc..
-    public TerrainGridMesh(int n, int m, ArrayList<TerrainElement> grid[]) {
+    public TerrainGridMesh(int n, int m, TerrainElement grid[]) {
         super();
         this.n = n;
         this.m = m;
@@ -34,7 +32,7 @@ public class TerrainGridMesh extends Mesh {
             for (int j = 0; j < m; j++) {
                 float off = 0.2f;
                 Vector2f base_tex;
-                base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * m + j].get(Terrain.TERRAIN_LAYER).getName());
+                base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * m + j].getName());
 
                 if (base_tex == null) {
                     continue;
@@ -70,12 +68,12 @@ public class TerrainGridMesh extends Mesh {
         updateBound();
     }
 
-    public void update(ArrayList<TerrainElement> grid[], int x, int y) {
+    public void update(TerrainElement grid[], int x, int y) {
         FloatBuffer texCoords = (FloatBuffer) getBuffer(VertexBuffer.Type.TexCoord).getData();
         texCoords.rewind();
         texCoords.position(8 * (x * m + y));
         Vector2f base_tex;
-        base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[x * m + y].get(Terrain.TERRAIN_LAYER).getName());
+        base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[x * m + y].getName());
 
         if (base_tex == null) {
             return;

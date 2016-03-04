@@ -52,13 +52,13 @@ public class MapFile {
             writer.newLine();
             for (int i = 0; i < terrain.width(); i++) {
                 for (int j = 0; j < terrain.height(); j++) {
-                    writer.write(terrain.grid[terrain.width() * j + i].get(Terrain.TERRAIN_LAYER).getAscii());
+                    writer.write(terrain.terrain[terrain.width() * j + i].getAscii());
                 }
                 writer.newLine();
             }
             for (int i = 0; i < terrain.width(); i++) {
                 for (int j = 0; j < terrain.height(); j++) {
-                    writer.write(terrain.grid[terrain.width() * j + i].get(Terrain.DECORATION_LAYER).getAscii());
+                    writer.write(terrain.decoration[terrain.width() * j + i].getAscii());
                 }
                 writer.newLine();
             }

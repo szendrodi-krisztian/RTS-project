@@ -1,12 +1,10 @@
 package battle.gfx;
 
-import battle.terrain.Terrain;
 import battle.terrain.TerrainElement;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import org.lwjgl.BufferUtils;
 
 /**
@@ -19,7 +17,7 @@ public class TerrainDecorationMesh extends Mesh {
     private final TerrainElement type;
 
     // TODO: implement batching in the sense of neighbours or even all grass etc..
-    public TerrainDecorationMesh(int n, int m, ArrayList<TerrainElement> grid[], TerrainElement type) {
+    public TerrainDecorationMesh(int n, int m, TerrainElement grid[], TerrainElement type) {
         super();
         this.n = n;
         this.type = type;
@@ -32,8 +30,8 @@ public class TerrainDecorationMesh extends Mesh {
         int index = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                if (grid[i * m + j].get(Terrain.DECORATION_LAYER) != null) {
-                    if (!grid[i * m + j].get(Terrain.DECORATION_LAYER).equals(type)) {
+                if (grid[i * m + j] != null) {
+                    if (!grid[i * m + j].equals(type)) {
                         continue;
                     }
 
@@ -72,7 +70,7 @@ public class TerrainDecorationMesh extends Mesh {
 
     }
 
-    public void update(ArrayList<TerrainElement> grid[]) {
+    public void update(TerrainElement grid[]) {
         FloatBuffer vertexbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
         FloatBuffer normalbuffer = BufferUtils.createFloatBuffer(n * m * 4 * 3);
         FloatBuffer texCoords = BufferUtils.createFloatBuffer(n * m * 4 * 3);
@@ -81,8 +79,8 @@ public class TerrainDecorationMesh extends Mesh {
         int index = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                if (grid[i * m + j].get(Terrain.DECORATION_LAYER) != null) {
-                    if (!grid[i * m + j].get(Terrain.DECORATION_LAYER).equals(type)) {
+                if (grid[i * m + j] != null) {
+                    if (!grid[i * m + j].equals(type)) {
                         continue;
                     }
                     vertexbuffer.put(i - 2).put(0).put(j);
