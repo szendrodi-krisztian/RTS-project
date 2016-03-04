@@ -33,8 +33,8 @@ public class Building {
         this.windowState = windowState;
         this.root = root;
         Geometry g = new Geometry(name, mesh);
-        Material m = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
-        m.setTexture("DiffuseMap", assets.loadTexture(new TextureKey("Textures/city/buildings/" + name + ".png", false)));
+        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setTexture("ColorMap", assets.loadTexture(new TextureKey("Textures/city/buildings/" + name + ".png", false)));
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         g.setMaterial(m);
         g.move(6, 0.0001f, 8);

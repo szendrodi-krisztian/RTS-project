@@ -27,8 +27,8 @@ public class City {
         this.root = root;
         mesh = new CityMesh();
         Geometry cg = new Geometry("CityGeom", mesh);
-        Material m = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
-        m.setTexture("DiffuseMap", assets.loadTexture(new TextureKey("Textures/city/city.png", false)));
+        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setTexture("ColorMap", assets.loadTexture(new TextureKey("Textures/city/city.png", false)));
         cg.setLocalScale(16, 1, 14);
         cg.setMaterial(m);
         root.attachChild(cg);

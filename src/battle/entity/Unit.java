@@ -38,12 +38,12 @@ public abstract class Unit extends RawUnit {
     public Unit(IVehicle vehicle, IWeapon weapon, Group group) {
         super(vehicle, weapon, group, Pose.STANDING, 2);
         this.fractal = new Vector2f();
-        Material m = new Material(getGroup().getMap().assets, "Common/MatDefs/Light/Lighting.j3md");
+        Material m = new Material(getGroup().getMap().assets, "Common/MatDefs/Misc/Unshaded.j3md");
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         Texture t = getGroup().getMap().assets.loadTexture(new TextureKey("Textures/units/unit_atlas.png", false));
         t.setMagFilter(Texture.MagFilter.Nearest);
         t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
-        m.setTexture("DiffuseMap", t);
+        m.setTexture("ColorMap", t);
         mesh = new UnitMesh();
         geometry = new Geometry("unit", mesh);
         geometry.setMaterial(m);
