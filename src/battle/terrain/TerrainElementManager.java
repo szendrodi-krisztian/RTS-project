@@ -116,8 +116,8 @@ public class TerrainElementManager {
                     atlas.addTexture(am, e.getName(), true);
                 }
                 if (e.getLayer().equals("DECORATION")) {
-                    Material mat = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
-                    mat.setTexture("DiffuseMap", t);
+                    Material mat = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+                    mat.setTexture("ColorMap", t);
                     mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
                     mat.getAdditionalRenderState().setAlphaFallOff(0.9f);
                     decorMaterMap.put(e, mat);
@@ -127,9 +127,9 @@ public class TerrainElementManager {
             }
         }
         atlas.create();
-        terrainMaterial = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
-        terrainMaterial.setTexture("DiffuseMap", atlas.getTexture());
-        terrainMaterial.setTexture("AlphaMap", atlas.getAlphaTexture());
+        terrainMaterial = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        terrainMaterial.setTexture("ColorMap", atlas.getTexture());
+        //terrainMaterial.setTexture("AlphaMap", atlas.getAlphaTexture());
         terrainMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         terrainMaterial.getAdditionalRenderState().setDepthTest(false);
     }

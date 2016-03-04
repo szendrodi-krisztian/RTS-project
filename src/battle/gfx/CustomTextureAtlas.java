@@ -105,7 +105,9 @@ public final class CustomTextureAtlas {
                     } else {
                         alphaRaster.setPixel(x, y, ColorRGBA.White);
                     }
-                    mainRaster.setPixel(x, y, raster.getPixel(tx, ty));
+                    ColorRGBA c = raster.getPixel(tx, ty);
+                    c.a = rasterAlp.getPixel(tx, ty).r;
+                    mainRaster.setPixel(x, y, c);
                     y++;
                 }
                 x++;
