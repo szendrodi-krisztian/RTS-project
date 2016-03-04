@@ -4,7 +4,6 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetManager;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.niftygui.NiftyJmeDisplay;
@@ -14,6 +13,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
 import java.util.ArrayList;
 import java.util.List;
+import util.Util;
 
 /**
  *
@@ -25,7 +25,6 @@ public abstract class AbstractAppStateWithRoot extends AbstractAppState implemen
     protected Camera camera;
     protected FlyByCamera flyCam;
     protected InputManager inputManager;
-    protected AssetManager assets;
     protected Node realRoot, myRoot;
     protected NiftyJmeDisplay niftyDisplay;
 
@@ -65,9 +64,8 @@ public abstract class AbstractAppStateWithRoot extends AbstractAppState implemen
         camera = ((SimpleApplication) app).getCamera();
         flyCam = ((SimpleApplication) app).getFlyByCamera();
         inputManager = ((SimpleApplication) app).getInputManager();
-        assets = ((SimpleApplication) app).getAssetManager();
         this.stateManager = ((SimpleApplication) app).getStateManager();
-        niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(assets, inputManager, ((SimpleApplication) app).getAudioRenderer(), ((SimpleApplication) app).getGuiViewPort());
+        niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(Util.assets(), inputManager, ((SimpleApplication) app).getAudioRenderer(), ((SimpleApplication) app).getGuiViewPort());
         Nifty nifty = niftyDisplay.getNifty();
         nifty.fromXml(getNiftyXMLName(), "start", this);
         app.getGuiViewPort().addProcessor(niftyDisplay);

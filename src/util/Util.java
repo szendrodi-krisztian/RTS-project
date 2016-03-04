@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package util;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
@@ -14,6 +10,16 @@ import java.util.List;
  * @author szend
  */
 public final class Util {
+
+    private static AssetManager assets;
+
+    public static void init(AssetManager assets) {
+        Util.assets = assets;
+    }
+
+    public static AssetManager assets() {
+        return assets;
+    }
 
     public static float angleToPositiveToOctave(float angle) {
         float newangle;

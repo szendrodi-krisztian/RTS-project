@@ -11,6 +11,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.texture.Texture;
+import util.Util;
 
 /**
  *
@@ -40,9 +41,9 @@ public class Projectile {
         this.canGravityAffect = canGravityAffect;
         Mesh mesh = new MyQuad();
         geometry = new Geometry("proj", mesh);
-        Material mat = new Material(map.assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        Material mat = new Material(Util.assets(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        Texture t = map.assets.loadTexture(new TextureKey("Textures/projectiles/proj.png", false));
+        Texture t = Util.assets().loadTexture(new TextureKey("Textures/projectiles/proj.png", false));
         t.setMagFilter(Texture.MagFilter.Nearest);
         t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
         mat.setTexture("ColorMap", t);

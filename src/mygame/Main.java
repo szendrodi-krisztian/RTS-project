@@ -10,6 +10,7 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.Util;
 
 public class Main extends SimpleApplication {
 
@@ -33,6 +34,7 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        Util.init(assetManager);
         flyCam.setEnabled(false);
         final MainMenuState ms = new MainMenuState();
         stateManager.attach(ms);

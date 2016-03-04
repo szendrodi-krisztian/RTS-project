@@ -19,16 +19,20 @@ public final class Group {
 
     private final AbstractFormation formation;
 
+    private final int team;
+
     /**
      * Creates a new empty group.
      *
      * @param map The map instance this group lives on.
-     * @param form the formation
+     * @param formation the formation
+     * @param team the team of this group
      */
-    public Group(BattleMap map, AbstractFormation form) {
+    public Group(BattleMap map, AbstractFormation formation, int team) {
         this.units = new ArrayList<>();
         this.map = map;
-        formation = form;
+        this.team = team;
+        this.formation = formation;
     }
 
     /**
@@ -90,6 +94,10 @@ public final class Group {
         for (Unit u : units) {
             u.attack();
         }
+    }
+
+    public int team() {
+        return team;
     }
 
 }

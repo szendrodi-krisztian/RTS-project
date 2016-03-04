@@ -163,7 +163,7 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
     public void loadMap() {
         try {
             myRoot.detachAllChildren();
-            MapFile f = new MapFile(getMapName(), assets);
+            MapFile f = new MapFile(getMapName());
             f.read();
             map = new BattleMap(f, myRoot);
         } catch (IOException ex) {
@@ -208,7 +208,7 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
     private TerrainElement getSelectedTerrainType() {
         DropDown<String> dd = niftyDisplay.getNifty().getCurrentScreen().findNiftyControl("SelectDrop", DropDown.class);
         String select = dd.getSelection();
-        return TerrainElementManager.getInstance(assets).getElementByName(select);
+        return TerrainElementManager.getInstance().getElementByName(select);
     }
 
     public void resizeMap() {
@@ -217,7 +217,7 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         int w = Integer.parseInt(tf.getDisplayedText());
         int h = Integer.parseInt(tf2.getDisplayedText());
         myRoot.detachAllChildren();
-        MeshedTerrain terrain = new MeshedTerrain(new Terrain(w, h, assets, 0xCAFFEE, false), myRoot);
+        MeshedTerrain terrain = new MeshedTerrain(new Terrain(w, h, 0xCAFFEE, false), myRoot);
         map = new BattleMap(terrain);
     }
 
@@ -228,13 +228,13 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         try {
             // ALL generators must be in that package
             Class c = Class.forName("battle.terrain.generator." + classname);
-            g = (IGenerator) c.getConstructors()[0].newInstance(map.mapWidth, map.mapHeight, assets, FastMath.nextRandomInt());
+            g = (IGenerator) c.getConstructors()[0].newInstance(map.mapWidth, map.mapHeight, FastMath.nextRandomInt());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException ex) {
             Logger.getLogger(MapEditorState.class.getName()).log(Level.SEVERE, null, ex);
-            g = new SimpleGenerator(map.mapWidth, map.mapHeight, assets, FastMath.nextRandomInt());
+            g = new SimpleGenerator(map.mapWidth, map.mapHeight, FastMath.nextRandomInt());
         }
 
-        Terrain terrain = new Terrain(map.mapWidth, map.mapHeight, assets, false, g);
+        Terrain terrain = new Terrain(map.mapWidth, map.mapHeight, false, g);
 
         map = new BattleMap(new MeshedTerrain(terrain, myRoot));
     }
@@ -249,7 +249,7 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         // Set up dropdown for selecting terrain to place
         DropDown<String> drop;
         drop = nifty.getCurrentScreen().findNiftyControl("SelectDrop", DropDown.class);
-        for (String s : TerrainElementManager.getInstance(assets).getAllTerrains().keySet()) {
+        for (String s : TerrainElementManager.getInstance().getAllTerrains().keySet()) {
             drop.addItem(s);
         }
         drop.selectItemByIndex(0);

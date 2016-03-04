@@ -32,7 +32,7 @@ public class TerrainGridMesh extends Mesh {
             for (int j = 0; j < m; j++) {
                 float off = 0.2f;
                 Vector2f base_tex;
-                base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[i * m + j].getName());
+                base_tex = TerrainElementManager.getInstance().getTextureOffset(grid[i * m + j].getName());
 
                 if (base_tex == null) {
                     continue;
@@ -73,7 +73,7 @@ public class TerrainGridMesh extends Mesh {
         texCoords.rewind();
         texCoords.position(8 * (x * m + y));
         Vector2f base_tex;
-        base_tex = TerrainElementManager.getInstance(null).getTextureOffset(grid[x * m + y].getName());
+        base_tex = TerrainElementManager.getInstance().getTextureOffset(grid[x * m + y].getName());
 
         if (base_tex == null) {
             return;

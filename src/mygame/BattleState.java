@@ -192,7 +192,7 @@ public class BattleState extends AbstractAppStateWithRoot {
         getRootNode().detachChildNamed("path");
         PathMesh mesh = new PathMesh(p, start);
         Geometry g = new Geometry("path", mesh);
-        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        Material m = new Material(Util.assets(), "Common/MatDefs/Misc/Unshaded.j3md");
         m.setColor("Color", ColorRGBA.White);
         g.setMaterial(m);
         getRootNode().attachChild(g);
@@ -204,15 +204,15 @@ public class BattleState extends AbstractAppStateWithRoot {
         light = new AmbientLight();
         light.setColor(ColorRGBA.White);
         if (map == null) {
-            map = new BattleMap(100, 100, getRootNode(), assets);
+            map = new BattleMap(100, 100, getRootNode());
 
-            Group g1 = new Group(map, new OneLineFormation(map));
+            Group g1 = new Group(map, new OneLineFormation(map), 1);
             for (int i = 0; i < 1; i++) {
                 map.spawn(0, 0, g1, SimpleUnit.class);
             }
             g1.moveTo(10, 10, 0);
 
-            Group g2 = new Group(map, new TriangleFormation(map));
+            Group g2 = new Group(map, new TriangleFormation(map), 1);
             for (int i = 0; i < 30; i++) {
                 map.spawn(0, 0, g2, SimpleUnit.class);
             }
@@ -221,8 +221,8 @@ public class BattleState extends AbstractAppStateWithRoot {
         getRootNode().addLight(light);
         to_menu = false;
         click_gui = new Geometry("click", new ClickMesh());
-        Material m = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
-        m.setTexture("ColorMap", assets.loadTexture("Interface/move.png"));
+        Material m = new Material(Util.assets(), "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setTexture("ColorMap", Util.assets().loadTexture("Interface/move.png"));
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
         click_gui.setMaterial(m);
@@ -231,8 +231,8 @@ public class BattleState extends AbstractAppStateWithRoot {
         getRootNode().attachChild(click_gui);
 
         click_filler = new Geometry("click", new ClickMesh());
-        Material m2 = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
-        m2.setTexture("ColorMap", assets.loadTexture("Interface/move_fill.png"));
+        Material m2 = new Material(Util.assets(), "Common/MatDefs/Misc/Unshaded.j3md");
+        m2.setTexture("ColorMap", Util.assets().loadTexture("Interface/move_fill.png"));
         m2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         m2.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
         click_filler.setMaterial(m2);

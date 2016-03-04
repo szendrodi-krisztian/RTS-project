@@ -6,7 +6,6 @@ import battle.entity.group.Group;
 import battle.gfx.MeshedTerrain;
 import battle.projectile.ProjectileList;
 import battle.terrain.Terrain;
-import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import java.lang.reflect.Constructor;
@@ -24,8 +23,6 @@ public class BattleMap {
 
     public final int mapWidth, mapHeight;
 
-    public final AssetManager assets;
-
     public final Node rootNode;
 
     private final MeshedTerrain terrain;
@@ -34,12 +31,12 @@ public class BattleMap {
 
     public ProjectileList projectileList = new ProjectileList(this);
 
-    public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets) {
-        this(mapWidth, mapHeight, rootNode, assets, 0xCAFFEE);
+    public BattleMap(int mapWidth, int mapHeight, Node rootNode) {
+        this(mapWidth, mapHeight, rootNode, 0xCAFFEE);
     }
 
-    public BattleMap(int mapWidth, int mapHeight, Node rootNode, AssetManager assets, int seed) {
-        this(new MeshedTerrain(new Terrain(mapWidth, mapHeight, assets, seed, false), rootNode), new UnitGrid(mapWidth, mapHeight));
+    public BattleMap(int mapWidth, int mapHeight, Node rootNode, int seed) {
+        this(new MeshedTerrain(new Terrain(mapWidth, mapHeight, seed, false), rootNode), new UnitGrid(mapWidth, mapHeight));
     }
 
     public BattleMap(MapFile map, Node rootNode) {
@@ -53,7 +50,6 @@ public class BattleMap {
     public BattleMap(MeshedTerrain terrain, UnitGrid units) {
         this.mapWidth = terrain.raw().mapWidth;
         this.mapHeight = terrain.raw().mapHeight;
-        this.assets = terrain.raw().assets;
         this.rootNode = terrain.root;
         this.terrain = terrain;
         this.units = units;

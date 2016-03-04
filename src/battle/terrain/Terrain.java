@@ -2,7 +2,6 @@ package battle.terrain;
 
 import battle.terrain.generator.IGenerator;
 import battle.terrain.generator.SimpleGenerator;
-import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
 
 /**
@@ -16,35 +15,33 @@ public final class Terrain {
     public final TerrainElement decoration[];
 
     public final int mapWidth, mapHeight;
-    public AssetManager assets;
 
     public static final int TERRAIN_LAYER = 0;
     public static final int DECORATION_LAYER = 1;
 
-    public Terrain(int mapWidth, int mapHeight, AssetManager assets, IGenerator generator) {
-        this(mapWidth, mapHeight, assets, false, generator);
+    public Terrain(int mapWidth, int mapHeight, IGenerator generator) {
+        this(mapWidth, mapHeight, false, generator);
     }
 
-    public Terrain(int mapWidth, int mapHeight, AssetManager assets) {
-        this(mapWidth, mapHeight, assets, true, new SimpleGenerator(mapWidth, mapHeight, assets, 0xCAFFEE));
+    public Terrain(int mapWidth, int mapHeight) {
+        this(mapWidth, mapHeight, true, new SimpleGenerator(mapWidth, mapHeight, 0xCAFFEE));
     }
 
-    public Terrain(int mapWidth, int mapHeight, AssetManager assets, int seed) {
-        this(mapWidth, mapHeight, assets, true, new SimpleGenerator(mapWidth, mapHeight, assets, seed));
+    public Terrain(int mapWidth, int mapHeight, int seed) {
+        this(mapWidth, mapHeight, true, new SimpleGenerator(mapWidth, mapHeight, seed));
     }
 
-    public Terrain(int mapWidth, int mapHeight, AssetManager assets, int seed, boolean empty) {
-        this(mapWidth, mapHeight, assets, empty, new SimpleGenerator(mapWidth, mapHeight, assets, seed));
+    public Terrain(int mapWidth, int mapHeight, int seed, boolean empty) {
+        this(mapWidth, mapHeight, empty, new SimpleGenerator(mapWidth, mapHeight, seed));
     }
 
-    public Terrain(int mapWidth, int mapHeight, AssetManager assets, boolean empty, IGenerator generator) {
+    public Terrain(int mapWidth, int mapHeight, boolean empty, IGenerator generator) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-        this.assets = assets;
         terrain = new TerrainElement[mapHeight * mapWidth];
         decoration = new TerrainElement[mapHeight * mapWidth];
 
-        TerrainElement air = TerrainElementManager.getInstance(assets).getElementByName("air");
+        TerrainElement air = TerrainElementManager.getInstance().getElementByName("air");
         for (int i = 0; i < mapWidth * mapHeight; i++) {
             terrain[i] = air;
             decoration[i] = air;

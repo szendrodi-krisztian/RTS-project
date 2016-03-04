@@ -2,7 +2,6 @@ package util;
 
 import battle.terrain.Terrain;
 import battle.terrain.TerrainElementManager;
-import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,22 +19,19 @@ public class MapFile {
 
     private final String name;
     private Terrain terrain;
-    private final AssetManager assets;
     private int width;
     private int heigth;
     private boolean load = false;
     private boolean save = false;
 
-    public MapFile(String name, AssetManager as) {
+    public MapFile(String name) {
         this.name = name;
-        this.assets = as;
         load = true;
     }
 
     public MapFile(String name, Terrain terrain) {
         this.name = name;
         this.terrain = terrain;
-        assets = null;
         save = true;
     }
 
@@ -74,14 +70,14 @@ public class MapFile {
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             width = Integer.parseInt(reader.readLine());
             heigth = Integer.parseInt(reader.readLine());
-            terrain = new Terrain(width, heigth, assets);
+            terrain = new Terrain(width, heigth);
             String line;
             Vector2f pos = new Vector2f(0, 0);
             for (int i = 0; i < heigth; i++) {
                 line = reader.readLine();
                 pos.x = 0;
                 for (char c : line.toCharArray()) {
-                    terrain.setTypeAt(TerrainElementManager.getInstance(assets).getElementByChar(c), pos, Terrain.TERRAIN_LAYER);
+                    terrain.setTypeAt(TerrainElementManager.getInstance().getElementByChar(c), pos, Terrain.TERRAIN_LAYER);
                     pos.x++;
                 }
                 pos.y++;
@@ -92,7 +88,7 @@ public class MapFile {
                 line = reader.readLine();
                 pos.x = 0;
                 for (char c : line.toCharArray()) {
-                    terrain.setTypeAt(TerrainElementManager.getInstance(assets).getElementByChar(c), pos, Terrain.DECORATION_LAYER);
+                    terrain.setTypeAt(TerrainElementManager.getInstance().getElementByChar(c), pos, Terrain.DECORATION_LAYER);
                     pos.x++;
                 }
                 pos.y++;
@@ -110,10 +106,6 @@ public class MapFile {
 
     public int heigth() {
         return heigth;
-    }
-
-    public AssetManager assets() {
-        return assets;
     }
 
 }

@@ -109,7 +109,7 @@ public class CityState extends AbstractAppStateWithRoot {
         light.setColor(ColorRGBA.White);
         getRootNode().addLight(light);
         to_menu = false;
-        city = new City(getRootNode(), assets);
+        city = new City(getRootNode());
         setEnabled(true);
     }
 

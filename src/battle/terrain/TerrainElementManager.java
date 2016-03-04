@@ -1,7 +1,6 @@
 package battle.terrain;
 
 import battle.gfx.CustomTextureAtlas;
-import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.Vector2f;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.Util;
 
 /**
  *
@@ -40,16 +40,11 @@ public class TerrainElementManager {
     /**
      * Get the singleton.
      *
-     * @param assets on the first call it must be valid, after that it can be
-     * null.
      * @return The singleton.
      */
-    public final static TerrainElementManager getInstance(AssetManager assets) {
+    public final static TerrainElementManager getInstance() {
         if (instance == null) {
-            if (assets == null) {
-                throw new RuntimeException("TerrainElementManager getInstance() asset is null!");
-            }
-            instance = new TerrainElementManager(assets);
+            instance = new TerrainElementManager();
         }
         return instance;
     }
@@ -71,7 +66,7 @@ public class TerrainElementManager {
         }
     }
 
-    private TerrainElementManager(AssetManager assets) {
+    private TerrainElementManager() {
         atlas = new CustomTextureAtlas();
 
         List<TerrainElement> elements = new ArrayList<>(10);
@@ -104,19 +99,19 @@ public class TerrainElementManager {
                 if (e.getName().equals("air")) {
                     continue;
                 }
-                Texture t = assets.loadTexture("Textures/terrain/" + e.getName() + ".png");
+                Texture t = Util.assets().loadTexture("Textures/terrain/" + e.getName() + ".png");
                 Texture am;
                 if (e.has_alpha) {
-                    am = assets.loadTexture("Textures/terrain/" + e.getName() + "alpha.png");
+                    am = Util.assets().loadTexture("Textures/terrain/" + e.getName() + "alpha.png");
                 } else {
-                    am = assets.loadTexture("Textures/terrain/terrainalpha.png");
+                    am = Util.assets().loadTexture("Textures/terrain/terrainalpha.png");
                 }
                 if (e.getLayer().equals("TERRAIN")) {
                     atlas.addTexture(t, e.getName(), false);
                     atlas.addTexture(am, e.getName(), true);
                 }
                 if (e.getLayer().equals("DECORATION")) {
-                    Material mat = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+                    Material mat = new Material(Util.assets(), "Common/MatDefs/Misc/Unshaded.j3md");
                     mat.setTexture("ColorMap", t);
                     mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
                     mat.getAdditionalRenderState().setAlphaFallOff(0.9f);
@@ -127,9 +122,8 @@ public class TerrainElementManager {
             }
         }
         atlas.create();
-        terrainMaterial = new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md");
+        terrainMaterial = new Material(Util.assets(), "Common/MatDefs/Misc/Unshaded.j3md");
         terrainMaterial.setTexture("ColorMap", atlas.getTexture());
-        //terrainMaterial.setTexture("AlphaMap", atlas.getAlphaTexture());
         terrainMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         terrainMaterial.getAdditionalRenderState().setDepthTest(false);
     }

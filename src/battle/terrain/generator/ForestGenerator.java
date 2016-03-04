@@ -2,7 +2,6 @@ package battle.terrain.generator;
 
 import battle.terrain.TerrainElement;
 import battle.terrain.TerrainElementManager;
-import com.jme3.asset.AssetManager;
 import util.SimplexNoise;
 
 /**
@@ -11,8 +10,8 @@ import util.SimplexNoise;
  */
 public final class ForestGenerator extends SimpleGenerator {
 
-    public ForestGenerator(int w, int h, AssetManager assets, int seed) {
-        super(w, h, assets, seed);
+    public ForestGenerator(int w, int h, int seed) {
+        super(w, h, seed);
     }
 
     @Override
@@ -24,9 +23,9 @@ public final class ForestGenerator extends SimpleGenerator {
             for (int j = 0; j < mapHeight; j++) {
                 float n = noise.getNoise(2f * i, 2f * j);
                 if (treenoise.getNoise(20 * i, 20 * j) > 7f) {
-                    decoration[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("tree");
+                    decoration[i * mapHeight + j] = TerrainElementManager.getInstance().getElementByName("tree");
                 }
-                terrain[i * mapHeight + j] = TerrainElementManager.getInstance(assets).getElementByName("grass");
+                terrain[i * mapHeight + j] = TerrainElementManager.getInstance().getElementByName("grass");
 
             }
         }
