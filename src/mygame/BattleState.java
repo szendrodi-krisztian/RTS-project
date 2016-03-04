@@ -64,7 +64,8 @@ public class BattleState extends AbstractAppStateWithRoot {
             }
             if (to_menu) {
                 setEnabled(false);
-                stateManager.getState(MainMenuState.class).setEnabled(true);
+                stateManager.detach(this);
+                stateManager.attach(new MainMenuState());
                 to_menu = false;
             }
         }
@@ -237,7 +238,7 @@ public class BattleState extends AbstractAppStateWithRoot {
         click_filler.setMaterial(m2);
         click_filler.setLocalRotation(new Quaternion().fromAngleNormalAxis(FastMath.DEG_TO_RAD * 22.5f, Vector3f.UNIT_Y));
         getRootNode().attachChild(click_filler);
-        setEnabled(false);
+        setEnabled(true);
     }
 
     private Vector2f getMouseRayCastIntCoords() {

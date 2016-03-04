@@ -39,7 +39,8 @@ public class CityState extends AbstractAppStateWithRoot {
         if (isEnabled()) {
             if (to_menu) {
                 setEnabled(false);
-                stateManager.getState(MainMenuState.class).setEnabled(true);
+                stateManager.detach(this);
+                stateManager.attach(new MainMenuState());
                 to_menu = false;
             }
         }
@@ -109,7 +110,7 @@ public class CityState extends AbstractAppStateWithRoot {
         getRootNode().addLight(light);
         to_menu = false;
         city = new City(getRootNode(), assets);
-        setEnabled(false);
+        setEnabled(true);
     }
 
     @Override

@@ -27,18 +27,21 @@ public class MainMenuState extends AbstractAppState implements ScreenController 
         super.update(tpf);
         if (to_bf) {
             setEnabled(false);
-            app.getStateManager().getState(BattleState.class).setEnabled(true);
+            app.getStateManager().detach(this);
+            app.getStateManager().attach(new BattleState(app.getStateManager()));
             to_bf = false;
             return;
         }
         if (to_me) {
             setEnabled(false);
-            app.getStateManager().getState(MapEditorState.class).setEnabled(true);
+            app.getStateManager().detach(this);
+            app.getStateManager().attach(new MapEditorState(app.getStateManager()));
             to_me = false;
         }
         if (to_ci) {
             setEnabled(false);
-            app.getStateManager().getState(CityState.class).setEnabled(true);
+            app.getStateManager().detach(this);
+            app.getStateManager().attach(new CityState(app.getStateManager()));
             to_ci = false;
         }
 

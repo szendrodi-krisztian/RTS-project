@@ -59,7 +59,8 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
             map.tick(tpf);
             if (to_menu) {
                 setEnabled(false);
-                stateManager.getState(MainMenuState.class).setEnabled(true);
+                stateManager.detach(this);
+                stateManager.attach(new MainMenuState());
                 to_menu = false;
             }
         }
@@ -201,7 +202,7 @@ public final class MapEditorState extends AbstractAppStateWithRoot {
         light.setColor(ColorRGBA.White);
         getRootNode().addLight(light);
         to_menu = false;
-        setEnabled(false);
+        setEnabled(true);
     }
 
     private TerrainElement getSelectedTerrainType() {
