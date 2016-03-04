@@ -25,7 +25,7 @@ public class SimpleGenerator implements IGenerator {
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
-                float n = noise.getNoise(2f * i, 2f * j);
+                float n = noise.getNoise(0.5f * i, 0.5f * j);
                 if (n < -0.16) {
                     terrain[i * mapHeight + j] = TerrainElementManager.getInstance().getElementByName("water");
                     continue;
@@ -34,7 +34,7 @@ public class SimpleGenerator implements IGenerator {
                     terrain[i * mapHeight + j] = TerrainElementManager.getInstance().getElementByName("sand");
 
                 }
-                if (treenoise.getNoise(20 * i, 20 * j) > 10f) {
+                if (treenoise.getNoise(20 * i, 20 * j) > 14f) {
                     decoration[i * mapHeight + j] = TerrainElementManager.getInstance().getElementByName("tree");
                 }
                 if (n > 0.015f) {

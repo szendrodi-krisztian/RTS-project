@@ -77,7 +77,7 @@ public final class Group {
         Vector2f leader = new Vector2f(x, y);
         // negative angles mess up Quaternion constructor...
         float rotation = Util.angleToPositiveToOctave(rot);
-        System.out.println("rotate from " + rot_bef + " to " + rotation);
+        //System.out.println("rotate from " + rot_bef + " to " + rotation);
         formation.position_offset = 0;
         formation.position_offset_neg = 0;
         if (FastMath.abs(rot_bef - rotation) >= 90 && FastMath.abs(rot_bef - rotation) != 315) {

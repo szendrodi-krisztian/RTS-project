@@ -5,11 +5,13 @@ import battle.entity.SimpleUnit;
 import battle.entity.Unit;
 import battle.entity.group.AbstractFormation;
 import battle.entity.group.Group;
-import battle.entity.group.OneLineFormation;
 import battle.entity.group.TwoLineFormation;
 import battle.gfx.ClickMesh;
+import battle.gfx.MeshedTerrain;
 import battle.gfx.PathMesh;
 import battle.path.Path;
+import battle.terrain.Terrain;
+import battle.terrain.generator.SimpleGenerator;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -202,7 +204,7 @@ public class BattleState extends AbstractAppStateWithRoot {
     private Group spawnGroup(AbstractFormation formation, int numUnits, int team) {
         Group g = new Group(map, formation, team);
         for (int i = 0; i < numUnits; i++) {
-            map.spawn(0, 0, g, SimpleUnit.class);
+            map.spawn(50, 50, g, SimpleUnit.class);
         }
         return g;
     }
@@ -213,9 +215,19 @@ public class BattleState extends AbstractAppStateWithRoot {
         light = new AmbientLight();
         light.setColor(ColorRGBA.White);
         if (map == null) {
-            map = new BattleMap(100, 100, getRootNode());
-            spawnGroup(new OneLineFormation(map), 10, 1).moveTo(20, 30, 0);
-            spawnGroup(new TwoLineFormation(map), 14, 1).moveTo(5, 15, 0);
+            map = new BattleMap(new MeshedTerrain(new Terrain(200, 200, new SimpleGenerator(200, 200, 0xCAFFEE)), myRoot));
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(50, 50, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(5, 15, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(30, 15, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(50, 15, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(20, 25, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(20, 50, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(40, 50, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(80, 50, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(80, 70, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(80, 90, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(40, 90, 0);
+            spawnGroup(new TwoLineFormation(map), 60, 1).moveTo(20, 90, 0);
         }
         getRootNode().addLight(light);
         to_menu = false;
