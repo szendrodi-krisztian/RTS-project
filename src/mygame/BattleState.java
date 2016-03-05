@@ -137,7 +137,7 @@ public class BattleState extends AbstractAppStateWithRoot {
                             }
                             break;
                         case "right click":
-                            if (select != null) {
+                            if (select != null && select.size() > 0) {
                                 if (isPressed) {
                                     right_pos = getMouseRayCastIntCoords();
                                     click_gui.setLocalTranslation(right_pos.x, 1.1f, right_pos.y);
