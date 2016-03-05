@@ -104,4 +104,8 @@ public class BattleMap {
         return units.getUnitsAt(position);
     }
 
+    public void removeUnit(Unit u) {
+        units.remove(u);
+    }
+
 }

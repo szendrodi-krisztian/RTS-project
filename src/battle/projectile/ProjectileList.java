@@ -7,6 +7,8 @@ package battle.projectile;
 
 import battle.BattleMap;
 import battle.entity.Unit;
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -43,12 +45,16 @@ public class ProjectileList extends ArrayList<Projectile> {
         }
         // End of temp code
         if (!map.getUnitsAt(projectile.getPosXi(), projectile.getPosZi()).isEmpty()) {
-            for (Iterator<Unit> it = map.getUnitsAt(projectile.getPos()).iterator(); it.hasNext();) {
+            Vector2f asd = projectile.getPos().clone();
+            asd.x = FastMath.floor(asd.x);
+            asd.y = FastMath.floor(asd.y);
+            for (Iterator<Unit> it = map.getUnitsAt(asd).iterator(); it.hasNext();) {
                 Unit thi = it.next();
                 thi.getHit(projectile.getDamage());
                 if (thi.getHealth() <= 0) {
                     thi.destroy();
                     it.remove();
+                    map.removeUnit(thi);
                 }
             }
             projectile.destroy();
